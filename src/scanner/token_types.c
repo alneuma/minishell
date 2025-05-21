@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stddef.h>
+#include "scanner_internals.h"
+#include "scanner.h"
+
+// precedence == -1 -> infinity
+typedef struct s_token_type
+{
+	char				*name;
+	char				*lexeme;
+	int					precedence;
+	t_token_identifier	identifier;
+}	t_token_type;
+
+typedef enum e_token_attribute
+{
+	ID,
+	NAME,
+	LEXEME,
+	PRECEDENCE,
+}	t_token_attribute;
+
+void	*token_id_get_attribute(t_token_identifier id, t_token_attribute attr)
+{
+	static const t_token_type	token_types[] = {{"PIPE", "|", 3, PIPE},
+												 {"LEFT_PAREN", "(", 0, LEFT_PAREN},
+												 {"RIGHT_PAREN", ")", 0, RIGHT_PAREN},
+												 {"DOLLAR", "$", 4, DOLLAR},
+												 {"SEMICOLON", ";", 1, SEMICOLON},
+												 {"QUOTE_SINGLE", "'", 4, QUOTE_SINGLE},
+												 {"QUOTE_DOUBLE", "\"", 4, QUOTE_DOUBLE},
+												 {"AND", "&&", 2, AND},
+												 {"AMPERSAND", "&", 4, AMPERSAND},
+												 {"ASTERISK", "*", 4, ASTERISK},
+												 {"LITERAL", NULL, -1, LITERAL}};
+	if (id > LITERAL || id < PIPE)
+		return (NULL);
+	if (attr == ID)
+		return ((void *)&token_types[id].identifier);
+	else if (attr == LEXEME)
+		return ((void **)&token_types[id].lexeme);
+	else if (attr == PRECEDENCE)
+		return ((void *)&token_types[id].precedence);
+	else if (attr == NAME)
+		return ((void **)&token_types[id].name);
+	return (NULL);
+}
+
+int	token_id_get_prec(t_token_identifier id)
+{
+	int	*prec_ptr;
+
+	prec_ptr = (int *)token_id_get_attribute(id, PRECEDENCE);
+	return (*prec_ptr);
+}
+
+t_token_identifier	token_id_get_id(t_token_identifier id)
+{
+	t_token_identifier	*id_ptr;
+
+	id_ptr = (t_token_identifier *)token_id_get_attribute(id, ID);
+	return (*id_ptr);
+}
+
+char *token_id_get_lexeme(t_token_identifier id)
+{
+	char **lexeme_ptr;
+
+	lexeme_ptr = (char **)token_id_get_attribute(id, LEXEME);
+	return (*lexeme_ptr);
+}
+
+char *token_id_get_name(t_token_identifier id)
+{
+	char **name_ptr;
+
+	name_ptr = (char **)token_id_get_attribute(id, NAME);
+	return (*name_ptr);
+}
+
+int	token_type_print(t_token_identifier id)
+{
+	char *fstr;
+	fstr = "%s:\t%d\t%s";
+	if (id == PIPE || id == DOLLAR || id == AND)
+		fstr = "%s:\t\t%d\t%s";
+	return (printf(fstr, token_id_get_name(id),
+						 token_id_get_prec(id),
+						 token_id_get_lexeme(id)));
+}
+
