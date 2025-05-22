@@ -14,6 +14,7 @@ int main(void)
 		return (1);
 	tokens_print(tokens);
 	tree_from_tokens(&tree, tokens);
+	print_tree(tree);
 	parse_tree_destroy(&tree);
 	return (0);
 }

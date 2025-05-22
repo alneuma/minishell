@@ -52,4 +52,3 @@ int	queue_enqueue(void *data, t_queue *queue)
 	queue->size++;
 	return (0);
 }
-

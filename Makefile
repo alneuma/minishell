@@ -18,6 +18,7 @@ SRC	+= parser.c
 SRC	+= scanner.c
 SRC	+= token.c
 SRC	+= token_types.c
+SRC	+= tree_queue.c
 vpath %.c $(SRC_DIR)/data_structures
 SRC	+= queue.c
 SRC	+= queue_init.c

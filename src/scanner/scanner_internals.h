@@ -2,6 +2,7 @@
 # define SCANNER_INTERNALS_H
 
 # include "scanner.h"
+# include "data_structures.h"
 
 # define ERROR_INVALID_TOKEN -1
 
@@ -39,5 +40,10 @@ int					get_next(t_token **token, char **input);
 int					is_blank(char c);
 void				token_destroy(t_token **token);
 void				token_print(t_token *token);
+int					tree_node_queue_enqueue(t_token *node,
+						int depth, t_queue *queue);
+int					tree_node_queue_dequeue(t_token **node,
+						int *depth, t_queue *queue);
 
 #endif //SCANNER_INTERNALS_H
+
