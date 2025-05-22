@@ -20,7 +20,7 @@ void	tokens_print(t_token *tokens)
 	{
 		token_print(tokens);
 		putchar('\n');
-		tokens = tokens->next;
+		tokens = tokens->right;
 	}
 }
 
@@ -51,7 +51,7 @@ void	tokens_destroy(t_token **tokens)
 
 	while (*tokens)
 	{
-		tmp = (*tokens)->next;
+		tmp = (*tokens)->right;
 		token_destroy(tokens);
 		*tokens = tmp;
 	}
@@ -115,7 +115,8 @@ int	make_token(t_token **token, t_token_identifier id, char **literal)
 	}
 	else
 		(*token)->literal = token_id_get_lexeme(id);
-	(*token)->next = NULL;
+	(*token)->left = NULL;
+	(*token)->right = NULL;
 	return (0);
 }
 

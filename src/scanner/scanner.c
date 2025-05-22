@@ -46,12 +46,12 @@ t_token	*scanner(char *input)
 	{
 		while (*input && is_blank(*input))
 			input++;
-		if (get_next(&current->next, &input))
+		if (get_next(&current->right, &input))
 		{
 			tokens_destroy(&start);
 			return (NULL);
 		}
-		current = current->next;
+		current = current->right;
 	}
 	return (start);
 }

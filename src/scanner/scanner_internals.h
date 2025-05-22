@@ -5,6 +5,23 @@
 
 # define ERROR_INVALID_TOKEN -1
 
+// precedence == -1 -> infinity
+typedef struct s_token_type
+{
+	char				*name;
+	char				*lexeme;
+	int					precedence;
+	t_token_identifier	identifier;
+}	t_token_type;
+
+typedef enum e_token_attribute
+{
+	ID,
+	NAME,
+	LEXEME,
+	PRECEDENCE,
+}	t_token_attribute;
+
 int					token_type_print(t_token_identifier id);
 int					token_id_get_prec(t_token_identifier id);
 t_token_identifier	token_id_get_id(t_token_identifier id);

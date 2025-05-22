@@ -3,23 +3,6 @@
 #include "scanner_internals.h"
 #include "scanner.h"
 
-// precedence == -1 -> infinity
-typedef struct s_token_type
-{
-	char				*name;
-	char				*lexeme;
-	int					precedence;
-	t_token_identifier	identifier;
-}	t_token_type;
-
-typedef enum e_token_attribute
-{
-	ID,
-	NAME,
-	LEXEME,
-	PRECEDENCE,
-}	t_token_attribute;
-
 void	*token_id_get_attribute(t_token_identifier id, t_token_attribute attr)
 {
 	static const t_token_type	token_types[] = {{"PIPE", "|", 3, PIPE},

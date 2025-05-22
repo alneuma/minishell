@@ -22,7 +22,8 @@ struct s_token
 {
 	t_token_identifier	id;
 	char				*literal;
-	t_token				*next;
+	t_token				*left;
+	t_token				*right;
 };
 
 t_token	*scanner(char *input);
