@@ -26,6 +26,8 @@ int	queue_dequeue(void **data, t_queue *queue)
 	{
 		queue_node_destroy(&queue->first);
 		queue->last = NULL;
+		queue->size = 0;
+		return (0);
 	}
 	tmp = queue->first;
 	queue->first = queue->first->next;

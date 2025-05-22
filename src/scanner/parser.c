@@ -103,6 +103,7 @@ int	print_tree(t_token *tree)
 			if (return_code)
 			{
 				queue_destroy(&queue);
+				ft_printf("\n");
 				return (return_code);
 			}
 		}
@@ -112,12 +113,16 @@ int	print_tree(t_token *tree)
 			if (return_code)
 			{
 				queue_destroy(&queue);
+				ft_printf("\n");
 				return (return_code);
 			}
 
 		}
 		return_code = tree_node_queue_dequeue(&tree, &new_depth, queue);
 		if (return_code)
+		{
+			ft_printf("\n");
 			return (0);
+		}
 	}
 }
