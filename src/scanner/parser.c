@@ -2,9 +2,39 @@
 #include <stdlib.h>
 #include "libft.h"
 #include "scanner.h"
+// #include "data_structures.h"
 #include "scanner_internals.h"
 
-int	parse_tree_insert(t_token **tree, t_token **new_node)
+static int	parse_tree_insert(t_token **tree, t_token **new_node);
+
+int	tree_from_tokens(t_token **tree, t_token *tokens)
+{
+	t_token	*tmp;
+
+	*tree = NULL;
+	while (tokens)
+	{
+		tmp = tokens->right;
+		tokens->right = NULL;
+		tokens->left = NULL;
+		if (parse_tree_insert(tree, &tokens))
+			return (1);;
+		tokens = tmp;
+	}
+	return (0);
+}
+
+void	parse_tree_destroy(t_token **tree)
+{
+	if (*tree == NULL)
+		return ;
+	parse_tree_destroy(&(*tree)->left);
+	parse_tree_destroy(&(*tree)->right);
+	token_destroy(tree);
+	*tree = NULL;
+}
+
+static int	parse_tree_insert(t_token **tree, t_token **new_node)
 {
 	int		prec_tree;
 	int		prec_node;

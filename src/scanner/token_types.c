@@ -15,7 +15,7 @@ void	*token_id_get_attribute(t_token_identifier id, t_token_attribute attr)
 												 {"AND", "&&", 2, AND},
 												 {"AMPERSAND", "&", 4, AMPERSAND},
 												 {"ASTERISK", "*", 4, ASTERISK},
-												 {"LITERAL", NULL, -1, LITERAL}};
+												 {"LITERAL", NULL, 1000, LITERAL}};
 	if (id > LITERAL || id < PIPE)
 		return (NULL);
 	if (attr == ID)

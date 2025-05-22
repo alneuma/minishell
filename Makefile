@@ -59,6 +59,12 @@ LDFLAGS		:=
 LDFLAGS		+= $(addprefix -L, $(LIB_DIR))
 LDFLAGS		+= $(addprefix -l, ft)
 
+ifeq ($(DEBUG), 1)
+	CFLAGS += -O0
+	CFLAGS += -g3
+	CPPFLAGS += -g3
+endif
+
 ## makeflags
 MAKEFLAGS		:= --no-print-directory
 
