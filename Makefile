@@ -14,9 +14,13 @@ SRC	:=
 vpath %.c $(SRC_DIR)
 SRC	+= main.c
 vpath %.c $(SRC_DIR)/scanner
+SRC	+= parser.c
 SRC	+= scanner.c
 SRC	+= token.c
 SRC	+= token_types.c
+vpath %.c $(SRC_DIR)/data_structures
+SRC	+= queue.c
+SRC	+= queue_init.c
 
 ## objects
 OBJ	:= $(SRC:.c=.o)

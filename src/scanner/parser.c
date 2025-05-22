@@ -19,7 +19,7 @@ int	parse_tree_insert(t_token **tree, t_token **new_node)
 	prec_node = token_id_get_prec((*new_node)->id);
 	if (prec_node < prec_tree)
 	{
-		*new_node->left = *tree;
+		(*new_node)->left = *tree;
 		*tree = *new_node;
 		return (0);
 	}
@@ -33,8 +33,7 @@ int	parse_tree_insert(t_token **tree, t_token **new_node)
 		if ((*tree)->literal == NULL)
 			return (ENOMEM);
 		free(tmp);
-		token_destroy(*new_node);
-		*new_node = NULL;
+		token_destroy(new_node);
 		return (0);
 	}
 	return (1);
