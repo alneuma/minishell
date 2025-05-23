@@ -7,7 +7,7 @@
 
 int			tree_literals_make_argv(t_token *tree);
 int			token_literal_make_argv(t_token *token);
-static int	parse_tree_insert(t_token **tree, t_token **new_node);
+static int	parse_tree_insert(t_token **tree, t_token *new_node);
 
 int	tree_from_tokens(t_token **tree, t_token *tokens)
 {
@@ -19,7 +19,7 @@ int	tree_from_tokens(t_token **tree, t_token *tokens)
 		tmp = tokens->right;
 		tokens->right = NULL;
 		tokens->left = NULL;
-		if (parse_tree_insert(tree, &tokens))
+		if (parse_tree_insert(tree, tokens))
 			return (1);;
 		tokens = tmp;
 	}
@@ -69,64 +69,6 @@ static int	parse_tree_insert(t_token **tree, t_token *new_node)
 	return (1);
 }
 
-int	print_tree_node(const t_token *tree)
-{
-	if (tree->id == LITERAL)
-		return (ft_printf("%s", tree->literal));
-	return (ft_printf("%s", token_id_get_lexeme(tree->id)));
-}
-
-int	print_tree(t_token *tree)
-{
-	t_queue	*queue;
-	int		return_code;
-	int		old_depth;
-	int		new_depth;
-
-	if (!tree)
-		return (0);
-	return_code = queue_init(&queue);
-	if (return_code)
-		return (return_code);
-	old_depth = 0;
-	new_depth = 0;
-	while (1)
-	{
-		if (old_depth < new_depth)
-			ft_printf("\n");
-		print_tree_node(tree);
-		ft_printf("     ");
-		old_depth = new_depth;
-		if (tree->left)
-		{
-			return_code = tree_node_queue_enqueue(tree->left, old_depth + 1, queue);
-			if (return_code)
-			{
-				queue_destroy(&queue);
-				ft_printf("\n");
-				return (return_code);
-			}
-		}
-		if (tree->right)
-		{
-			return_code = tree_node_queue_enqueue(tree->right, old_depth + 1, queue);
-			if (return_code)
-			{
-				queue_destroy(&queue);
-				ft_printf("\n");
-				return (return_code);
-			}
-
-		}
-		return_code = tree_node_queue_dequeue(&tree, &new_depth, queue);
-		if (return_code)
-		{
-			ft_printf("\n");
-			return (0);
-		}
-	}
-}
-
 int	tree_literals_make_argv(t_token *tree)
 {
 	int	return_code;
@@ -142,24 +84,21 @@ int	tree_literals_make_argv(t_token *tree)
 	return_code = tree_literals_make_argv(tree->left);
 	if (return_code)
 		return (return_code);
-	return_code = tree_literals_make_argv(tree->right);
-	if (return_code)
-		return (return_code);
+	return (tree_literals_make_argv(tree->right));
 }
 
 int	token_literal_make_argv(t_token *token)
 {
 	int		count;
-	int		len_cur;
 	t_token	*tmp;
 	t_token	*p;
 
 	count = 0;
-	tmp = token;
-	while (tmp)
+	p = token;
+	while (p)
 	{
 		count++;
-		tmp->literals;
+		p = p->literals;
 	}
 	token->argv = (char **)malloc(sizeof(*token->argv) * (count + 1));
 	if (token->argv == NULL)
@@ -168,21 +107,14 @@ int	token_literal_make_argv(t_token *token)
 	p = token;
 	while (p)
 	{
-		len_cur = ft_strlen(p->literal);
-		token->argv[count] = (char *)malloc(sizeof(char) * (len_cur + 1));
-		if (token->argv[count] == NULL)
-		{
-			while (count-- >= 0)
-				free(token->argv[count]);
-			free(token->argv);
-		}
-		memcpy(token->argv[count], p->literal, len_cur);
-		token->argv[count][len_cur] = '\0';
+		token->argv[count] = p->literal;
+		p->literal = NULL;
 		tmp = p;
 		p = p->literals;
 		if (count != 0)
-			token_destroy(tmp);
+			free(tmp);
 		count++;
 	}
+	token->argv[count] = NULL;
 	return (0);
 }

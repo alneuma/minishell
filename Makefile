@@ -19,6 +19,7 @@ SRC	+= scanner.c
 SRC	+= token.c
 SRC	+= token_types.c
 SRC	+= tree_queue.c
+SRC	+= tree_print.c
 vpath %.c $(SRC_DIR)/data_structures
 SRC	+= queue.c
 SRC	+= queue_init.c
@@ -64,6 +65,11 @@ ifeq ($(DEBUG), 1)
 	CFLAGS += -O0
 	CFLAGS += -g3
 	CPPFLAGS += -g3
+endif
+
+ifeq ($(ASAN), 1)
+	CFLAGS		+= -fsanitize=address
+	LDFLAGS		+= -fsanitize=address
 endif
 
 ## makeflags

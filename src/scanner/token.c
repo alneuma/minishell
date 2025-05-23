@@ -5,6 +5,8 @@
 #include "scanner_internals.h"
 #include "scanner.h"
 
+static void	free_argv(char **argv);
+
 void	token_print(t_token *token)
 {
 	char *fstr;
@@ -27,9 +29,26 @@ void	tokens_print(t_token *tokens)
 void	token_destroy(t_token **token)
 {
 	if ((*token)->id == LITERAL)
-		free((*token)->literal);
+	{
+		if ((*token)->literal != NULL)
+			free((*token)->literal);
+		else
+			free_argv((*token)->argv);
+	}
 	free(*token);
 	*token = NULL;
+}
+
+static void	free_argv(char **argv)
+{
+	char	**start;
+
+	if (!argv)
+		return ;
+	start = argv;
+	while (*argv)
+		free(*argv++);
+	free(start);
 }
 
 int	is_blank(char c)
@@ -115,6 +134,7 @@ int	make_token(t_token **token, t_token_identifier id, char **literal)
 	}
 	else
 		(*token)->literal = token_id_get_lexeme(id);
+	(*token)->literals = NULL;
 	(*token)->left = NULL;
 	(*token)->right = NULL;
 	return (0);
