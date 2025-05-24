@@ -5,19 +5,20 @@
 
 void	*token_id_get_attribute(t_token_identifier id, t_token_attribute attr)
 {
-	static const t_token_type	token_types[] = {{"PIPE", "|", 3, PIPE},
-												 {"HEREDOC", "<<", 4, HEREDOC},
+	static const t_token_type	token_types[] = {{"OR", "||", 3, OR},
+												 {"PIPE", "|", 4, PIPE},
+												 {"HEREDOC", "<<", 5, HEREDOC},
 												 {"LEFT_PAREN", "(", 0, LEFT_PAREN},
 												 {"RIGHT_PAREN", ")", 0, RIGHT_PAREN},
-												 {"DOLLAR", "$", 5, DOLLAR},
+												 {"DOLLAR", "$", 6, DOLLAR},
 												 {"SEMICOLON", ";", 1, SEMICOLON},
-												 {"QUOTE_SINGLE", "'", 5, QUOTE_SINGLE},
-												 {"QUOTE_DOUBLE", "\"", 5, QUOTE_DOUBLE},
+												 {"QUOTE_SINGLE", "'", 6, QUOTE_SINGLE},
+												 {"QUOTE_DOUBLE", "\"", 6, QUOTE_DOUBLE},
 												 {"AND", "&&", 2, AND},
-												 {"AMPERSAND", "&", 5, AMPERSAND},
-												 {"ASTERISK", "*", 5, ASTERISK},
+												 {"AMPERSAND", "&", 6, AMPERSAND},
+												 {"ASTERISK", "*", 6, ASTERISK},
 												 {"LITERAL", NULL, 1000, LITERAL}};
-	if (id > LITERAL || id < PIPE)
+	if (id > LITERAL || id < OR)
 		return (NULL);
 	if (attr == ID)
 		return ((void *)&token_types[id].identifier);

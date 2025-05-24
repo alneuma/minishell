@@ -47,6 +47,16 @@ static int	parse_tree_insert(t_token **tree, t_token *new_node)
 		*tree = new_node;
 		return (0);
 	}
+	if ((*tree)->id == HEREDOC && new_node->id == LITERAL)
+	{
+		if ((*tree)->literal == NULL)
+		{
+			(*tree)->literal = new_node->literal;
+			free(new_node);
+			return (0);
+		}
+		return (parse_tree_insert(&(*tree)->left, new_node));
+	}
 	prec_tree = token_id_get_prec((*tree)->id);
 	prec_node = token_id_get_prec(new_node->id);
 	if (prec_node < prec_tree)

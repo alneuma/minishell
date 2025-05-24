@@ -133,7 +133,7 @@ int	make_token(t_token **token, t_token_identifier id, char **literal)
 		}
 	}
 	else
-		(*token)->literal = token_id_get_lexeme(id);
+		(*token)->literal = NULL;
 	(*token)->literals = NULL;
 	(*token)->left = NULL;
 	(*token)->right = NULL;

@@ -3,6 +3,7 @@
 
 typedef enum e_token_identifier
 {
+	OR,
 	PIPE,
 	HEREDOC,
 	LEFT_PAREN,

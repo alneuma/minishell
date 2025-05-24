@@ -28,8 +28,8 @@ int main(void)
 		if (!tokens)
 			return (1);
 		tree_from_tokens(&tree, tokens);
+		/*print_tree(tree);*/
 		execute(tree, 0, 1);
-		// print_tree(tree);
 		parse_tree_destroy(&tree);
 	}
 	return (return_code);
