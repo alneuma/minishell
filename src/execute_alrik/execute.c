@@ -70,8 +70,6 @@ int	execute_literal(t_token *node, int fd_in, int fd_out)
 	}
 	else if (pid > 0)
 	{
-		if (fd_in >= 0)
-			close(fd_in);
 		waitpid(pid, &status, 0);
 		return (WEXITSTATUS(status));
 	}

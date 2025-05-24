@@ -22,15 +22,18 @@ int main(void)
 	while (1)
 	{
 		line = readline("$ ");
-		tokens = scanner(line);
-		add_history(line);
-		free(line);
-		if (!tokens)
-			return (1);
-		tree_from_tokens(&tree, tokens);
-		/*print_tree(tree);*/
-		execute(tree, 0, 1);
-		parse_tree_destroy(&tree);
+		if (line != NULL)
+		{
+			tokens = scanner(line);
+			add_history(line);
+			free(line);
+			if (!tokens)
+				return (1);
+			tree_from_tokens(&tree, tokens);
+			/*print_tree(tree);*/
+			execute(tree, 0, 1);
+			parse_tree_destroy(&tree);
+		}
 	}
 	return (return_code);
 }
