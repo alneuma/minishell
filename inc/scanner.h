@@ -4,6 +4,7 @@
 typedef enum e_token_identifier
 {
 	PIPE,
+	HEREDOC,
 	LEFT_PAREN,
 	RIGHT_PAREN,
 	DOLLAR,

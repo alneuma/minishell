@@ -7,12 +7,14 @@ INC_DIR			:= inc
 
 # files
 
-NAME	:= scanner
+NAME	:= minishell
 
 ## sources
 SRC	:=
 vpath %.c $(SRC_DIR)
 SRC	+= main.c
+vpath %.c $(SRC_DIR)/prompt
+SRC	+= prompt.c
 vpath %.c $(SRC_DIR)/scanner
 SRC	+= parser.c
 SRC	+= scanner.c
@@ -23,6 +25,9 @@ SRC	+= tree_print.c
 vpath %.c $(SRC_DIR)/data_structures
 SRC	+= queue.c
 SRC	+= queue_init.c
+vpath %.c $(SRC_DIR)/execute_alrik
+SRC	+= execute.c
+SRC	+= heredoc.c
 
 ## objects
 OBJ	:= $(SRC:.c=.o)
@@ -60,6 +65,7 @@ CPPFLAGS	+= $(addprefix -I, $(LIB_DIR))
 LDFLAGS		:=
 LDFLAGS		+= $(addprefix -L, $(LIB_DIR))
 LDFLAGS		+= $(addprefix -l, ft)
+LDFLAGS		+= $(addprefix -l, readline)
 
 ifeq ($(DEBUG), 1)
 	CFLAGS += -O0
@@ -70,6 +76,11 @@ endif
 ifeq ($(ASAN), 1)
 	CFLAGS		+= -fsanitize=address
 	LDFLAGS		+= -fsanitize=address
+endif
+
+ifeq ($(LSAN), 1)
+	CFLAGS		+= -fsanitize=leak
+	LDFLAGS		+= -fsanitize=leak
 endif
 
 ## makeflags

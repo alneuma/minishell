@@ -6,15 +6,16 @@
 void	*token_id_get_attribute(t_token_identifier id, t_token_attribute attr)
 {
 	static const t_token_type	token_types[] = {{"PIPE", "|", 3, PIPE},
+												 {"HEREDOC", "<<", 4, HEREDOC},
 												 {"LEFT_PAREN", "(", 0, LEFT_PAREN},
 												 {"RIGHT_PAREN", ")", 0, RIGHT_PAREN},
-												 {"DOLLAR", "$", 4, DOLLAR},
+												 {"DOLLAR", "$", 5, DOLLAR},
 												 {"SEMICOLON", ";", 1, SEMICOLON},
-												 {"QUOTE_SINGLE", "'", 4, QUOTE_SINGLE},
-												 {"QUOTE_DOUBLE", "\"", 4, QUOTE_DOUBLE},
+												 {"QUOTE_SINGLE", "'", 5, QUOTE_SINGLE},
+												 {"QUOTE_DOUBLE", "\"", 5, QUOTE_DOUBLE},
 												 {"AND", "&&", 2, AND},
-												 {"AMPERSAND", "&", 4, AMPERSAND},
-												 {"ASTERISK", "*", 4, ASTERISK},
+												 {"AMPERSAND", "&", 5, AMPERSAND},
+												 {"ASTERISK", "*", 5, ASTERISK},
 												 {"LITERAL", NULL, 1000, LITERAL}};
 	if (id > LITERAL || id < PIPE)
 		return (NULL);
