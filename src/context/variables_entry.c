@@ -1,14 +1,14 @@
 #include <errno.h>
 #include <stdlib.h>
-#include "environment_internals.h"
+#include "variables_internals.h"
 #include "libft.h"
 
-int	environment_entry_print(t_environment_entry *entry)
+int	variable_print(t_variable *entry)
 {
 	return (ft_printf("%s=%s", entry->key, entry->value));
 }
 
-int	environment_entry_val_replace(t_environment_entry *entry, const char *val)
+int	variable_val_replace(t_variable *entry, const char *val)
 {
 	free(entry->value);
 	entry->value = ft_strdup(val);
@@ -17,7 +17,7 @@ int	environment_entry_val_replace(t_environment_entry *entry, const char *val)
 	return (0);
 }
 
-int	environment_entry_val_append(t_environment_entry *entry, const char *val)
+int	variable_val_append(t_variable *entry, const char *val)
 {
 	char	*tmp;
 
@@ -29,7 +29,7 @@ int	environment_entry_val_append(t_environment_entry *entry, const char *val)
 	return (0);
 }
 
-void	environment_entry_destroy(t_environment_entry **entry)
+void	variable_destroy(t_variable **entry)
 {
 	free((*entry)->key);
 	free((*entry)->value);
@@ -37,11 +37,11 @@ void	environment_entry_destroy(t_environment_entry **entry)
 	*entry = NULL;
 }
 
-t_environment_entry	*environment_entry_create(const char *key, const char *val)
+t_variable	*variable_create(const char *key, const char *val)
 {
-	t_environment_entry	*new_entry;
+	t_variable	*new_entry;
 
-	new_entry = (t_environment_entry *)malloc(sizeof(*new_entry));
+	new_entry = (t_variable *)malloc(sizeof(*new_entry));
 	if (new_entry == NULL)
 		return (NULL);
 	new_entry->key = ft_strdup(key);

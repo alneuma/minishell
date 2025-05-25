@@ -1,6 +1,6 @@
 #include "libft.h"
 
-int	execute_builtin(const char **argv, int fd_in, int fd_out)
+int	exec_builtin(const char **argv, int fd_in, int fd_out, t_environment *env)
 {
 	static const builtins = {"cd",
 							 "echo",
@@ -22,7 +22,7 @@ int	execute_builtin(const char **argv, int fd_in, int fd_out)
 	while (i < sizeof(builtins)/sizeof(*builtins))
 	{
 		if (!ft_strcmp(cmd, builtins[i]))
-			return (builtin_funcs[i](argv, fd_in, fd_out));
+			return (builtin_funcs[i](argv, fd_in, fd_out, env));
 		i++;
 	}
 	return (-1);

@@ -2,45 +2,45 @@
 #include <errno.h>
 #include <limits.h>
 #include "libft.h"
-#include "environment_internals.h"
-#include "environment.h"
+#include "variables_internals.h"
+#include "variables.h"
 
-static char	*environment_string_val_get(const char *str);
-static char	*environment_string_key_get(const char *str);
+static char	*variable_set_string_val_get(const char *str);
+static char	*variable_set_string_key_get(const char *str);
 
-void	environment_destroy(t_environment **env)
+void	variable_set_destroy(t_variable_set **env)
 {
-	t_environment_entry	*tmp;
+	t_variable	*tmp;
 
-	// t_environment	*head = *env;
-	// head = (t_environment *)head;
+	// t_variable_set	*head = *env;
+	// head = (t_variable_set *)head;
 	while ((*env)->first != NULL)
 	{
 		tmp = (*env)->first;
 		(*env)->first = tmp->next;
-		environment_entry_destroy(&tmp);
+		variable_destroy(&tmp);
 	}
 	free(*env);
 	*env = NULL;
 }
 
-t_environment	*environment_create(void)
+t_variable_set	*variable_set_create(void)
 {
-	t_environment	*new_environment;
+	t_variable_set	*new_variable_set;
 
-	new_environment = (t_environment *)malloc(sizeof(*new_environment));
-	if (new_environment == NULL)
+	new_variable_set = (t_variable_set *)malloc(sizeof(*new_variable_set));
+	if (new_variable_set == NULL)
 		return (NULL);
-	new_environment->first = NULL;
-	new_environment->size = 0;
-	return (new_environment);
+	new_variable_set->first = NULL;
+	new_variable_set->size = 0;
+	return (new_variable_set);
 }
 
-char	**environment_array_get(t_environment *env)
+char	**variable_set_array_get(t_variable_set *env)
 {
 	char				**envp;
 	int					i;
-	t_environment_entry	*p;
+	t_variable	*p;
 
 	envp = (char **)malloc(sizeof(envp) * ((size_t)env->size + 1));
 	if (envp == NULL)
@@ -65,7 +65,7 @@ char	**environment_array_get(t_environment *env)
 	return (envp);
 }
 
-int	environment_array_feed(t_environment *env, char **envp)
+int	variable_set_array_feed(t_variable_set *env, char **envp)
 {
 	char	*key;
 	char	*val;
@@ -75,16 +75,16 @@ int	environment_array_feed(t_environment *env, char **envp)
 	i = 0;
 	while (envp[i] != NULL)
 	{
-		key = environment_string_key_get(envp[i]);
+		key = variable_set_string_key_get(envp[i]);
 		if (key == NULL)
 			return (ENOMEM);
-		val = environment_string_val_get(envp[i]);
+		val = variable_set_string_val_get(envp[i]);
 		if (val == NULL)
 		{
 			free(key);
 			return (ENOMEM);
 		}
-		return_code = environment_val_set(env, key, val);
+		return_code = variable_set_val_set(env, key, val);
 		free(key);
 		free(val);
 		if (return_code)
@@ -94,7 +94,7 @@ int	environment_array_feed(t_environment *env, char **envp)
 	return (0);
 }
 
-static char	*environment_string_key_get(const char *str)
+static char	*variable_set_string_key_get(const char *str)
 {
 	char	*key;
 	char	*equal;
@@ -108,7 +108,7 @@ static char	*environment_string_key_get(const char *str)
 	return (key);
 }
 
-static char	*environment_string_val_get(const char *str)
+static char	*variable_set_string_val_get(const char *str)
 {
 	char	*val;
 	char	*start;
@@ -118,14 +118,14 @@ static char	*environment_string_val_get(const char *str)
 	return (val);
 }
 
-void	environment_print(t_environment *env)
+void	variable_set_print(t_variable_set *env)
 {
-	t_environment_entry	*p;
+	t_variable	*p;
 
 	p = env->first;
 	while (p)
 	{
-		environment_entry_print(p);
+		variable_print(p);
 		ft_putchar_fd('\n', 1);
 		p = p->next;
 	}

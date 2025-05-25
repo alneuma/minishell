@@ -28,10 +28,10 @@ SRC	+= queue_init.c
 vpath %.c $(SRC_DIR)/execute_alrik
 SRC	+= execute.c
 SRC	+= heredoc.c
-vpath %.c $(SRC_DIR)/environment
-SRC	+= environment.c
-SRC	+= environment_entry.c
-SRC	+= environment_operations.c
+vpath %.c $(SRC_DIR)/context
+SRC	+= variables_entry.c
+SRC	+= variable_set.c
+SRC	+= variable_set_operations.c
 
 ## objects
 OBJ	:= $(SRC:.c=.o)
