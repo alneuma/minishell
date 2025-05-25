@@ -87,17 +87,20 @@ void	environment_entry_del(t_environment *env, const char *key)
 	{
 		tmp = env->first;
 		env->first = env->first->next;
-		environment_entry_destroy(&env->first);
+		environment_entry_destroy(&tmp);
+		env->size--;
 		return ;
 	}
 	p = env->first;
-	while (p->next)
+	while (p->next != NULL)
 	{
 		if (!ft_strcmp(key, p->next->key))
 		{
 			tmp = p->next;
-			p = p->next->next;
+			p->next = p->next->next;
 			environment_entry_destroy(&tmp);
+			env->size--;
+			return ;
 		}
 		p = p->next;
 	}

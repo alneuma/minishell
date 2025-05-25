@@ -13,27 +13,35 @@
 
 #define P1 "$ "
 
-int	main(int argc, char **argv, char **envp)
-{
-	t_environment	*env;
-	int				return_code;
-	// char			*ep[] = {"hello=bye", NULL};
 
-	(void)argc;
-	(void)argv;
-	env = environment_create();
-	if (env == NULL)
-		return (1);
-	return_code = environment_array_feed(env, envp);
-	if (return_code)
-	{
-		environment_destroy(&env);
-		return (1);
-	}
-	environment_print(env);
-	environment_destroy(&env);
-	return (0);
-}
+// #define ENVP ep
+// int	main(int argc, char **argv, char **envp)
+// {
+// 	t_environment	*env;
+// 	int				return_code;
+// 	char			*val;
+// 	char			*key = "asdf";
+// 	char			*ep[] = {"hello=bye", "yo=why?", "this=that", NULL};
+//
+// 	(void)argc;
+// 	(void)argv;
+// 	(void)envp;
+// 	env = environment_create();
+// 	if (env == NULL)
+// 		return (1);
+// 	return_code = environment_array_feed(env, ENVP);
+// 	ft_printf("ret = %d\n", environment_val_get(&val, env, key));
+// 	if (return_code)
+// 	{
+// 		environment_destroy(&env);
+// 		return (1);
+// 	}
+// 	environment_print(env);
+// 	ft_printf("key = %s\nval = %s\n", key, val);
+// 	free(val);
+// 	environment_destroy(&env);
+// 	return (0);
+// }
 
 // int main(void)
 // {
