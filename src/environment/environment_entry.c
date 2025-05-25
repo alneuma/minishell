@@ -1,5 +1,12 @@
 #include <errno.h>
 #include <stdlib.h>
+#include "environment_internals.h"
+#include "libft.h"
+
+int	environment_entry_print(t_environment_entry *entry)
+{
+	return (ft_printf("%s=%s", entry->key, entry->value));
+}
 
 int	environment_entry_val_replace(t_environment_entry *entry, const char *val)
 {
@@ -25,26 +32,26 @@ int	environment_entry_val_append(t_environment_entry *entry, const char *val)
 void	environment_entry_destroy(t_environment_entry **entry)
 {
 	free((*entry)->key);
-	free((*entry)->val);
+	free((*entry)->value);
 	free(*entry);
 	*entry = NULL;
 }
 
-t_environment	*environment_entry_create(const char *key, const char *val)
+t_environment_entry	*environment_entry_create(const char *key, const char *val)
 {
 	t_environment_entry	*new_entry;
 
 	new_entry = (t_environment_entry *)malloc(sizeof(*new_entry));
 	if (new_entry == NULL)
-		return (ENOMEM);
+		return (NULL);
 	new_entry->key = ft_strdup(key);
 	if (new_entry->key == NULL)
 	{
 		free(new_entry);
 		return (NULL);
 	}
-	new_entry->val = ft_strdup(val);
-	if (new_entry->val == NULL)
+	new_entry->value = ft_strdup(val);
+	if (new_entry->value == NULL)
 	{
 		free(new_entry->key);
 		free(new_entry);

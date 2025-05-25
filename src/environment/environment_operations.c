@@ -4,17 +4,17 @@
 #include "libft.h"
 #include "environment_internals.h"
 
-char	*environment_val_append(t_environment *env, const char *key, const char *val)
+int	environment_val_append(t_environment *env, const char *key, const char *val)
 {
 	t_environment_entry	*p;
 
 	if (env->size > 0 && !ft_strcmp(env->first->key, key))
-		return (environment_val_append(env->first, val));
+		return (environment_entry_val_append(env->first, val));
 	p = env->first;
 	while (p->next != NULL)
 	{
 		if (!ft_strcmp(p->next->key, key))
-			return (environment_val_append(p->next, val));
+			return (environment_entry_val_append(p->next, val));
 		p = p->next;
 	}
 	if (env->size == INT_MAX)
@@ -50,13 +50,21 @@ int	environment_val_set(t_environment *env, const char *key, const char *val)
 {
 	t_environment_entry	*p;
 
+	if (env->size == 0)
+	{
+		env->first = environment_entry_create(key, val);
+		if (env->first == NULL)
+			return (ENOMEM);
+		env->size++;
+		return (0);
+	}
 	if (env->size > 0 && !ft_strcmp(env->first->key, key))
-		return (environment_val_replace(env->first, val));
+		return (environment_entry_val_replace(env->first, val));
 	p = env->first;
 	while (p->next != NULL)
 	{
 		if (!ft_strcmp(p->next->key, key))
-			return (environment_val_replace(p->next, val));
+			return (environment_entry_val_replace(p->next, val));
 		p = p->next;
 	}
 	if (env->size == INT_MAX)
@@ -74,7 +82,7 @@ void	environment_entry_del(t_environment *env, const char *key)
 	t_environment_entry	*tmp;
 
 	if (env->size <= 0)
-		return
+		return ;
 	if (!ft_strcmp(key, env->first->key))
 	{
 		tmp = env->first;
@@ -85,7 +93,7 @@ void	environment_entry_del(t_environment *env, const char *key)
 	p = env->first;
 	while (p->next)
 	{
-		if (!ft_strcmp(key, p->next->key)
+		if (!ft_strcmp(key, p->next->key))
 		{
 			tmp = p->next;
 			p = p->next->next;

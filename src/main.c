@@ -6,37 +6,60 @@
 #include "libft.h"
 #include "prompt.h"
 #include "execute.h"
+#include "environment.h"
 
 // #define INPUT "/usr/bin/cat Makefile | head -n 4"
 // #define INPUT "asdfasdf"
 
 #define P1 "$ "
 
-int main(void)
+int	main(int argc, char **argv, char **envp)
 {
-	t_token	*tokens;
-	t_token	*tree;
-	int		return_code;
-	char	*line;
+	t_environment	*env;
+	int				return_code;
+	// char			*ep[] = {"hello=bye", NULL};
 
-	while (1)
+	(void)argc;
+	(void)argv;
+	env = environment_create();
+	if (env == NULL)
+		return (1);
+	return_code = environment_array_feed(env, envp);
+	if (return_code)
 	{
-		line = readline("$ ");
-		if (line != NULL)
-		{
-			tokens = scanner(line);
-			add_history(line);
-			free(line);
-			if (!tokens)
-				return (1);
-			tree_from_tokens(&tree, tokens);
-			/*print_tree(tree);*/
-			execute(tree, 0, 1);
-			parse_tree_destroy(&tree);
-		}
+		environment_destroy(&env);
+		return (1);
 	}
-	return (return_code);
+	environment_print(env);
+	environment_destroy(&env);
+	return (0);
 }
+
+// int main(void)
+// {
+// 	t_token	*tokens;
+// 	t_token	*tree;
+// 	int		return_code;
+// 	char	*line;
+//
+// 	while (1)
+// 	{
+// 		line = readline("$ ");
+// 		if (line != NULL)
+// 		{
+// 			tokens = scanner(line);
+// 			add_history(line);
+// 			free(line);
+// 			if (!tokens)
+// 				return (1);
+// 			tree_from_tokens(&tree, tokens);
+// 			/*print_tree(tree);*/
+// 			execute(tree, 0, 1);
+// 			parse_tree_destroy(&tree);
+// 		}
+// 	}
+// 	return (return_code);
+// }
 
 // int main(void)
 // {
