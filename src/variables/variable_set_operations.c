@@ -4,17 +4,36 @@
 #include "libft.h"
 #include "variables_internals.h"
 
-int	variable_set_val_append(t_variable_set *env, const char *key, const char *val)
+// always returns 0
+int	variable_set_var_type_set(t_variable_set *env, const char *key,
+		const t_vartype vartype)
+{
+	t_variable	*p;
+	
+	p = env->first;
+	while (p != NULL)
+	{
+		if (!ft_strcmp(p->key, key))
+		{
+			variable_type_set(p, vartype);
+			return (0);
+		}
+		p = p->next;
+	}
+	return (0);
+}
+
+int	variable_set_var_append(t_variable_set *env, const char *key, const char *val)
 {
 	t_variable	*p;
 
 	if (env->size > 0 && !ft_strcmp(env->first->key, key))
-		return (variable_val_append(env->first, val));
+		return (variable_var_append(env->first, val));
 	p = env->first;
 	while (p->next != NULL)
 	{
 		if (!ft_strcmp(p->next->key, key))
-			return (variable_val_append(p->next, val));
+			return (variable_var_append(p->next, val));
 		p = p->next;
 	}
 	if (env->size == INT_MAX)
@@ -26,7 +45,7 @@ int	variable_set_val_append(t_variable_set *env, const char *key, const char *va
 	return (0);
 }
 
-int	variable_set_val_get(char **val, t_variable_set *env, const char *key)
+char	*variable_set_var_get(t_variable_set *env, const char *key)
 {
 	t_variable	*p;
 
@@ -34,19 +53,13 @@ int	variable_set_val_get(char **val, t_variable_set *env, const char *key)
 	while (p != NULL)
 	{
 		if (!ft_strcmp(p->key, key))
-		{
-			*val = ft_strdup(p->value);
-			if (val == NULL)
-				return (ENOMEM);
-			return (0);
-		}
+			return(ft_strdup(p->value));
 		p = p->next;
 	}
-	*val = ft_strdup("");
-	return (0);
+	return (ft_strdup(""));
 }
 
-int	variable_set_val_set(t_variable_set *env, const char *key, const char *val)
+int	variable_set_var_set(t_variable_set *env, const char *key, const char *val, t_vartype vartype)
 {
 	t_variable	*p;
 
@@ -59,12 +72,12 @@ int	variable_set_val_set(t_variable_set *env, const char *key, const char *val)
 		return (0);
 	}
 	if (env->size > 0 && !ft_strcmp(env->first->key, key))
-		return (variable_val_replace(env->first, val));
+		return (variable_var_replace(env->first, val));
 	p = env->first;
 	while (p->next != NULL)
 	{
 		if (!ft_strcmp(p->next->key, key))
-			return (variable_val_replace(p->next, val));
+			return (variable_var_replace(p->next, val));
 		p = p->next;
 	}
 	if (env->size == INT_MAX)
@@ -76,7 +89,7 @@ int	variable_set_val_set(t_variable_set *env, const char *key, const char *val)
 	return (0);
 }
 
-void	variable_del(t_variable_set *env, const char *key)
+void	variable_set_var_del(t_variable_set *env, const char *key)
 {
 	t_variable	*p;
 	t_variable	*tmp;
