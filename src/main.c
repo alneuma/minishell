@@ -70,11 +70,14 @@ int main(int argc, char **argv, char **envp)
 				return (1);
 			tree_from_tokens(&tree, tokens);
 			/*print_tree(tree);*/
-			execute(tree, 0, 1, env);
+			return_code = execute(tree, 0, 1, env);
 			parse_tree_destroy(&tree);
 		}
+		if (return_code == 100)
+			break ;
 	}
-	// variable_set_destroy(&env);
+	rl_clear_history();
+	variable_set_destroy(&env);
 	return (return_code);
 }
 

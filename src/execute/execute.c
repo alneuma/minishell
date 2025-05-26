@@ -18,7 +18,6 @@ int	execute_program(const char **argv, int fd_in, int fd_out, t_variable_set *en
 
 int	execute(t_token *token, int fd_in, int fd_out, t_variable_set *env)
 {
-
 	if (token->id == LITERAL)
 		return (execute_literal(token, fd_in, fd_out, env));
 	if (token->id == PIPE)

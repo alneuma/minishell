@@ -25,7 +25,7 @@ SRC	+= tree_print.c
 vpath %.c $(SRC_DIR)/data_structures
 SRC	+= queue.c
 SRC	+= queue_init.c
-vpath %.c $(SRC_DIR)/execute_alrik
+vpath %.c $(SRC_DIR)/execute
 SRC	+= execute.c
 SRC	+= heredoc.c
 vpath %.c $(SRC_DIR)/variables

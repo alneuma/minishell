@@ -71,6 +71,7 @@ int builtin_cd(const char **argv, int fd_in, int fd_out, t_variable_set *env)
 	return (0);
 }
 
+// -n missing
 int builtin_echo(const char **argv, int fd_in, int fd_out, t_variable_set *env)
 {
 	int	i;
@@ -104,7 +105,7 @@ int builtin_exit(const char **argv, int fd_in, int fd_out, t_variable_set *env)
 	(void)fd_in;
 	(void)fd_out;
 	(void)env;
-	return (0);
+	return (100);
 }
 
 // can not deal with non assignment variables yet
