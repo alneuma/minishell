@@ -3,6 +3,17 @@
 #include "variables_internals.h"
 #include "libft.h"
 
+char	*variable_assignment_string_get(const t_variable *entry)
+{
+	char	*str;
+
+	str = (char *)malloc(ft_strlen(entry->key) + ft_strlen(entry->value) + 2);
+	if (str == NULL)
+		return (NULL);
+	ft_sprintf(str, "%s=%s", entry->key, entry->value);
+	return (str);
+}
+
 t_variable	*variable_create(const char *key, const char *val,
 				const t_vartype vartype)
 {

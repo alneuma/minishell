@@ -36,10 +36,10 @@ SRC += variable_set_query.c
 # variable
 SRC += variable.c
 SRC += variable_operations.c
-# assignemt_strings
-SRC += assignment_strings.c
 vpath %.c $(SRC_DIR)/builtins
 SRC += builtins.c
+vpath %.c $(SRC_DIR)/assignment_strings
+SRC	+= assignment_strings.c
 
 ## objects
 OBJ	:= $(SRC:.c=.o)

@@ -1,21 +1,10 @@
 #include <stdlib.h>
+#include "assignment_strings.h"
 #include "libft.h"
-#include "variables_internals.h"
 
 int	assignment_string_is_append(const char *str)
 {
 	return (ft_strchr(str, '+') == ft_strchr(str, '=') - 1);
-}
-
-char	*variable_assignment_string_get(const t_variable *entry)
-{
-	char	*str;
-
-	str = (char *)malloc(ft_strlen(entry->key) + ft_strlen(entry->value) + 2);
-	if (str == NULL)
-		return (NULL);
-	ft_sprintf(str, "%s=%s", entry->key, entry->value);
-	return (str);
 }
 
 char	*assignment_string_val_get(const char *str)
@@ -44,4 +33,25 @@ char	*assignment_string_key_get(const char *str)
 	ft_memcpy(key, str, len);
 	key[len] = '\0';
 	return (key);
+}
+
+char	*first_non_assignment(const char **arr)
+{
+	while (*arr != NULL)
+	{
+		if (!is_assignment(*arr))
+			return ((char *)*arr);
+		arr++;
+	}
+	return (NULL);
+}
+
+int	is_assignment(const char *str)
+{
+	char	*equal;
+
+	equal = ft_strchr(str, '=');
+	if ((equal - str > 2 && str[1] == '+') || equal - str > 1)
+		return (1);
+	return (0);
 }

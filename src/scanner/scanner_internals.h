@@ -46,4 +46,3 @@ int					tree_node_queue_dequeue(t_token **node,
 						int *depth, t_queue *queue);
 
 #endif //SCANNER_INTERNALS_H
-

@@ -9,12 +9,17 @@
 #include "variables.h"
 #include "builtins.h"
 
+// copied from src/variables/assignment_strings.c
+static char	*assignment_string_key_get(const char *str);
+char	*first_non_assignment(const char **arr);
+int		is_assignment(const char *str);
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
 int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
 int	execute_heredoc(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
 int	execute_and(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
 int	execute_or(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
 int	execute_program(const char **argv, int fd_in, int fd_out, t_variable_set *env);
+int	execute_builtin(const char **argv, int fd_in, int fd_out, t_variable_set *env);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_variable_set *env)
 {
@@ -53,10 +58,36 @@ int	execute_or(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 {
-	if (is_builtin(tree->argv[0]))
+	char	*cmd;
+
+	cmd = first_non_assignment((const char **)tree->argv);
+	if (cmd == NULL)
+		return (variable_set_assignment_string_add(env, tree->argv[0], 0));
+	if (is_builtin(cmd))
 		return (execute_builtin((const char **)tree->argv, fd_in, fd_out, env));
 	else
 		return (execute_program((const char **)tree->argv, fd_in, fd_out, env));
+}
+
+int	execute_builtin(const char **argv, int fd_in, int fd_out, t_variable_set *env)
+{
+	int		return_value;
+	char	**tmp_argv;
+	char	*key;
+
+	tmp_argv = (char **)argv;
+	while (is_assignment(*tmp_argv))
+		variable_set_assignment_string_add(env, *tmp_argv++, 0);
+	return_value = builtin_get_func(*tmp_argv)(argv, fd_in, fd_out, env);
+	while (is_assignment(*argv))
+	{	
+		key = assignment_string_key_get(*argv++);
+		if (key == NULL)
+			return (ENOMEM);
+		variable_set_var_remove(env, key);
+		free(key);
+	}
+	return (return_value);
 }
 
 int	execute_program(const char **argv, int fd_in, int fd_out, t_variable_set *env)
@@ -123,4 +154,23 @@ int	execute_heredoc(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 	return_code = execute(tree->left, fds[0], fd_out, env);
 	close(fds[0]);
 	return (return_code);
+}
+
+// copied from src/variables/assignment_strings.c
+static char	*assignment_string_key_get(const char *str)
+{
+	char	*key;
+	char	*equal;
+	int		len;
+
+	equal = ft_strchr(str, '=');
+	len = equal - str;
+	if (equal != str && ft_strchr(str, '+') == equal - 1)
+		len--;
+	key = (char *)malloc(len + 1);
+	if (key == NULL)
+		return (NULL);
+	ft_memcpy(key, str, len);
+	key[len] = '\0';
+	return (key);
 }

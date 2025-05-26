@@ -4,7 +4,7 @@
 # include "variables.h"
 
 int	is_builtin(const char *cmd);
-int	execute_builtin(const char **argv, int fd_in, int fd_out,
-		t_variable_set *env);
+int	(*builtin_get_func(const char *cmd))(const char **, int, int,
+		t_variable_set *);
 
 #endif //BUILTINS_H

@@ -16,7 +16,6 @@ typedef enum e_vartype
 void			variable_set_destroy(t_variable_set **env);
 t_variable_set	*variable_set_create(void);
 
-
 // query
 char			*variable_set_var_get(t_variable_set *env, const char *key);
 char			**variable_set_array_get(const t_variable_set *env,

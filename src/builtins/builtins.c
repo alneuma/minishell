@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include "variables.h"
+#include "assignment_strings.h"
 #include "libft.h"
 
 int	(*builtin_get_func(const char *cmd))(const char **, int, int, t_variable_set *);
@@ -16,11 +17,6 @@ int builtin_unset(const char **argv, int fd_in, int fd_out, t_variable_set *env)
 
 // utils
 int	string_array_get_len(const char **arr);
-
-int	execute_builtin(const char **argv, int fd_in, int fd_out, t_variable_set *env)
-{
-	return (builtin_get_func(argv[0])(argv, fd_in, fd_out, env));
-}
 
 int	(*builtin_get_func(const char *cmd))(const char **, int, int, t_variable_set *)
 {
@@ -112,13 +108,23 @@ int builtin_exit(const char **argv, int fd_in, int fd_out, t_variable_set *env)
 int builtin_export(const char **argv, int fd_in, int fd_out, t_variable_set *env)
 {
 	int	i;
+	int	return_value;
 
 	(void)fd_in;
 	(void)fd_out;
-	(void)env;
 	i = 1;
-	while (argv[i] != NULL)
-		variable_set_assignment_string_add(env, argv[i++], 1);
+	while (*argv != NULL)
+	{
+		if (is_assignment(*argv))
+		{
+			return_value = variable_set_assignment_string_add(env, argv[i++], 1);
+			if (return_value)
+				return (return_value);
+		}
+		else
+			variable_set_var_type_set(env, *argv, ENV);
+		argv++;
+	}
 	return (0);
 }
 

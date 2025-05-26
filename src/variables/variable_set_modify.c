@@ -3,6 +3,7 @@
 #include <errno.h>
 #include "variables.h"
 #include "variables_internals.h"
+#include "assignment_strings.h"
 #include "libft.h"
 
 static int	variable_set_var_set(t_variable_set *env, const char *key,

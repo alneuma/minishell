@@ -31,11 +31,6 @@ int			variable_type_set(t_variable *entry, const t_vartype vartype);
 t_variable	*variable_create(const char *key, const char *val,
 				const t_vartype vartype);
 void		variable_destroy(t_variable **entry);
-
-// assignment string
-int			assignment_string_is_append(const char *str);
 char		*variable_assignment_string_get(const t_variable *entry);
-char		*assignment_string_val_get(const char *str);
-char		*assignment_string_key_get(const char *str);
 
 #endif //VARIABLES_INTERNALS_H
