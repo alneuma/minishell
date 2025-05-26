@@ -15,7 +15,7 @@ typedef enum e_token_identifier
 	AND,
 	AMPERSAND,
 	ASTERISK,
-	LITERAL,
+	LITERAL
 }	t_token_identifier;
 
 typedef struct s_token	t_token;

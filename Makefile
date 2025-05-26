@@ -28,10 +28,16 @@ SRC	+= queue_init.c
 vpath %.c $(SRC_DIR)/execute_alrik
 SRC	+= execute.c
 SRC	+= heredoc.c
-vpath %.c $(SRC_DIR)/context
-SRC	+= variables_entry.c
-SRC	+= variable_set.c
-SRC	+= variable_set_operations.c
+vpath %.c $(SRC_DIR)/variables
+# variable_set
+SRC += variable_set.c
+SRC += variable_set_modify.c
+SRC += variable_set_query.c
+# variable
+SRC += variable.c
+SRC += variable_operations.c
+# assignemt_strings
+SRC += assignment_strings.c
 
 ## objects
 OBJ	:= $(SRC:.c=.o)
@@ -55,8 +61,18 @@ CFLAGS		:=
 CFLAGS		+= -Wall
 CFLAGS		+= -Wextra
 CFLAGS		+= -Werror
-CFLAGS		+= --pedantic
 CFLAGS		+= -O3
+### more strict
+CFLAGS		+= -Wunused
+CFLAGS		+= -Wunreachable-code
+CFLAGS		+= -Wshadow
+CFLAGS		+= -pedantic
+CFLAGS		+= -Wno-conversion
+CFLAGS		+= -Wunused-variable
+CFLAGS		+= -Wunused-function
+CFLAGS		+= -Wnull-dereference
+CFLAGS		+= -Wuninitialized
+CFLAGS		+= -std=c99
 
 ## cppflags
 CPPFLAGS	:=

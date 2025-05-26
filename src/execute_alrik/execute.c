@@ -69,7 +69,7 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 		cmd = ft_strjoin("/usr/bin/", tree->argv[0]);
 		if (cmd == NULL)
 			return (ENOMEM);
-		envp = variable_set_array_get(env);
+		envp = variable_set_array_get(env, ENV);
 		if (envp == NULL)
 			return (ENOMEM);
 		execve(cmd, tree->argv, envp);
