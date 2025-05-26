@@ -3,7 +3,7 @@
 #include "variables_internals.h"
 #include "libft.h"
 
-int	variable_print(t_variable *entry)
+int	variable_assignment_string_print(t_variable *entry)
 {
 	if (ft_printf("%s=%s", entry->key, entry->value) < 0)
 		return (EIO);

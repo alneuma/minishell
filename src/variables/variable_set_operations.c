@@ -89,7 +89,7 @@ int	variable_set_var_set(t_variable_set *env, const char *key, const char *val, 
 	return (0);
 }
 
-void	variable_set_var_del(t_variable_set *env, const char *key)
+void	variable_set_var_remove(t_variable_set *env, const char *key)
 {
 	t_variable	*p;
 	t_variable	*tmp;

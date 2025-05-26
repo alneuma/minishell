@@ -9,7 +9,7 @@ char	*variable_set_string_val_get(const char *str);
 char	*variable_set_string_key_get(const char *str);
 int		assignment_string_is_append(const char *str);
 size_t	variable_set_size_by_type(const t_variable_set *env,
-			const t_vartype vartype)
+			const t_vartype vartype);
 
 void	variable_set_destroy(t_variable_set **env)
 {
@@ -37,7 +37,7 @@ t_variable_set	*variable_set_create(void)
 	return (new_variable_set);
 }
 
-size_t	variable_set_size_by_type(const t_variable_set *env,
+size_t	variable_set_size_get_by_type(const t_variable_set *env,
 			const t_vartype vartype)
 {
 	size_t		size;
@@ -161,7 +161,8 @@ static char	*assignment_string_val_get(const char *str)
 	return (val);
 }
 
-void	variable_set_print(const t_variable_set *env, const t_vartype vartype)
+void	variable_set_print_print_by_type(const t_variable_set *env,
+			const t_vartype vartype)
 {
 	t_variable	*p;
 
