@@ -16,7 +16,7 @@ int	variable_set_var_type_set(t_variable_set *env, const char *key,
 		const t_vartype vartype)
 {
 	t_variable	*p;
-	
+
 	p = env->first;
 	while (p != NULL)
 	{

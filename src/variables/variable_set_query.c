@@ -33,7 +33,7 @@ char	**variable_set_array_get(const t_variable_set *env,
 	t_variable	*p;
 
 	envp = (char **)malloc(sizeof(envp)
-				* (variable_set_size_get_by_type(env, vartype) - 1));
+			* (variable_set_size_get_by_type(env, vartype) - 1));
 	if (envp == NULL)
 		return (NULL);
 	i = 0;
@@ -63,7 +63,7 @@ char	*variable_set_var_get(t_variable_set *env, const char *key)
 	while (p != NULL)
 	{
 		if (!ft_strcmp(p->key, key))
-			return(ft_strdup(p->value));
+			return (ft_strdup(p->value));
 		p = p->next;
 	}
 	return (ft_strdup(""));
@@ -81,4 +81,3 @@ static void	string_array_destroy(char ***arr)
 	free(*arr);
 	*arr = NULL;
 }
-

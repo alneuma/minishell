@@ -38,7 +38,7 @@ char	*assignment_string_key_get(const char *str)
 	len = equal - str;
 	if (equal != str && ft_strchr(str, '+') == equal - 1)
 		len--;
-	key	= (char *)malloc(len + 1);
+	key = (char *)malloc(len + 1);
 	if (key == NULL)
 		return (NULL);
 	ft_memcpy(key, str, len);

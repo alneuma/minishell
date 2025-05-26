@@ -3,7 +3,8 @@
 #include "variables_internals.h"
 #include "libft.h"
 
-int	variable_var_replace(t_variable *entry, const char *val, const int is_export)
+int	variable_var_replace(t_variable *entry, const char *val,
+		const int is_export)
 {
 	free(entry->value);
 	entry->value = ft_strdup(val);
