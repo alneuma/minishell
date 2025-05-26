@@ -23,7 +23,7 @@ char			**variable_set_array_get(const t_variable_set *env,
 					const t_vartype vartype);
 
 // display
-void			variable_set_print_print_by_type(const t_variable_set *env,
+void			variable_set_print_by_type(const t_variable_set *env,
 					const t_vartype vartype);
 
 // modify

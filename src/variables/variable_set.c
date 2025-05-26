@@ -31,7 +31,7 @@ void	variable_set_destroy(t_variable_set **env)
 	*env = NULL;
 }
 
-void	variable_set_print_print_by_type(const t_variable_set *env,
+void	variable_set_print_by_type(const t_variable_set *env,
 			const t_vartype vartype)
 {
 	t_variable	*p;

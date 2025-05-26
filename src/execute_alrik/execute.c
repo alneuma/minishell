@@ -7,12 +7,14 @@
 #include "libft.h"
 #include "execute_internals.h"
 #include "variables.h"
+#include "builtins.h"
 
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
 int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
 int	execute_heredoc(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
 int	execute_and(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
 int	execute_or(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
+int	execute_program(const char **argv, int fd_in, int fd_out, t_variable_set *env);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_variable_set *env)
 {
@@ -52,6 +54,14 @@ int	execute_or(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 {
+	if (is_builtin(tree->argv[0]))
+		return (execute_builtin((const char **)tree->argv, fd_in, fd_out, env));
+	else
+		return (execute_program((const char **)tree->argv, fd_in, fd_out, env));
+}
+
+int	execute_program(const char **argv, int fd_in, int fd_out, t_variable_set *env)
+{
 	char	**envp;
 	pid_t	pid;
 	int		status;
@@ -66,13 +76,13 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 			dup2(fd_in, 0);
 		if (fd_out >= 0)
 			dup2(fd_out, 1);
-		cmd = ft_strjoin("/usr/bin/", tree->argv[0]);
+		cmd = ft_strjoin("/usr/bin/", argv[0]);
 		if (cmd == NULL)
 			return (ENOMEM);
 		envp = variable_set_array_get(env, ENV);
 		if (envp == NULL)
 			return (ENOMEM);
-		execve(cmd, tree->argv, envp);
+		execve(cmd, (char *const *)argv, envp);
 	}
 	else if (pid > 0)
 	{

@@ -38,6 +38,8 @@ SRC += variable.c
 SRC += variable_operations.c
 # assignemt_strings
 SRC += assignment_strings.c
+vpath %.c $(SRC_DIR)/builtins
+SRC += builtins.c
 
 ## objects
 OBJ	:= $(SRC:.c=.o)

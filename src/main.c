@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -11,8 +12,8 @@
 // #define INPUT "/usr/bin/cat Makefile | head -n 4"
 // #define INPUT "asdfasdf"
 
-#define P1 "$ "
-
+// #define P1 "$ "
+//
 // #define ENVP ep
 // int	main(int argc, char **argv, char **envp)
 // {
@@ -42,16 +43,24 @@
 // 	return (0);
 // }
 
-int main(void)
+int main(int argc, char **argv, char **envp)
 {
-	t_token	*tokens;
-	t_token	*tree;
-	int		return_code;
-	char	*line;
+	t_token			*tokens;
+	t_token			*tree;
+	int				return_code;
+	char			*line;
+	t_variable_set	*env;
 
+	(void)argc;
+	(void)argv;
+	env = variable_set_create();
+	if (env == NULL)
+		return (ENOMEM);
+	while (*envp != NULL)
+		variable_set_assignment_string_add(env, *envp++, ENV);
 	while (1)
 	{
-		line = readline("$ ");
+		line = readline("$> ");
 		if (line != NULL)
 		{
 			tokens = scanner(line);
@@ -65,6 +74,7 @@ int main(void)
 			parse_tree_destroy(&tree);
 		}
 	}
+	// variable_set_destroy(&env);
 	return (return_code);
 }
 
