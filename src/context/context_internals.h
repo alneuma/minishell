@@ -8,13 +8,6 @@
 typedef struct s_variable	t_variable;
 typedef struct s_variable_set	t_variable_set;
 
-enum e_vartype
-{
-	SHELL,
-	ENV,
-	BOTH,
-};
-
 struct s_variable
 {
 	char	*key;
