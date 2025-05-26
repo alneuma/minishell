@@ -70,7 +70,7 @@ int main(int argc, char **argv, char **envp)
 				return (1);
 			tree_from_tokens(&tree, tokens);
 			/*print_tree(tree);*/
-			execute(tree, 0, 1);
+			execute(tree, 0, 1, env);
 			parse_tree_destroy(&tree);
 		}
 	}

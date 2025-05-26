@@ -80,7 +80,12 @@ int builtin_echo(const char **argv, int fd_in, int fd_out, t_variable_set *env)
 	(void)env;
 	i = 1;
 	while (argv[i] != NULL)
+	{
+		if (i > 1)
+			ft_printf(" ");
 		ft_printf("%s", argv[i++]);
+	}
+	ft_printf("\n");
 	return (0);
 }
 
