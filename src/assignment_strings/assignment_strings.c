@@ -49,8 +49,16 @@ char	*first_non_assignment(const char **arr)
 int	is_assignment(const char *str)
 {
 	char	*equal;
+	char	*quote_single;
+	char	*quote_double;
 
 	equal = ft_strchr(str, '=');
+	quote_single = ft_strchr(str, '\'');
+	quote_double = ft_strchr(str, '"');
+	if (quote_single != NULL && quote_single < equal)
+		return (0);
+	if (quote_double != NULL && quote_double < equal)
+		return (0);
 	if ((equal - str > 2 && str[1] == '+') || equal - str > 1)
 		return (1);
 	return (0);

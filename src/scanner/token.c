@@ -128,6 +128,8 @@ int	make_token(t_token **token, t_token_identifier id, char **str)
 			free(token);
 			return (ENOMEM);
 		}
+		if (is_assignment((*token)->literal))
+			id = ASSIGNMENT;
 	}
 	else
 		(*token)->literal = NULL;

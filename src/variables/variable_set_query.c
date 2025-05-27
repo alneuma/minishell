@@ -6,6 +6,20 @@
 
 static void	string_array_destroy(char ***arr);
 
+char	*variable_set_var_get_ref(t_variable_set *env, const char *key)
+{
+	t_variable	*p;
+
+	p = env->first;
+	while (p != NULL)
+	{
+		if (!ft_strcmp(p->key, key))
+			return (p->value);
+		p = p->next;
+	}
+	return (NULL);
+}
+
 size_t	variable_set_size_get_by_type(const t_variable_set *env,
 			const t_vartype vartype)
 {
