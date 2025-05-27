@@ -16,7 +16,7 @@
 
 #define P1 "$> "
 
-#define STR "\"$SHELL\""
+#define STR "\"'$SHELL'\""
 int	main(int argc, char **argv, char **envp)
 {
 	t_variable_set	*env;

@@ -3,10 +3,11 @@
 #include "variables.h"
 #include "libft.h"
 
+void	expand_write_single_quoted(char **expansion, char **str);
+int		expand_write_val(char **expansion, char **str, const t_variable_set *env);
 int		expand_get_length(int *len, const char *str, const t_variable_set *env);
 char	*expand_get_key(const char *key_start);
-int		expand_string_write(char *expansion, const t_variable_set *env,
-			const char *str);
+int		expand_string_write(char *expansion, const t_variable_set *env, char *str);
 int		expand_string_length(int *length, const t_variable_set *env,
 			const char *str);
 int		expand_get_value_length(const t_variable_set *env, const char *key);
@@ -28,7 +29,7 @@ int	expand_str(char **new_str, const t_variable_set *env, const char *str)
 	*new_str = (char *)malloc(length + 1);
 	if (*new_str == NULL)
 		return (ENOMEM);
-	return_code = expand_string_write(*new_str, env, str);
+	return_code = expand_string_write(*new_str, env, (char *)str);
 	if (return_code)
 	{
 		free(*new_str);
@@ -37,33 +38,52 @@ int	expand_str(char **new_str, const t_variable_set *env, const char *str)
 	return (return_code);
 }
 
-int	expand_string_write(char *expansion, const t_variable_set *env,
-		const char *str)
+int	expand_string_write(char *expansion, const t_variable_set *env, char *str)
 {
-	int		i;
-	int		j;
-	char	*key;
-	char	*val;
-	
-	i = 0;
-	j = 0;
-	while (str[i] != '\0')
-	{
-		if (str[i] == '$')
+	int	return_code;
+	int	quoted_double;
+
+	quoted_double = 0;
+	while (*str != '\0')
+	{	
+		if (*str == '"')
+			quoted_double = 1 - quoted_double;
+		if (*str == '\'' && !quoted_double)
+			expand_write_single_quoted(&expansion, &str);
+		if (*str == '$')
 		{
-			key = expand_get_key(&str[i]);
-			if (key == NULL)
-				return (ENOMEM);
-			i += ft_strlen(key) + 1;
-			val = variable_set_var_get_ref(env, key);
-			free(key);
-			while (*val != '\0')
-				expansion[j++] = *val++;
+			return_code = expand_write_val(&expansion, &str, env);
+			if (return_code)
+				return (return_code);
 		}
 		else
-			expansion[j++] = str[i++];
+			*expansion++ = *str++;
 	}
-	expansion[j] = '\0';
+	*expansion = '\0';
+	return (0);
+}
+
+void	expand_write_single_quoted(char **expansion, char **str)
+{
+	*(*expansion)++ = *(*str)++;
+	while (**str != '\'')
+		*(*expansion)++ = *(*str)++;
+	*(*expansion)++ = *(*str)++;
+}
+
+int	expand_write_val(char **expansion, char **str, const t_variable_set *env)
+{
+	char	*key;
+	char	*val;
+
+	key = expand_get_key(*str);
+	if (key == NULL)
+		return (ENOMEM);
+	*str += ft_strlen(key) + 1;
+	val = variable_set_var_get_ref(env, key);
+	free(key);
+	while (*val != '\0')
+		*(*expansion)++ = *val++;
 	return (0);
 }
 
