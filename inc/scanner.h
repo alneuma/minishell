@@ -6,16 +6,9 @@ typedef enum e_token_identifier
 	OR,
 	PIPE,
 	HEREDOC,
-	LEFT_PAREN,
-	RIGHT_PAREN,
-	DOLLAR,
-	SEMICOLON,
-	QUOTE_SINGLE,
-	QUOTE_DOUBLE,
 	AND,
-	AMPERSAND,
-	ASTERISK,
-	LITERAL
+	LITERAL,
+	ASSIGNMENT
 }	t_token_identifier;
 
 typedef struct s_token	t_token;
@@ -24,9 +17,11 @@ struct s_token
 {
 	char				*literal;
 	char				**argv;
+	char				limiter;
 	t_token				*left;
 	t_token				*right;
 	t_token				*literals;
+	t_token				*parent;
 	t_token_identifier	id;
 };
 

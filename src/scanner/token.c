@@ -6,12 +6,13 @@
 #include "scanner.h"
 
 static void	free_argv(char **argv);
+int			literal_length(char *str);
 
 void	token_print(t_token *token)
 {
 	char *fstr;
 	fstr = "%s:\t%s";
-	if (token->id == PIPE || token->id == DOLLAR || token->id == AND)
+	if (token->id == PIPE || token->id == AND)
 		fstr = "%s:\t\t%s";
 	printf(fstr, token_id_get_name(token->id), token->literal);
 }
@@ -50,7 +51,7 @@ static void	free_argv(char **argv)
 
 int	is_blank(char c)
 {
-	return (c == ' ' || c == '\t');
+	return (c == ' ' || c == '\t' || c == '\n');
 }
 
 int	is_token_of_type(char *str, t_token_identifier id)
@@ -77,9 +78,9 @@ int	in_literal(char *str)
 {
 	int	id;
 
-	id = 0;
 	if (is_blank(*str))
 		return (0);
+	id = 0;
 	while (id < LITERAL)
 	{
 		if (*str == *token_id_get_lexeme(id))
@@ -89,31 +90,30 @@ int	in_literal(char *str)
 	return (1);
 }
 
-char *get_literal(char **literal)
+char *get_literal(char **str)
 {
-	char	*start;
-	char	*new;
+	int		len;
+	char	*new_literal;
 	int		i;
 
-	start = *literal;
-	while (**literal && in_literal(*literal))
-		*literal += 1;
-	new = (char *)malloc(sizeof(*literal) * (*literal - start + 1));
-	if (!new)
+	len = literal_length(*str);
+	new_literal = (char *)malloc(len + 1);
+	if (!new_literal)
 		return (NULL);
 	i = 0;
-	while (&start[i] != *literal)
+	while (i < len)
 	{
-		new[i] = start[i];
+		new_literal[i] = (*str)[i];
 		i++;
 	}
-	new[i] = '\0';
-	return (new);
+	new_literal[i] = '\0';
+	*str += len;
+	return (new_literal);
 }
 
 // success	-> 0
 // error	-> != 0
-int	make_token(t_token **token, t_token_identifier id, char **literal)
+int	make_token(t_token **token, t_token_identifier id, char **str)
 {
 
 	*token = (t_token *)malloc(sizeof(**token));
@@ -122,7 +122,7 @@ int	make_token(t_token **token, t_token_identifier id, char **literal)
 	(*token)->id = id;
 	if (id == LITERAL)
 	{
-		(*token)->literal = get_literal(literal);
+		(*token)->literal = get_literal(str);
 		if (!(*token)->literal)
 		{
 			free(token);
@@ -138,3 +138,29 @@ int	make_token(t_token **token, t_token_identifier id, char **literal)
 	return (0);
 }
 
+int	literal_length(char *str)
+{
+	int		i;
+	char	quote;
+
+	i = 0;
+	quote = 0;
+	while (str[i] != '\0')
+	{
+		if (quote == 0 && (str[i] == '\'' || str[i] == '"'))
+		{
+			quote = str[i];
+			i++;
+		}
+		else if (str[i] == quote)
+		{
+			quote = 0;
+			i++;
+		}
+		else if (quote != 0 || in_literal(&str[i]))
+			i++;
+		else
+			return (i);
+	}
+	return (i);
+}

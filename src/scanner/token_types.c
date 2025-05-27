@@ -8,16 +8,9 @@ void	*token_id_get_attribute(t_token_identifier id, t_token_attribute attr)
 	static const t_token_type	token_types[] = {{"OR", "||", 3, OR},
 												 {"PIPE", "|", 4, PIPE},
 												 {"HEREDOC", "<<", 5, HEREDOC},
-												 {"LEFT_PAREN", "(", 0, LEFT_PAREN},
-												 {"RIGHT_PAREN", ")", 0, RIGHT_PAREN},
-												 {"DOLLAR", "$", 6, DOLLAR},
-												 {"SEMICOLON", ";", 1, SEMICOLON},
-												 {"QUOTE_SINGLE", "'", 6, QUOTE_SINGLE},
-												 {"QUOTE_DOUBLE", "\"", 6, QUOTE_DOUBLE},
 												 {"AND", "&&", 2, AND},
-												 {"AMPERSAND", "&", 6, AMPERSAND},
-												 {"ASTERISK", "*", 6, ASTERISK},
-												 {"LITERAL", NULL, 1000, LITERAL}};
+												 {"LITERAL", NULL, 1000, LITERAL},
+												 {"ASSIGNMENT", NULL, 1000, ASSIGNMENT}};
 	if (id > LITERAL || id < OR)
 		return (NULL);
 	if (attr == ID)
@@ -67,7 +60,7 @@ int	token_type_print(t_token_identifier id)
 {
 	char *fstr;
 	fstr = "%s:\t%d\t%s";
-	if (id == PIPE || id == DOLLAR || id == AND)
+	if (id == PIPE || id == AND)
 		fstr = "%s:\t\t%d\t%s";
 	return (printf(fstr, token_id_get_name(id),
 						 token_id_get_prec(id),

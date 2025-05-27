@@ -64,8 +64,10 @@ int main(int argc, char **argv, char **envp)
 		if (line != NULL)
 		{
 			tokens = scanner(line);
+			// ft_printf("string:\n\"%s\"\n\ntokens:\n", line);
 			add_history(line);
 			free(line);
+			// tokens_print(tokens);
 			if (!tokens)
 				return (1);
 			tree_from_tokens(&tree, tokens);
