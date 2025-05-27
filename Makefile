@@ -17,9 +17,11 @@ vpath %.c $(SRC_DIR)/scanner
 SRC	+= scanner.c
 SRC	+= token.c
 SRC	+= token_types.c
-vpath %.c $(SRC_DIR)/data_structures
+vpath %.c $(SRC_DIR)/data_structures/queue
 SRC	+= queue.c
 SRC	+= queue_init.c
+vpath %.c $(SRC_DIR)/data_structures/stack_char
+SRC	+= stack_char.c
 vpath %.c $(SRC_DIR)/execute
 SRC	+= execute.c
 SRC	+= heredoc.c
