@@ -4,6 +4,7 @@
 #include <string.h>
 #include "scanner_internals.h"
 #include "scanner.h"
+#include "assignment_strings.h"
 
 static void	free_argv(char **argv);
 int			literal_length(char *str);

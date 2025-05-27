@@ -13,15 +13,10 @@ NAME	:= minishell
 SRC	:=
 vpath %.c $(SRC_DIR)
 SRC	+= main.c
-vpath %.c $(SRC_DIR)/prompt
-SRC	+= prompt.c
 vpath %.c $(SRC_DIR)/scanner
-SRC	+= parser.c
 SRC	+= scanner.c
 SRC	+= token.c
 SRC	+= token_types.c
-SRC	+= tree_queue.c
-SRC	+= tree_print.c
 vpath %.c $(SRC_DIR)/data_structures
 SRC	+= queue.c
 SRC	+= queue_init.c
@@ -40,6 +35,12 @@ vpath %.c $(SRC_DIR)/builtins
 SRC += builtins.c
 vpath %.c $(SRC_DIR)/assignment_strings
 SRC	+= assignment_strings.c
+vpath %.c $(SRC_DIR)/expander
+SRC	+= expander.c
+vpath %.c $(SRC_DIR)/parser
+SRC	+= parser.c
+SRC	+= tree_print.c
+SRC	+= tree_queue.c
 
 ## objects
 OBJ	:= $(SRC:.c=.o)

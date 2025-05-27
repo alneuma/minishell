@@ -1,5 +1,5 @@
-#include "scanner_internals.h"
 #include "data_structures.h"
+#include "parser_internals.h"
 #include "scanner.h"
 #include "libft.h"
 

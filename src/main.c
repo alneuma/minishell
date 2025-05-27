@@ -8,6 +8,7 @@
 #include "prompt.h"
 #include "execute.h"
 #include "variables.h"
+#include "parser.h"
 
 // #define INPUT "/usr/bin/cat Makefile | head -n 4"
 // #define INPUT "asdfasdf"
