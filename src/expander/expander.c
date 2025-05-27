@@ -3,6 +3,7 @@
 #include "variables.h"
 #include "libft.h"
 
+int		expand_get_length(int *len, const char *str, const t_variable_set *env);
 char	*expand_get_key(const char *key_start);
 int		expand_string_write(char *expansion, const t_variable_set *env,
 			const char *str);
@@ -50,28 +51,27 @@ int	expand_string_write(char *expansion, const t_variable_set *env,
 	{
 		if (str[i] == '$')
 		{
-			i++;
 			key = expand_get_key(&str[i]);
 			if (key == NULL)
 				return (ENOMEM);
-			i += ft_strlen(key);
+			i += ft_strlen(key) + 1;
 			val = variable_set_var_get_ref(env, key);
 			free(key);
-			while (val != NULL && *val != '\0')
+			while (*val != '\0')
 				expansion[j++] = *val++;
 		}
-		while (str[i] != '\0' && !is_blank(str[i]))
-			i++;
-		if (str[i] != '\0')
+		else
 			expansion[j++] = str[i++];
 	}
+	expansion[j] = '\0';
 	return (0);
 }
 
 int	expand_string_length(int *length, const t_variable_set *env, const char *str)
 {
-	int		i;
-	char	*key;
+	int	i;
+	int	tmp;
+	int	return_value;
 
 	i = 0;
 	*length = 0;
@@ -79,21 +79,34 @@ int	expand_string_length(int *length, const t_variable_set *env, const char *str
 	{
 		if (str[i] == '$')
 		{
+			return_value = expand_get_length(&tmp, &str[i], env);
+			*length += tmp;
 			i++;
-			key = expand_get_key(&str[i]);
-			if (key == NULL)
-				return (ENOMEM);
-			*length += expand_get_value_length(env, key);
-			free(key);
+			while (str[i] != '\0' && !is_blank(str[i]) && str[i] != '"'
+				&& str[i] != '\'')
+				i++;
 		}
-		while (str[i] != '\0' && !is_blank(str[i]))
-			i++;
-		if (str[i] != '\0')
-		{
-			i++;
+		else
+		{	
 			*length += 1;
+			i++;
 		}
 	}
+	return (0);
+}
+
+
+int	expand_get_length(int *len, const char *str, const t_variable_set *env)
+{
+	char	*key;
+
+	if (*str != '$')
+		return (0);
+	key = expand_get_key(str);
+	if (key == NULL)
+		return (ENOMEM);
+	*len = expand_get_value_length(env, key);
+	free(key);
 	return (0);
 }
 
@@ -113,13 +126,15 @@ char	*expand_get_key(const char *key_start)
 	int		i;
 	char	*key;
 
-	i = 0;
-	while (key_start[i] != '\0' && !is_blank(key_start[i]))
+	if (*key_start != '$')
+		return (NULL);
+	i = 1;
+	while (key_start[i] != '\0' && !is_blank(key_start[i]) && key_start[i] != '"' && key_start[i] != '\'')
 		i++;
-	key = (char *)malloc(i + 1);
+	key = (char *)malloc(i - 1);
 	if (key == NULL)
 		return (NULL);
-	ft_memcpy(key, key_start, i);
-	key[i] = '\0';
+	ft_memcpy(key, key_start + 1, i - 1);
+	key[i - 1] = '\0';
 	return (key);
 }
