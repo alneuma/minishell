@@ -107,17 +107,15 @@ int builtin_exit(const char **argv, int fd_in, int fd_out, t_variable_set *env)
 // can not deal with non assignment variables yet
 int builtin_export(const char **argv, int fd_in, int fd_out, t_variable_set *env)
 {
-	int	i;
 	int	return_value;
 
 	(void)fd_in;
 	(void)fd_out;
-	i = 1;
 	while (*argv != NULL)
 	{
 		if (is_assignment(*argv))
 		{
-			return_value = variable_set_assignment_string_add(env, argv[i++], 1);
+			return_value = variable_set_assignment_string_add(env, *argv, 1);
 			if (return_value)
 				return (return_value);
 		}
