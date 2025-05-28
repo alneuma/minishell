@@ -19,6 +19,9 @@ int	execute_and(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
 int	execute_or(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
 int	execute_program(const char **argv, int fd_in, int fd_out, t_variable_set *env);
 int	execute_builtin(const char **argv, int fd_in, int fd_out, t_variable_set *env);
+int	send_data(t_token *node, int fd_in, int fd_out);
+int	send_heredoc(char *heredoc, int fd_in, int fd_out);
+int	send_infile(t_token *node, int fd_in, int fd_out);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_variable_set *env)
 {
@@ -56,14 +59,64 @@ int	execute_or(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 {
 	char	*cmd;
+	int		fds[2];
 
 	cmd = first_non_assignment((const char **)tree->argv);
 	if (cmd == NULL)
 		return (variable_set_assignment_string_add(env, tree->argv[0], 0));
+	if (tree->heredoc != NULL || tree->redirect == INFILE)
+	{
+		pipe(fds);
+		if (pipe(fds) < 0)
+			return (errno);
+		send_data(tree, fd_in, fds[1]);
+		close(fds[1]);
+		close(fds[0]);	
+	}
 	if (is_builtin(cmd))
 		return (execute_builtin((const char **)tree->argv, fd_in, fd_out, env));
 	else
 		return (execute_program((const char **)tree->argv, fd_in, fd_out, env));
+}
+
+// doublecheck return code
+int	send_data(t_token *node, int fd_in, int fd_out)
+{
+	if (node->heredoc != NULL && node->redirect == HEREDOC)
+		return (send_heredoc(node->heredoc, fd_in, fd_out));
+	if (node->redirect == INFILE)
+		return (send_infile(node, fd_in, fd_out));
+	return (EINVAL);
+}
+
+// not implemented yet
+int	send_infile(t_token *node, int fd_in, int fd_out)
+{
+	(void)node;
+	(void)fd_in;
+	(void)fd_out;
+	return (0);
+}
+
+// check return codes
+int	send_heredoc(char *heredoc, int fd_in, int fd_out)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid < 0)
+		return (errno);
+	else if (pid == 0)
+	{
+		// free resources
+		close(fd_in);
+		write(fd_out, heredoc, ft_strlen(heredoc));
+		close(fd_out);
+		return (0);
+	}
+	else if (pid > 0)
+		return (0);
+	return (0);
 }
 
 int	execute_builtin(const char **argv, int fd_in, int fd_out, t_variable_set *env)
@@ -119,6 +172,7 @@ int	execute_program(const char **argv, int fd_in, int fd_out, t_variable_set *en
 	return (0);
 }
 
+// deal with return codes
 int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 {
 	int	fds[2];
@@ -126,7 +180,7 @@ int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 
 	if (pipe(fds) < 0)
 		return (errno);
-	execute(tree->left, fd_in, fds[1], env);
+	return_code = execute(tree->left, fd_in, fds[1], env);
 	close(fds[1]);
 	return_code = execute(tree->right, fds[0], fd_out, env);
 	close(fds[0]);	
