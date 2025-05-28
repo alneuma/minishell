@@ -116,6 +116,7 @@ char *get_literal(char **str)
 	return (new_literal);
 }
 
+// sets token->redirect to HEREDOC as default
 // success	-> 0
 // error	-> != 0
 int	make_token(t_token **token, t_token_identifier id, char **str)
@@ -144,7 +145,7 @@ int	make_token(t_token **token, t_token_identifier id, char **str)
 	(*token)->infiles = NULL;
 	(*token)->outfiles = NULL;
 	(*token)->heredoc = NULL;
-	(*token)->redirect = -1;
+	(*token)->redirect = HEREDOC;
 	return (0);
 }
 

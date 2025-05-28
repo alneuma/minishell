@@ -34,6 +34,8 @@ void	queue_destroy(t_queue **queue)
 	t_queue_node	*tmp;
 	t_queue_node	*p;
 
+	if (*queue == NULL)
+		return ;
 	p = (*queue)->first;
 	while (p)
 	{

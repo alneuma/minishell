@@ -10,14 +10,12 @@ int	process_all_redirects(t_token *tokens)
 {
 	int	return_code;
 
-
 	while (tokens != NULL)
 	{
 		return_code = token_process_all_redirects(tokens, &tokens->right);
 		if (return_code)
 			return (return_code);
-		if (tokens->right != NULL)
-			tokens = tokens->right->right;
+		tokens = tokens->right;
 	}
 	return (0);
 }

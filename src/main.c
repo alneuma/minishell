@@ -90,13 +90,14 @@ int main(int argc, char **argv, char **envp)
 		if (line != NULL)
 		{
 			tokens = scanner(line);
-			// ft_printf("string:\n\"%s\"\n\ntokens:\n", line);
+			ft_printf("string:\n\"%s\"\n\ntokens:\n", line);
 			add_history(line);
 			free(line);
-			// tokens_print(tokens);
+			tokens_print(tokens);
 			if (!tokens)
 				return (1);
 			return_code = tokens_validate(tokens);
+			process_all_redirects(tokens);
 			tree_from_tokens(&tree, tokens);
 			if (return_code == 1)
 				return_code = execute(tree, 0, 1, env);
