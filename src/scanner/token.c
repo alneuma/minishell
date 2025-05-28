@@ -5,6 +5,7 @@
 #include "scanner_internals.h"
 #include "scanner.h"
 #include "assignment_strings.h"
+#include "data_structures.h"
 
 static void	free_argv(char **argv);
 int			literal_length(char *str);
@@ -116,7 +117,6 @@ char *get_literal(char **str)
 // error	-> != 0
 int	make_token(t_token **token, t_token_identifier id, char **str)
 {
-
 	*token = (t_token *)malloc(sizeof(**token));
 	if (!*token)
 		return (ENOMEM);

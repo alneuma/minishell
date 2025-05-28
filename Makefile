@@ -17,6 +17,7 @@ vpath %.c $(SRC_DIR)/scanner
 SRC	+= scanner.c
 SRC	+= token.c
 SRC	+= token_types.c
+SRC	+= validate.c
 vpath %.c $(SRC_DIR)/data_structures/queue
 SRC	+= queue.c
 SRC	+= queue_init.c

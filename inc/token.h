@@ -5,8 +5,11 @@ typedef enum e_token_identifier
 {
 	OR,
 	PIPE,
-	HEREDOC,
 	AND,
+	HEREDOC,
+	INFILE,
+	OUTFILE,
+	OUTFILE_APPEND,
 	LITERAL,
 	ASSIGNMENT
 }	t_token_identifier;

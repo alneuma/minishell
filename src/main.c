@@ -16,25 +16,25 @@
 
 #define P1 "$> "
 
-#define STR "\"'$SHELL'\""
-int	main(int argc, char **argv, char **envp)
-{
-	t_variable_set	*env;
-	char			*str_exp;
-
-	(void)argc;
-	(void)argv;
-	(void)envp;
-	env = variable_set_create();
-	if (env == NULL)
-		return (1);
-	while (*envp)
-		variable_set_assignment_string_add(env, *envp++, 1);
-	variable_set_print_by_type(env, BOTH);
-	expand_str(&str_exp, env, STR);
-	ft_printf("\n%s\n", str_exp);
-	return (0);
-}
+// #define STR "\"'$SHELL'\""
+// int	main(int argc, char **argv, char **envp)
+// {
+// 	t_variable_set	*env;
+// 	char			*str_exp;
+//
+// 	(void)argc;
+// 	(void)argv;
+// 	(void)envp;
+// 	env = variable_set_create();
+// 	if (env == NULL)
+// 		return (1);
+// 	while (*envp)
+// 		variable_set_assignment_string_add(env, *envp++, 1);
+// 	variable_set_print_by_type(env, BOTH);
+// 	expand_str(&str_exp, env, STR);
+// 	ft_printf("\n%s\n", str_exp);
+// 	return (0);
+// }
 
 // #define P1 "$ "
 //
@@ -67,45 +67,48 @@ int	main(int argc, char **argv, char **envp)
 // 	return (0);
 // }
 
-// int main(int argc, char **argv, char **envp)
-// {
-// 	t_token			*tokens;
-// 	t_token			*tree;
-// 	int				return_code;
-// 	char			*line;
-// 	t_variable_set	*env;
-//
-// 	(void)argc;
-// 	(void)argv;
-// 	env = variable_set_create();
-// 	if (env == NULL)
-// 		return (ENOMEM);
-// 	while (*envp != NULL)
-// 		variable_set_assignment_string_add(env, *envp++, ENV);
-// 	while (1)
-// 	{
-// 		line = readline("$> ");
-// 		if (line != NULL)
-// 		{
-// 			tokens = scanner(line);
-// 			ft_printf("string:\n\"%s\"\n\ntokens:\n", line);
-// 			add_history(line);
-// 			free(line);
-// 			tokens_print(tokens);
-// 			if (!tokens)
-// 				return (1);
-// 			tree_from_tokens(&tree, tokens);
-// 			// print_tree(tree);
-// 			return_code = execute(tree, 0, 1, env);
-// 			parse_tree_destroy(&tree);
-// 		}
-// 		if (return_code == 100)
-// 			break ;
-// 	}
-// 	rl_clear_history();
-// 	variable_set_destroy(&env);
-// 	return (return_code);
-// }
+int main(int argc, char **argv, char **envp)
+{
+	t_token			*tokens;
+	t_token			*tree;
+	int				return_code;
+	char			*line;
+	t_variable_set	*env;
+
+	(void)argc;
+	(void)argv;
+	env = variable_set_create();
+	if (env == NULL)
+		return (ENOMEM);
+	while (*envp != NULL)
+		return_code = variable_set_assignment_string_add(env, *envp++, ENV);
+	if (return_code)
+		return (return_code);
+	while (1)
+	{
+		line = readline("$> ");
+		if (line != NULL)
+		{
+			tokens = scanner(line);
+			// ft_printf("string:\n\"%s\"\n\ntokens:\n", line);
+			add_history(line);
+			free(line);
+			// tokens_print(tokens);
+			if (!tokens)
+				return (1);
+			return_code = tokens_validate(tokens);
+			tree_from_tokens(&tree, tokens);
+			if (return_code == 1)
+				return_code = execute(tree, 0, 1, env);
+			parse_tree_destroy(&tree);
+		}
+		if (return_code == 100)
+			break ;
+	}
+	rl_clear_history();
+	variable_set_destroy(&env);
+	return (return_code);
+}
 
 // int main(void)
 // {
