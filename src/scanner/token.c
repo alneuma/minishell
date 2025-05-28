@@ -31,7 +31,7 @@ void	tokens_print(t_token *tokens)
 
 void	token_destroy(t_token **token, int keep_literal)
 {
-	if ((*token)->literal != NULL && keep_literal == KEEP_LITERAL)
+	if ((*token)->literal != NULL && keep_literal == FREE_LITERAL)
 		free((*token)->literal);
 	if ((*token)->argv != NULL)
 		free_argv((*token)->argv);

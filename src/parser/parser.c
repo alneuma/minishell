@@ -22,7 +22,7 @@ int	tree_from_tokens(t_token **tree, t_token *tokens)
 	t_token	*tmp;
 
 	*tree = NULL;
-	while (tokens)
+	while (tokens != NULL)
 	{
 		tmp = tokens->right;
 		tokens->right = NULL;
@@ -54,16 +54,6 @@ static int	parse_tree_insert(t_token **tree, t_token *new_node)
 	{
 		*tree = new_node;
 		return (0);
-	}
-	if ((*tree)->id == HEREDOC && new_node->id == LITERAL)
-	{
-		if ((*tree)->literal == NULL)
-		{
-			(*tree)->literal = new_node->literal;
-			token_destroy(&new_node, KEEP_LITERAL);
-			return (0);
-		}
-		return (parse_tree_insert(&(*tree)->left, new_node));
 	}
 	prec_tree = token_id_get_prec((*tree)->id);
 	prec_node = token_id_get_prec(new_node->id);

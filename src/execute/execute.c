@@ -19,9 +19,9 @@ int	execute_and(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
 int	execute_or(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
 int	execute_program(const char **argv, int fd_in, int fd_out, t_variable_set *env);
 int	execute_builtin(const char **argv, int fd_in, int fd_out, t_variable_set *env);
-int	send_data(t_token *node, int fd_in, int fd_out);
-int	send_heredoc(char *heredoc, int fd_in, int fd_out);
-int	send_infile(t_token *node, int fd_in, int fd_out);
+int	send_data(t_token *node, int fd);
+int	send_heredoc(char *heredoc, int fd);
+int	send_infile(t_token *node, int fd);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_variable_set *env)
 {
@@ -56,10 +56,12 @@ int	execute_or(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 	return (execute(tree->right, -1, fd_out, env));
 }
 
+// protect close
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 {
 	char	*cmd;
 	int		fds[2];
+	int		return_code;
 
 	cmd = first_non_assignment((const char **)tree->argv);
 	if (cmd == NULL)
@@ -69,9 +71,20 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 		pipe(fds);
 		if (pipe(fds) < 0)
 			return (errno);
-		send_data(tree, fd_in, fds[1]);
+		send_data(tree, fds[1]);
 		close(fds[1]);
-		close(fds[0]);	
+		if (is_builtin(cmd))
+		{
+			return_code = execute_builtin((const char **)tree->argv, fds[0], fd_out, env);
+			close(fds[0]);
+			return (return_code);
+		}
+		else
+		{
+			return_code = execute_program((const char **)tree->argv, fds[0], fd_out, env);
+			close(fds[0]);
+			return (return_code);
+		}
 	}
 	if (is_builtin(cmd))
 		return (execute_builtin((const char **)tree->argv, fd_in, fd_out, env));
@@ -80,42 +93,27 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 }
 
 // doublecheck return code
-int	send_data(t_token *node, int fd_in, int fd_out)
+int	send_data(t_token *node, int fd)
 {
 	if (node->heredoc != NULL && node->redirect == HEREDOC)
-		return (send_heredoc(node->heredoc, fd_in, fd_out));
+		return (send_heredoc(node->heredoc, fd));
 	if (node->redirect == INFILE)
-		return (send_infile(node, fd_in, fd_out));
+		return (send_infile(node, fd));
 	return (EINVAL);
 }
 
 // not implemented yet
-int	send_infile(t_token *node, int fd_in, int fd_out)
+int	send_infile(t_token *node, int fd)
 {
 	(void)node;
-	(void)fd_in;
-	(void)fd_out;
+	(void)fd;
 	return (0);
 }
 
 // check return codes
-int	send_heredoc(char *heredoc, int fd_in, int fd_out)
+int	send_heredoc(char *heredoc, int fd)
 {
-	pid_t	pid;
-
-	pid = fork();
-	if (pid < 0)
-		return (errno);
-	else if (pid == 0)
-	{
-		// free resources
-		close(fd_in);
-		write(fd_out, heredoc, ft_strlen(heredoc));
-		close(fd_out);
-		return (0);
-	}
-	else if (pid > 0)
-		return (0);
+	write(fd, heredoc, ft_strlen(heredoc));
 	return (0);
 }
 

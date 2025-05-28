@@ -4,38 +4,43 @@
 
 int	token_is_redirect(t_token *token);
 int	token_preprocess_redirect(t_token *root, t_token **token_rd);
-int	token_preprocess_all_redirects(t_token *token, t_token **token_rd);
+int	token_preprocess_all_redirects(t_token *token);
 
 void	tokens_redirects_cleanup(t_token *tokens)
 {
 	t_token	*tmp;
+	t_token	*next;
 
-	while (tokens != NULL && tokens->right != NULL)
+	while (tokens != NULL)
 	{
-		if (token_is_redirect(tokens->right))
+		next = tokens->right;
+		if (next != NULL && token_is_redirect(next))
 		{
-			tmp = tokens->right;
-			tokens->right = tokens->right->right->right;
+			tmp = next;
+			next = next->right->right;
+			tokens->right = next;
 			token_destroy(&tmp->right, FREE_LITERAL);
 			token_destroy(&tmp, FREE_LITERAL);
 		}
-		if (tokens->right != NULL)
-			tokens = tokens->right;
+		else
+			tokens = next;
 	}
 }
 
 int	preprocess_all_redirects(t_token *tokens)
 {
 	int		return_code;
-	t_token	*token_rd;
 
-	token_rd = tokens->right;
 	while (tokens != NULL)
 	{
-		return_code = token_preprocess_all_redirects(tokens, &token_rd);
+		while (tokens != NULL && tokens->id != LITERAL)
+			tokens = tokens->right;
+		return_code = token_preprocess_all_redirects(tokens);
 		if (return_code)
 			return (return_code);
-		tokens = tokens->right;
+		while (tokens != NULL
+			&& (tokens->id == LITERAL || token_is_redirect(tokens)))
+			tokens = tokens->right;
 	}
 	return (0);
 }
@@ -46,19 +51,21 @@ int	token_is_redirect(t_token *token)
 		|| token->id == OUTFILE || token->id == OUTFILE_APPEND);
 }
 
-int	token_preprocess_all_redirects(t_token *token, t_token **token_rd)
+int	token_preprocess_all_redirects(t_token *token)
 {
 	int		return_code;
+	t_token	*cur;
 
-	while (*token_rd != NULL && (*token_rd)->id == LITERAL)
-		*token_rd = (*token_rd)->right;
-	while (*token_rd != NULL && token_is_redirect(*token_rd))
+	cur = token->right;
+	while (cur != NULL && cur->id == LITERAL)
+		cur = cur->right;
+	while (cur != NULL && token_is_redirect(cur))
 	{
-		return_code = token_preprocess_redirect(token, token_rd);
+		return_code = token_preprocess_redirect(token, &cur);
 		if (return_code)
 			return (return_code);
-		while (*token_rd != NULL && (*token_rd)->id == LITERAL)
-			*token_rd = (*token_rd)->right;
+		while (cur != NULL && cur->id == LITERAL)
+			cur = cur->right;
 	}
 	return (0);
 }

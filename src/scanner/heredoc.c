@@ -32,7 +32,9 @@ static char	*heredoc_get_doc(const char *prompt, const char *eof)
 	char	*line;
 	char	*doc;
 
-	doc = NULL;
+	doc = ft_strdup("");
+	if (doc == NULL)
+		return (NULL);
 	while (1)
 	{
 		line = readline(prompt);
