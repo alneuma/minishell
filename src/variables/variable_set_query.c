@@ -47,7 +47,7 @@ char	**variable_set_array_get(const t_variable_set *env,
 	t_variable	*p;
 
 	envp = (char **)malloc(sizeof(envp)
-			* (variable_set_size_get_by_type(env, vartype) - 1));
+			* (variable_set_size_get_by_type(env, vartype) + 1));
 	if (envp == NULL)
 		return (NULL);
 	i = 0;
@@ -56,12 +56,13 @@ char	**variable_set_array_get(const t_variable_set *env,
 	{
 		if (vartype == BOTH || variable_type_get(p) == vartype)
 		{
-			envp[i++] = variable_assignment_string_get(p);
-			if (envp == NULL)
+			envp[i] = variable_assignment_string_get(p);
+			if (envp[i] == NULL)
 			{
 				string_array_destroy(&envp);
 				return (NULL);
 			}
+			i++;
 		}
 		p = p->next;
 	}

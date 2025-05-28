@@ -63,6 +63,7 @@ int	token_enqueue_infile(t_token *root, t_token **token_if)
 	*token_if = (*token_if)->right->right;
 	token_destroy(&tmp->right, KEEP_LITERAL);
 	token_destroy(&tmp, FREE_LITERAL);
+	root->redirect = INFILE;
 	return (0);
 }
 

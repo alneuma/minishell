@@ -38,7 +38,7 @@ void	outfile_destroy(t_outfile **outfile);
 // process_heredoc() assumes HEREDOC->LITERAL
 // token_enqueue_outfile assumes OUTFILE->LITERAL or OUTFILE_APPEND->LITERAL
 // token_enqueue_infile assumes INFILE->LITERAL
-int					process_heredoc(t_token *root, t_token **token_hd);
+int					preprocess_heredoc(t_token *root, t_token **token_hd);
 int					token_enqueue_outfile(t_token *root, t_token **token_of);
 int					token_dequeue_outfile(t_outfile **outfile, t_token *token);
 int					token_enqueue_infile(t_token *root, t_token **token_if);

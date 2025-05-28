@@ -67,27 +67,29 @@
 // 	return (0);
 // }
 
-int main(int argc, char **argv, char **envp)
+int main(int argc, char **argv)//, char **envp)
 {
 	t_token			*tokens;
 	t_token			*tree;
 	int				return_code;
 	char			*line;
 	t_variable_set	*env;
+	char			*envp[] = {"hello=bye", NULL};
 
 	(void)argc;
 	(void)argv;
 	env = variable_set_create();
 	if (env == NULL)
 		return (ENOMEM);
-	while (*envp != NULL)
-		return_code = variable_set_assignment_string_add(env, *envp++, ENV);
+	int	i = 0;
+	while (envp[i] != NULL)
+		return_code = variable_set_assignment_string_add(env, envp[i++], ENV);
 	if (return_code)
 		return (return_code);
 	while (1)
 	{
 		line = readline("$> ");
-		if (line != NULL)
+		if (line != NULL && *line != '\0')
 		{
 			tokens = scanner(line);
 			ft_printf("string:\n\"%s\"\n\ntokens:\n", line);
@@ -97,7 +99,7 @@ int main(int argc, char **argv, char **envp)
 			if (!tokens)
 				return (1);
 			return_code = tokens_validate(tokens);
-			process_all_redirects(tokens);
+			preprocess_all_redirects(tokens);
 			tree_from_tokens(&tree, tokens);
 			if (return_code == 1)
 				return_code = execute(tree, 0, 1, env);

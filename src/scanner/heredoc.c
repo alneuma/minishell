@@ -16,7 +16,7 @@
 static int	heredoc_append_line(char **doc, char **line);
 static char	*heredoc_get_doc(const char *prompt, const char *eof);
 
-int	process_heredoc(t_token *root, t_token **token_hd)
+int	preprocess_heredoc(t_token *root, t_token **token_hd)
 {
 	t_token	*tmp;
 
@@ -28,6 +28,7 @@ int	process_heredoc(t_token *root, t_token **token_hd)
 	*token_hd = (*token_hd)->right->right;
 	token_destroy(&tmp->right, FREE_LITERAL);
 	token_destroy(&tmp, FREE_LITERAL);
+	root->redirect = HEREDOC;
 	return (0);
 }
 
