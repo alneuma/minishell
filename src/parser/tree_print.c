@@ -26,7 +26,7 @@ int	print_tree(t_token *tree)
 
 	if (!tree)
 		return (0);
-	return_code = queue_init(&queue);
+	return_code = queue_init(&queue, (void (*)(void *))token_destroy);
 	if (return_code)
 		return (return_code);
 	old_depth = 0;

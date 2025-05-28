@@ -17,4 +17,6 @@ struct s_queue
 	int				size;
 };
 
+t_queue_node	*queue_node_create(void *data);
+
 #endif //QUEUE_INTERNALS_H

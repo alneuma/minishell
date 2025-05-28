@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "token.h"
 #include "data_structures.h"
+#include "scanner_internals.h"
 
 static t_outfile	*outfile_make(void);
 
@@ -25,7 +26,7 @@ int	token_enqueue_outfile(t_token *root, t_token **token_of)
 
 	return_code = 0;
 	if (root->outfiles == NULL)
-		return_code = queue_init(&root->outfiles, outfile_destroy);
+		return_code = queue_init(&root->outfiles, (void (*)(void *))outfile_destroy);
 	if (return_code)
 		return (return_code);
 	new_file = outfile_make();
@@ -59,7 +60,7 @@ int	token_enqueue_infile(t_token *root, t_token **token_if)
 	if (return_code)
 		return (ENOMEM);
 	tmp = *token_if;
-	*token_if = (*token)->right->right;
+	*token_if = (*token_if)->right->right;
 	token_destroy(&tmp->right, KEEP_LITERAL);
 	token_destroy(&tmp, FREE_LITERAL);
 	return (0);

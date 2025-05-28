@@ -9,7 +9,7 @@ typedef struct s_list_string	t_list_string;
 int		queue_peek(void **data, t_queue *queue);
 int		queue_dequeue(void **data, t_queue *queue);
 int		queue_enqueue(void *data, t_queue *queue);
-int		queue_init(t_queue **queue);
+int		queue_init(t_queue **queue, void (*free_data)(void *));
 void	queue_destroy(t_queue **queue);
 
 // stack char

@@ -24,7 +24,8 @@ int	queue_dequeue(void **data, t_queue *queue)
 	*data = queue->first->data;
 	if (queue->first == queue->last)
 	{
-		queue_node_destroy(&queue->first);
+		free(queue->first);
+		queue->first = NULL;
 		queue->last = NULL;
 		queue->size = 0;
 		return (0);
@@ -32,7 +33,7 @@ int	queue_dequeue(void **data, t_queue *queue)
 	tmp = queue->first;
 	queue->first = queue->first->next;
 	*data = tmp->data;
-	queue_node_destroy(&tmp);
+	free(tmp);
 	queue->size--;
 	return (0);
 }

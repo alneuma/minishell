@@ -40,7 +40,7 @@ void	parse_tree_destroy(t_token **tree)
 		return ;
 	parse_tree_destroy(&(*tree)->left);
 	parse_tree_destroy(&(*tree)->right);
-	token_destroy(tree);
+	token_destroy(tree, FREE_LITERAL);
 	*tree = NULL;
 }
 
@@ -59,8 +59,8 @@ static int	parse_tree_insert(t_token **tree, t_token *new_node)
 	{
 		if ((*tree)->literal == NULL)
 		{
-			(*tree)->literal = ft_strdup(new_node->literal);
-			token_destroy(&new_node);
+			(*tree)->literal = new_node->literal;
+			token_destroy(&new_node, KEEP_LITERAL);
 			return (0);
 		}
 		return (parse_tree_insert(&(*tree)->left, new_node));

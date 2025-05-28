@@ -19,6 +19,8 @@ SRC	+= token.c
 SRC	+= token_types.c
 SRC	+= validate.c
 SRC	+= heredoc.c
+SRC	+= redirects.c
+SRC	+= in_and_outfiles.c  
 vpath %.c $(SRC_DIR)/data_structures/queue
 SRC	+= queue.c
 SRC	+= queue_init.c

@@ -3,7 +3,7 @@
 #include "queue_internals.h"
 #include "data_structures.h"
 
-static t_queue_node	*queue_node_create(void *data);
+t_queue_node	*queue_node_create(void *data);
 
 int	queue_init(t_queue **queue, void (*free_data)(void *))
 {
@@ -17,7 +17,7 @@ int	queue_init(t_queue **queue, void (*free_data)(void *))
 	return (0);
 }
 
-static t_queue_node	*queue_node_create(void *data)
+t_queue_node	*queue_node_create(void *data)
 {
 	t_queue_node	*new_node;
 

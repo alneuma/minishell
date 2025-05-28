@@ -1,3 +1,11 @@
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <stdlib.h>
+#include <errno.h>
+#include "token.h"
+#include "libft.h"
+
 #define P2 "> "
 
 // assumes *line != NULL
@@ -10,7 +18,6 @@ static char	*heredoc_get_doc(const char *prompt, const char *eof);
 
 int	process_heredoc(t_token *root, t_token **token_hd)
 {
-	int		return_code;
 	t_token	*tmp;
 
 	free(root->heredoc);

@@ -60,6 +60,4 @@ int					get_next(t_token **token, char **input);
 int					is_blank(char c);
 void				token_print(t_token *token);
 
-char				*process_heredoc(t_token *token_hd);
-
 #endif //SCANNER_INTERNALS_H

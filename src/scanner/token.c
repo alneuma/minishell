@@ -35,7 +35,7 @@ void	token_destroy(t_token **token, int keep_literal)
 		free((*token)->literal);
 	if ((*token)->argv != NULL)
 		free_argv((*token)->argv);
-	free((*token->heredoc);
+	free((*token)->heredoc);
 	queue_destroy(&(*token)->infiles);
 	queue_destroy(&(*token)->outfiles);
 	free(*token);
@@ -74,7 +74,7 @@ void	tokens_destroy(t_token **tokens)
 	while (*tokens)
 	{
 		tmp = (*tokens)->right;
-		token_destroy(tokens);
+		token_destroy(tokens, FREE_LITERAL);
 		*tokens = tmp;
 	}
 }
@@ -144,6 +144,7 @@ int	make_token(t_token **token, t_token_identifier id, char **str)
 	(*token)->infiles = NULL;
 	(*token)->outfiles = NULL;
 	(*token)->heredoc = NULL;
+	(*token)->redirect = -1;
 	return (0);
 }
 

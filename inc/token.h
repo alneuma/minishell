@@ -34,6 +34,7 @@ struct s_token
 	char				*literal;
 	char				**argv;
 	char				*heredoc;
+	t_token_identifier	redirect;
 	t_token_identifier	id;
 };
 
