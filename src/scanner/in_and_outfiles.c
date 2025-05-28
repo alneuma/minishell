@@ -22,7 +22,6 @@ int	token_enqueue_outfile(t_token *root, t_token **token_of)
 {
 	t_outfile	*new_file;
 	int			return_code;
-	t_token		*tmp;
 
 	return_code = 0;
 	if (root->outfiles == NULL)
@@ -34,10 +33,7 @@ int	token_enqueue_outfile(t_token *root, t_token **token_of)
 		return (ENOMEM);
 	new_file->file = (*token_of)->right->literal;
 	new_file->type = (*token_of)->id;
-	tmp = *token_of;
 	*token_of = (*token_of)->right->right;
-	token_destroy(&tmp->right, KEEP_LITERAL);
-	token_destroy(&tmp, FREE_LITERAL);
 	return (queue_enqueue(new_file, root->outfiles));
 }
 
@@ -49,7 +45,6 @@ int	token_dequeue_outfile(t_outfile **outfile, t_token *token)
 int	token_enqueue_infile(t_token *root, t_token **token_if)
 {
 	int			return_code;
-	t_token		*tmp;
 
 	return_code = 0;
 	if (root->infiles == NULL)
@@ -59,10 +54,7 @@ int	token_enqueue_infile(t_token *root, t_token **token_if)
 	return_code = queue_enqueue((*token_if)->right->literal, root->infiles);
 	if (return_code)
 		return (ENOMEM);
-	tmp = *token_if;
 	*token_if = (*token_if)->right->right;
-	token_destroy(&tmp->right, KEEP_LITERAL);
-	token_destroy(&tmp, FREE_LITERAL);
 	root->redirect = INFILE;
 	return (0);
 }

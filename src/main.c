@@ -100,6 +100,9 @@ int main(int argc, char **argv)//, char **envp)
 				return (1);
 			return_code = tokens_validate(tokens);
 			preprocess_all_redirects(tokens);
+			tokens_redirects_cleanup(tokens);
+			ft_printf("\n\ntokens:\n", line);
+			tokens_print(tokens);
 			tree_from_tokens(&tree, tokens);
 			if (return_code == 1)
 				return_code = execute(tree, 0, 1, env);

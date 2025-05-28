@@ -6,13 +6,33 @@ int	token_is_redirect(t_token *token);
 int	token_preprocess_redirect(t_token *root, t_token **token_rd);
 int	token_preprocess_all_redirects(t_token *token, t_token **token_rd);
 
+void	tokens_redirects_cleanup(t_token *tokens)
+{
+	t_token	*tmp;
+
+	while (tokens != NULL && tokens->right != NULL)
+	{
+		if (token_is_redirect(tokens->right))
+		{
+			tmp = tokens->right;
+			tokens->right = tokens->right->right->right;
+			token_destroy(&tmp->right, FREE_LITERAL);
+			token_destroy(&tmp, FREE_LITERAL);
+		}
+		if (tokens->right != NULL)
+			tokens = tokens->right;
+	}
+}
+
 int	preprocess_all_redirects(t_token *tokens)
 {
-	int	return_code;
+	int		return_code;
+	t_token	*token_rd;
 
+	token_rd = tokens->right;
 	while (tokens != NULL)
 	{
-		return_code = token_preprocess_all_redirects(tokens, &tokens->right);
+		return_code = token_preprocess_all_redirects(tokens, &token_rd);
 		if (return_code)
 			return (return_code);
 		tokens = tokens->right;

@@ -18,16 +18,11 @@ static char	*heredoc_get_doc(const char *prompt, const char *eof);
 
 int	preprocess_heredoc(t_token *root, t_token **token_hd)
 {
-	t_token	*tmp;
-
 	free(root->heredoc);
 	root->heredoc = heredoc_get_doc(P2, (*token_hd)->right->literal);
 	if (root->heredoc == NULL)
 		return (ENOMEM);
-	tmp = *token_hd;
 	*token_hd = (*token_hd)->right->right;
-	token_destroy(&tmp->right, FREE_LITERAL);
-	token_destroy(&tmp, FREE_LITERAL);
 	root->redirect = HEREDOC;
 	return (0);
 }
