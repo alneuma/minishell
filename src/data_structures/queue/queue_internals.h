@@ -11,12 +11,10 @@ struct s_queue_node
 
 struct s_queue
 {
+	void			(*free_data)(void *);
 	t_queue_node	*first;
 	t_queue_node	*last;
 	int				size;
 };
-
-t_queue_node	*queue_node_create(void *data);
-void			queue_node_destroy(t_queue_node **node);
 
 #endif //QUEUE_INTERNALS_H

@@ -3,18 +3,21 @@
 #include "queue_internals.h"
 #include "data_structures.h"
 
-int	queue_init(t_queue **queue)
+static t_queue_node	*queue_node_create(void *data);
+
+int	queue_init(t_queue **queue, void (*free_data)(void *))
 {
 	*queue = (t_queue *)malloc(sizeof(**queue));
 	if (*queue == NULL)
 		return (ENOMEM);
+	(*queue)->free_data = free_data;
 	(*queue)->first = NULL;
 	(*queue)->last = NULL;
 	(*queue)->size = 0;
 	return (0);
 }
 
-t_queue_node	*queue_node_create(void *data)
+static t_queue_node	*queue_node_create(void *data)
 {
 	t_queue_node	*new_node;
 
@@ -24,12 +27,6 @@ t_queue_node	*queue_node_create(void *data)
 	new_node->data = data;
 	new_node->next = NULL;
 	return (new_node);
-}
-
-void	queue_node_destroy(t_queue_node **node)
-{
-	free(*node);
-	*node = NULL;
 }
 
 void	queue_destroy(t_queue **queue)
@@ -42,7 +39,8 @@ void	queue_destroy(t_queue **queue)
 	{
 		tmp = p;
 		p = p->next;
-		queue_node_destroy(&tmp);
+		(*queue)->free_data(tmp->data);
+		free(tmp);
 	}
 	free(*queue);
 	*queue = NULL;

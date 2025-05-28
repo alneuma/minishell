@@ -1,10 +1,4 @@
-#include <unistd.h>
-#include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <errno.h>
-#include <stdlib.h>
-#include "libft.h"
+#define P2 "> "
 
 // assumes *line != NULL
 // frees *line
@@ -14,19 +8,19 @@
 static int	heredoc_append_line(char **doc, char **line);
 static char	*heredoc_get_doc(const char *prompt, const char *eof);
 
-int	heredoc(const char *prompt, const char *eof, const int fd)
+int	process_heredoc(t_token *root, t_token **token_hd)
 {
-	char	*doc;
+	int		return_code;
+	t_token	*tmp;
 
-	doc = heredoc_get_doc(prompt, eof);
-	if (doc == NULL)
+	free(root->heredoc);
+	root->heredoc = heredoc_get_doc(P2, (*token_hd)->right->literal);
+	if (root->heredoc == NULL)
 		return (ENOMEM);
-	if (write(fd, doc, ft_strlen(doc)) < 0)
-	{
-		free(doc);
-		return (errno);
-	}
-	free(doc);
+	tmp = *token_hd;
+	*token_hd = (*token_hd)->right->right;
+	token_destroy(&tmp->right, FREE_LITERAL);
+	token_destroy(&tmp, FREE_LITERAL);
 	return (0);
 }
 

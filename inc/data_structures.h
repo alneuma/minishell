@@ -3,6 +3,7 @@
 
 typedef struct s_queue	t_queue;
 typedef struct s_stack_char	t_stack_char;
+typedef struct s_list_string	t_list_string;
 
 // queue
 int		queue_peek(void **data, t_queue *queue);
@@ -18,5 +19,7 @@ int		stack_char_pop(char *c, t_stack_char *stack);
 int		stack_char_push(char c, t_stack_char *stack);
 int		stack_char_init(t_stack_char **stack);
 void	stack_char_destroy(t_stack_char **stack);
+
+// list string
 
 #endif //DATA_STRUCTURES_H
