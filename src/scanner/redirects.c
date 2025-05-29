@@ -76,7 +76,7 @@ int	token_preprocess_redirect(t_token *root, t_token **token_rd)
 
 	if (root->redirects == NULL)
 	{
-		return_code = queue_init(&root->redirects);
+		return_code = queue_init(&root->redirects, (void (*)(void *))file_destroy);
 		if (return_code)
 			return (return_code);
 	}

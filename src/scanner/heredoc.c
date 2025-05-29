@@ -14,9 +14,8 @@
 // success	-> 0
 // error	-> != 0
 static int	heredoc_append_line(char **doc, char **line);
-static char	*heredoc_get_doc(const char *prompt, const char *eof);
 
-static char	*heredoc_get_doc(const char *prompt, const char *eof)
+char	*heredoc_get_doc(const char *prompt, const char *eof)
 {
 	char	*line;
 	char	*doc;

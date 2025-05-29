@@ -29,8 +29,10 @@ struct s_file
 	t_token_id	type;
 };
 
+char	*heredoc_get_doc(const char *prompt, const char *eof);
+
 // infiles/outfiles
-void	outfile_destroy(t_file **outfile);
+void	file_destroy(t_file *file);
 
 // redirects
 // functions assume that the second argument references specific token
@@ -39,10 +41,8 @@ void	outfile_destroy(t_file **outfile);
 // token_enqueue_outfile assumes OUTFILE->LITERAL or OUTFILE_APPEND->LITERAL
 // token_enqueue_infile assumes INFILE->LITERAL
 int					preprocess_heredoc(t_token *root, t_token **token_hd);
-int					token_enqueue_outfile(t_token *root, t_token **token_of);
-int					token_dequeue_outfile(t_file **outfile, t_token *token);
-int					token_enqueue_infile(t_token *root, t_token **token_if);
-int					token_dequeue_infile(char **infile, t_token *token);
+int					token_enqueue_file(t_token *root, t_token **token_file);
+int					token_dequeue_file(t_file **outfile, t_token *token);
 
 int					token_type_print(t_token_id id);
 t_token_id	token_id_get_id(t_token_id id);
