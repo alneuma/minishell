@@ -70,7 +70,7 @@ CFLAGS		:=
 CFLAGS		+= -Wall
 CFLAGS		+= -Wextra
 CFLAGS		+= -Werror
-CFLAGS		+= -O3
+CFLAGS		+= -O0
 ### more strict
 CFLAGS		+= -Wunused
 CFLAGS		+= -Wunreachable-code
@@ -103,11 +103,13 @@ ifeq ($(DEBUG), 1)
 endif
 
 ifeq ($(ASAN), 1)
+	CFLAGS += -O0
 	CFLAGS		+= -fsanitize=address
 	LDFLAGS		+= -fsanitize=address
 endif
 
 ifeq ($(LSAN), 1)
+	CFLAGS += -O0
 	CFLAGS		+= -fsanitize=leak
 	LDFLAGS		+= -fsanitize=leak
 endif

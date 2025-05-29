@@ -32,8 +32,6 @@ int	token_enqueue_file(t_token *root, t_token **token_file)
 		free(buffer);
 		return (ENOMEM);
 	}
-	new_file->file = (*token_file)->right->literal;
-	new_file->type = (*token_file)->id;
 	*token_file = (*token_file)->right->right;
 	return (queue_enqueue(new_file, root->redirects));
 }

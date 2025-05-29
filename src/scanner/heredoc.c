@@ -34,7 +34,11 @@ char	*heredoc_get_doc(const char *prompt, const char *eof)
 			break ;
 		}
 		if (heredoc_append_line(&doc, &line))
+		{
+			free(doc);
+			free(line);
 			return (NULL);
+		}
 	}
 	return (doc);
 }
@@ -48,22 +52,13 @@ static int	heredoc_append_line(char **doc, char **line)
 {
 	char	*tmp;
 
-	if (*doc != NULL)
-	{
-		tmp = ft_strjoin(*doc, *line);
-		free(*line);
-		*line = tmp;
-		if (*line == NULL)
-		{
-			free(*doc);
-			*doc = NULL;
-			return (ENOMEM);
-		}
-	}
-	free(*doc);
-	*doc = ft_strjoin(*line, "\n");
+	tmp = ft_strjoin(*doc, *line);
+	if (tmp == NULL)
+		return (ENOMEM);
 	free(*line);
-	*line = NULL;
+	free(*doc);
+	*doc = ft_strjoin(tmp, "\n");
+	free(tmp);
 	if (*doc == NULL)
 		return (ENOMEM);
 	return (0);

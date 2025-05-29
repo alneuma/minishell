@@ -18,6 +18,7 @@ int	redirect_fds_get(int *infile_fd, int *outfile_fd, char **hdoc, t_token *toke
 	*outfile_fd = -1;
 	*infile_fd = -1;
 	*hdoc = NULL;
+	return_code = 0;
 	while (queue_get_size(token->redirects) > 0)
 	{
 		queue_dequeue((void **)&file, token->redirects);
@@ -34,13 +35,13 @@ int	redirect_fds_get(int *infile_fd, int *outfile_fd, char **hdoc, t_token *toke
 			free(*hdoc);
 			*hdoc = file->file;
 			file->file = NULL;
-			file_destroy(file);
 			if (*infile_fd >= 0 && close(*infile_fd) < 0)
 			{
+				file_destroy(file);
 				infile_fd = -1;
 				return (errno);
 			}
-			infile_fd = -1;
+			*infile_fd = -1;
 		}
 		file_destroy(file);
 		if (return_code)

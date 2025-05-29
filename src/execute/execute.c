@@ -58,7 +58,6 @@ int	execute_or(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 // protect close
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 {
-	char	*cmd;
 	int		fds[2];
 	int		return_code;
 	int		infile_fd;
@@ -68,9 +67,9 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 	infile_fd = -1;
 	outfile_fd = -1;
 	heredoc = NULL;
-	cmd = first_non_assignment((const char **)tree->argv);
-	if (cmd == NULL)
-		return (variable_set_assignment_string_add(env, tree->argv[0], 0));
+	/*cmd = first_non_assignment((const char **)tree->argv);*/
+	/*if (cmd == NULL)*/
+	/*	return (variable_set_assignment_string_add(env, tree->argv[0], 0));*/
 	return_code = redirect_fds_get(&infile_fd, &outfile_fd, &heredoc, tree);
 	if (return_code)
 		return (return_code);
@@ -86,7 +85,7 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 			return (errno);
 		if (return_code < 0)
 			return (errno);
-		if (is_builtin(cmd))
+		if (is_builtin(*tree->argv))
 		{
 			return_code = execute_builtin((const char **)tree->argv, fds[0], fd_out, env);
 			close(fds[0]);
@@ -99,7 +98,7 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 			return (return_code);
 		}
 	}
-	if (is_builtin(cmd))
+	if (is_builtin(*tree->argv))
 		return (execute_builtin((const char **)tree->argv, fd_in, fd_out, env));
 	else
 		return (execute_program((const char **)tree->argv, fd_in, fd_out, env));

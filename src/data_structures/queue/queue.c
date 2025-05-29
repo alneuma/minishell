@@ -32,7 +32,6 @@ int	queue_dequeue(void **data, t_queue *queue)
 	}
 	tmp = queue->first;
 	queue->first = queue->first->next;
-	*data = tmp->data;
 	free(tmp);
 	queue->size--;
 	return (0);
@@ -58,5 +57,7 @@ int	queue_enqueue(void *data, t_queue *queue)
 
 int	queue_get_size(t_queue *queue)
 {
+	if (queue == NULL)
+		return (0);
 	return (queue->size);
 }
