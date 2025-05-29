@@ -4,62 +4,58 @@
 #include "data_structures.h"
 #include "scanner_internals.h"
 
-static t_outfile	*outfile_make(void);
+#define P2 "> "
 
-static t_outfile	*outfile_make(void)
+static t_file	*file_make(void);
+
+static t_file	*file_make(const char *buffer, const t_token_id type)
 {
-	return ((t_outfile *)malloc(sizeof(t_outfile)));
+	t_file	*new_file
+
+	new_file = (t_file *)malloc(sizeof(t_file)));
+	if (new_file == NULL)
+		return (NULL);
+	new_file->file = buffer;
+	new_file->type = type;
+	return (new_file);
 }
 
-void	outfile_destroy(t_outfile **outfile)
+void	file_destroy(t_file **file)
 {
-	free((*outfile)->file);
-	free(*outfile);
+	free((*file)->file);
+	free(*file);
 	*outfile = NULL;
 }
 
-int	token_enqueue_outfile(t_token *root, t_token **token_of)
+int	token_enqueue_file(t_token *root, t_token **token_file)
 {
-	t_outfile	*new_file;
-	int			return_code;
+	t_file	*new_file;
+	char	*buffer;
 
-	return_code = 0;
-	if (root->outfiles == NULL)
-		return_code = queue_init(&root->outfiles, (void (*)(void *))outfile_destroy);
-	if (return_code)
-		return (return_code);
-	new_file = outfile_make();
-	if (new_file == NULL)
+	if ((*token_file)->type == HEREDOC)
+		buffer = heredoc_get_doc(P2, (*token_file)->right->literal);
+	else
+		buffer = ft_strdup((*token_file)->right->literal);
+	if (buffer == NULL)
 		return (ENOMEM);
+	new_file = file_make(buffer, (*token_file)->type);
+	if (new_file == NULL)
+	{
+		free(buffer);
+		return (ENOMEM);
+	}
 	new_file->file = (*token_of)->right->literal;
 	new_file->type = (*token_of)->id;
 	*token_of = (*token_of)->right->right;
-	return (queue_enqueue(new_file, root->outfiles));
+	return (queue_enqueue(new_file, root->redirects));
 }
 
-int	token_dequeue_outfile(t_outfile **outfile, t_token *token)
+int	token_dequeue_outfile(t_file **outfile, t_token *token)
 {
 	return (queue_dequeue((void **)outfile, token->outfiles));
 }
 
-int	token_enqueue_infile(t_token *root, t_token **token_if)
+int	dequeue_file(char **file, t_queue *queue)
 {
-	int			return_code;
-
-	return_code = 0;
-	if (root->infiles == NULL)
-		return_code = queue_init(&root->infiles, free);
-	if (return_code)
-		return (return_code);
-	return_code = queue_enqueue((*token_if)->right->literal, root->infiles);
-	if (return_code)
-		return (ENOMEM);
-	*token_if = (*token_if)->right->right;
-	root->redirect = INFILE;
-	return (0);
-}
-
-int	token_dequeue_infile(char **infile, t_token *token)
-{
-	return (queue_dequeue((void **)infile, token->infiles));
+	return (queue_dequeue((void **)file, queue));
 }

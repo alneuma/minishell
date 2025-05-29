@@ -3,7 +3,7 @@
 #include "scanner_internals.h"
 #include "scanner.h"
 
-void	*token_id_get_attribute(t_token_identifier id, t_token_attribute attr)
+void	*token_id_get_attribute(t_token_id id, t_token_attribute attr)
 {
 	static const t_token_type	token_types[] = {{"OR", "||", 3, OR},
 												 {"PIPE", "|", 4, PIPE},
@@ -28,7 +28,7 @@ void	*token_id_get_attribute(t_token_identifier id, t_token_attribute attr)
 	return (NULL);
 }
 
-int	token_id_get_prec(t_token_identifier id)
+int	token_id_get_prec(t_token_id id)
 {
 	int	*prec_ptr;
 
@@ -36,15 +36,15 @@ int	token_id_get_prec(t_token_identifier id)
 	return (*prec_ptr);
 }
 
-t_token_identifier	token_id_get_id(t_token_identifier id)
+t_token_id	token_id_get_id(t_token_id id)
 {
-	t_token_identifier	*id_ptr;
+	t_token_id	*id_ptr;
 
-	id_ptr = (t_token_identifier *)token_id_get_attribute(id, ID);
+	id_ptr = (t_token_id *)token_id_get_attribute(id, ID);
 	return (*id_ptr);
 }
 
-char *token_id_get_lexeme(t_token_identifier id)
+char *token_id_get_lexeme(t_token_id id)
 {
 	char **lexeme_ptr;
 
@@ -52,7 +52,7 @@ char *token_id_get_lexeme(t_token_identifier id)
 	return (*lexeme_ptr);
 }
 
-char *token_id_get_name(t_token_identifier id)
+char *token_id_get_name(t_token_id id)
 {
 	char **name_ptr;
 
@@ -60,7 +60,7 @@ char *token_id_get_name(t_token_identifier id)
 	return (*name_ptr);
 }
 
-int	token_type_print(t_token_identifier id)
+int	token_type_print(t_token_id id)
 {
 	char *fstr;
 	fstr = "%s:\t%d\t%s";

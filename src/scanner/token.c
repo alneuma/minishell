@@ -59,7 +59,7 @@ int	is_blank(char c)
 	return (c == ' ' || c == '\t' || c == '\n');
 }
 
-int	is_token_of_type(char *str, t_token_identifier id)
+int	is_token_of_type(char *str, t_token_id id)
 {
 	char *lexeme;
 
@@ -119,7 +119,7 @@ char *get_literal(char **str)
 // sets token->redirect to HEREDOC as default
 // success	-> 0
 // error	-> != 0
-int	make_token(t_token **token, t_token_identifier id, char **str)
+int	make_token(t_token **token, t_token_id id, char **str)
 {
 	*token = (t_token *)malloc(sizeof(**token));
 	if (!*token)

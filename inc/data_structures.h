@@ -6,6 +6,7 @@ typedef struct s_stack_char	t_stack_char;
 typedef struct s_list_string	t_list_string;
 
 // queue
+int		queue_get_size(t_queue *queue);
 int		queue_peek(void **data, t_queue *queue);
 int		queue_dequeue(void **data, t_queue *queue);
 int		queue_enqueue(void *data, t_queue *queue);

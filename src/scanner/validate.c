@@ -11,7 +11,7 @@ void	print_error_syntax(const char *str)
 // invalid	-> 0
 int	tokens_validate(t_token *token)
 {
-	t_token_identifier	id_last;
+	t_token_id	id_last;
 
 	id_last = -1;
 	while (token != NULL)

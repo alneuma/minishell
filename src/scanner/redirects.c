@@ -72,11 +72,13 @@ int	token_preprocess_all_redirects(t_token *token)
 
 int	token_preprocess_redirect(t_token *root, t_token **token_rd)
 {
-	if ((*token_rd)->id == HEREDOC)
-		return (preprocess_heredoc(root, token_rd));
-	else if ((*token_rd)->id == INFILE)
-		return (token_enqueue_infile(root, token_rd));
-	else if ((*token_rd)->id == OUTFILE || (*token_rd)->id == OUTFILE_APPEND)
-		return (token_enqueue_outfile(root, token_rd));
-	return (0);
+	int	return_code;
+
+	if (root->redirects == NULL)
+	{
+		return_code = queue_init(&root->redirects);
+		if (return_code)
+			return (return_code);
+	}
+	return (token_enqueue_file(root, token_rd));
 }

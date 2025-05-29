@@ -16,17 +16,6 @@
 static int	heredoc_append_line(char **doc, char **line);
 static char	*heredoc_get_doc(const char *prompt, const char *eof);
 
-int	preprocess_heredoc(t_token *root, t_token **token_hd)
-{
-	free(root->heredoc);
-	root->heredoc = heredoc_get_doc(P2, (*token_hd)->right->literal);
-	if (root->heredoc == NULL)
-		return (ENOMEM);
-	*token_hd = (*token_hd)->right->right;
-	root->redirect = HEREDOC;
-	return (0);
-}
-
 static char	*heredoc_get_doc(const char *prompt, const char *eof)
 {
 	char	*line;

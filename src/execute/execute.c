@@ -13,15 +13,15 @@
 static char	*assignment_string_key_get(const char *str);
 char	*first_non_assignment(const char **arr);
 int		is_assignment(const char *str);
-int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
-int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
-int	execute_and(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
-int	execute_or(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
-int	execute_program(const char **argv, int fd_in, int fd_out, t_variable_set *env);
-int	execute_builtin(const char **argv, int fd_in, int fd_out, t_variable_set *env);
-int	send_data(t_token *node, int fd);
-int	send_heredoc(char *heredoc, int fd);
-int	send_infile(t_token *node, int fd);
+int		execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
+int		execute_pipe(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
+int		execute_and(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
+int		execute_or(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
+int		execute_program(const char **argv, int fd_in, int fd_out, t_variable_set *env);
+int		execute_builtin(const char **argv, int fd_in, int fd_out, t_variable_set *env);
+int		send_data(t_token *node, int fd);
+int		send_heredoc(char *heredoc, int fd);
+int		send_infile(t_token *node, int fd);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_variable_set *env)
 {
