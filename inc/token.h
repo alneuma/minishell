@@ -4,6 +4,7 @@
 # include "data_structures.h"
 
 typedef struct s_file	t_file;
+typedef struct s_token	t_token;
 
 # define KEEP_LITERAL 1
 # define FREE_LITERAL 0
@@ -21,7 +22,11 @@ typedef enum e_token_identifier
 	ASSIGNMENT
 }	t_token_id;
 
-typedef struct s_token	t_token;
+struct s_file
+{
+	char		*file;
+	t_token_id	type;
+};
 
 struct s_token
 {
@@ -34,6 +39,9 @@ struct s_token
 	char		**argv;
 	t_token_id	id;
 };
+
+// infiles/outfiles
+void	file_destroy(t_file *file);
 
 void	token_destroy(t_token **token, int keep_literal);
 int		token_id_get_prec(t_token_id id);

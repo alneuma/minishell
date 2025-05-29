@@ -28,6 +28,7 @@ vpath %.c $(SRC_DIR)/data_structures/stack_char
 SRC	+= stack_char.c
 vpath %.c $(SRC_DIR)/execute
 SRC	+= execute.c
+SRC += execute_redirects.c
 vpath %.c $(SRC_DIR)/variables
 # variable_set
 SRC += variable_set.c

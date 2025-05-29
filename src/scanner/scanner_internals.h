@@ -23,16 +23,7 @@ typedef enum e_token_attribute
 	PRECEDENCE,
 }	t_token_attribute;
 
-struct s_file
-{
-	char				*file;
-	t_token_id	type;
-};
-
 char	*heredoc_get_doc(const char *prompt, const char *eof);
-
-// infiles/outfiles
-void	file_destroy(t_file *file);
 
 // redirects
 // functions assume that the second argument references specific token

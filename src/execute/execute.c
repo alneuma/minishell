@@ -19,9 +19,8 @@ int		execute_and(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
 int		execute_or(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
 int		execute_program(const char **argv, int fd_in, int fd_out, t_variable_set *env);
 int		execute_builtin(const char **argv, int fd_in, int fd_out, t_variable_set *env);
-int		send_data(t_token *node, int fd);
+int		send_data(char *heredoc, int infile_fd, int fd_out);
 int		send_heredoc(char *heredoc, int fd);
-int		send_infile(t_token *node, int fd);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_variable_set *env)
 {
@@ -62,17 +61,31 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 	char	*cmd;
 	int		fds[2];
 	int		return_code;
+	int		infile_fd;
+	int		outfile_fd;
+	char	*heredoc;
 
+	infile_fd = -1;
+	outfile_fd = -1;
+	heredoc = NULL;
 	cmd = first_non_assignment((const char **)tree->argv);
 	if (cmd == NULL)
 		return (variable_set_assignment_string_add(env, tree->argv[0], 0));
-	if (tree->heredoc != NULL || tree->redirect == INFILE)
+	return_code = redirect_fds_get(&infile_fd, &outfile_fd, &heredoc, tree);
+	if (return_code)
+		return (return_code);
+	if (heredoc != NULL || infile_fd != -1)
 	{
 		pipe(fds);
 		if (pipe(fds) < 0)
 			return (errno);
-		send_data(tree, fds[1]);
-		close(fds[1]);
+		send_data(heredoc, infile_fd, fds[1]);
+		free(heredoc);
+		return_code = close(fds[1]);
+		if ((return_code < 0 || infile_fd != -1) && close(infile_fd) < 0)
+			return (errno);
+		if (return_code < 0)
+			return (errno);
 		if (is_builtin(cmd))
 		{
 			return_code = execute_builtin((const char **)tree->argv, fds[0], fd_out, env);
@@ -93,27 +106,20 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
 }
 
 // doublecheck return code
-int	send_data(t_token *node, int fd)
+int	send_data(char *heredoc, int infile_fd, int fd_out)
 {
-	if (node->heredoc != NULL && node->redirect == HEREDOC)
-		return (send_heredoc(node->heredoc, fd));
-	if (node->redirect == INFILE)
-		return (send_infile(node, fd));
+	if (heredoc != NULL)
+		return (send_heredoc(heredoc, fd_out));
+	else if (infile_fd != -1)
+		return (write_file(infile_fd, fd_out));
 	return (EINVAL);
-}
-
-// not implemented yet
-int	send_infile(t_token *node, int fd)
-{
-	(void)node;
-	(void)fd;
-	return (0);
 }
 
 // check return codes
 int	send_heredoc(char *heredoc, int fd)
 {
-	write(fd, heredoc, ft_strlen(heredoc));
+	if (write(fd, heredoc, ft_strlen(heredoc)) < 0)
+		return (errno);
 	return (0);
 }
 
