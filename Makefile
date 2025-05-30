@@ -44,7 +44,7 @@ vpath %.c $(SRC_DIR)/expander
 SRC	+= expander.c
 vpath %.c $(SRC_DIR)/parser
 SRC	+= parser.c
-# SRC	+= tree_print.c
+SRC	+= tree_print.c
 SRC	+= tree_queue.c
 vpath %.c $(SRC_DIR)/token
 SRC	+= token.c

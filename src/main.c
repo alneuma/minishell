@@ -123,18 +123,19 @@ int main(int argc, char **argv)//, char **envp)
 				if (!valid)
 					continue ;
 			}
-			preprocess_all_redirects(tokens);
-			if (return_code == 0)
+			return_code	= tokens_preprocess_redirects(tokens);
+			if (return_code)
 			{
 				tokens_destroy(&tokens);
-				continue ;
+				return (return_code);
 			}
-			tokens_redirects_cleanup(tokens);
 			/*ft_printf("\n\ntokens:\n", line);*/
 			/*tokens_print(tokens);*/
+			ft_printf("\ntree:\n");
 			tree_from_tokens(&tree, tokens);
-			if (return_code == 1)
-				return_code = execute(tree, 0, 1, env);
+			print_tree(tree);
+			// if (return_code == 1)
+			// 	return_code = execute(tree, 0, 1, env);
 			parse_tree_destroy(&tree);
 		}
 		if (return_code == 100)

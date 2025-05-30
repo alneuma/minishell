@@ -3,18 +3,9 @@
 #include "scanner.h"
 #include "libft.h"
 
-void	print_argv(char **argv)
-{
-	while (*argv != NULL)
-		ft_printf("%s ", *argv++);
-}
-
 void	print_tree_node(const t_token *tree)
 {
-	if (tree->id == LITERAL)
-		print_argv(tree->argv);
-	else
-		ft_printf("%s", token_id_get_lexeme(tree->id));
+	ft_printf("%s: %s", token_id_get_lexeme(tree->id), tree->string);
 }
 
 int	print_tree(t_token *tree)

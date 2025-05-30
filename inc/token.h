@@ -50,5 +50,6 @@ char	*token_id_get_lexeme(t_token_id id);
 char	*token_id_get_name(t_token_id id);
 void	tokens_print(t_token *tokens);
 void	tokens_destroy(t_token **tokens);
+int		tokens_preprocess_redirects(t_token *tokens);
 
 #endif //TOKEN_H

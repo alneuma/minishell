@@ -49,32 +49,6 @@ char *get_literal(char **str)
 	return (new_literal);
 }
 
-// sets token->redirect to HEREDOC as default
-// success	-> 0
-// error	-> != 0
-int	make_token(t_token **token, t_token_id id, char **str)
-{
-	*token = (t_token *)malloc(sizeof(**token));
-	if (!*token)
-		return (ENOMEM);
-	(*token)->id = id;
-	if (id == LITERAL)
-	{
-		(*token)->string = get_literal(str);
-		if (!(*token)->string)
-		{
-			free(token);
-			return (ENOMEM);
-		}
-	}
-	else
-		(*token)->string = NULL;
-	(*token)->left = NULL;
-	(*token)->right = NULL;
-	(*token)->is_subshell = 0;
-	return (0);
-}
-
 int	literal_length(char *str)
 {
 	int		i;
