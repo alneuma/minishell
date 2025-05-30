@@ -30,6 +30,7 @@ int	tokens_preprocess_redirects(t_token *tokens)
 			if (return_code)
 				return (return_code);
 		}
+		tokens = tokens->right;
 	}
 	return (return_code);
 }
@@ -44,14 +45,14 @@ static int	preprocess_redirect(t_token *token)
 	token->right = token->right->right;
 	if (token->id == HEREDOC)
 	{
-		token->string = heredoc_get_doc(P2, token->right->string);
+		token->string = heredoc_get_doc(P2, tmp->string);
 		token_destroy(&tmp, FREE_STRING);
 		if (token->string == NULL)
 			return (ENOMEM);
 	}
 	else
 	{
-		token->string = token->right->string;
+		token->string = tmp->string;
 		token_destroy(&tmp, KEEP_STRING);
 	}
 	return (0);

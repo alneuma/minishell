@@ -95,8 +95,13 @@ int main(int argc, char **argv)//, char **envp)
 		if (line != NULL && *line != '\0')
 		{
 			tokens = scanner(line);
-			/*ft_printf("string:\n\"%s\"\n\ntokens:\n", line);*/
 			add_history(line);
+			ft_printf("string:\n\"%s\"\n", line);
+			if (tokens == NULL)
+			{
+				free(line);
+				continue ;
+			}
 			return_code = string_validate(&valid, &culprit, line);
 			if (return_code || !valid)
 			{
@@ -110,9 +115,10 @@ int main(int argc, char **argv)//, char **envp)
 					continue ;
 			}
 			free(line);
-			/*tokens_print(tokens);*/
 			if (!tokens)
 				return (1);
+			ft_printf("\n\ntokens:\n");
+			tokens_print(tokens);
 			return_code = tokens_validate(&valid, &culprit, tokens);
 			if (return_code || !valid)
 			{
@@ -136,6 +142,8 @@ int main(int argc, char **argv)//, char **envp)
 			print_tree(tree);
 			// if (return_code == 1)
 			// 	return_code = execute(tree, 0, 1, env);
+			if (!ft_strncmp(tree->string, "exit", 1000))
+				return_code = 100;
 			parse_tree_destroy(&tree);
 		}
 		if (return_code == 100)

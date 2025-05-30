@@ -12,7 +12,8 @@ void	token_print(t_token *token)
 {
 	char *fstr;
 	fstr = "%s:\t%s";
-	if (token->id == PIPE || token->id == AND)
+	if (token->id == PIPE || token->id == AND || token->id == OR
+		|| token->id == INFILE)
 		fstr = "%s:\t\t%s";
 	ft_printf(fstr, token_id_get_name(token->id), token->string);
 }

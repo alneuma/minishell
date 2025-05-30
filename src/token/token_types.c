@@ -14,10 +14,10 @@ void	*token_id_get_attribute(t_token_id id, t_token_attribute attr)
 												 {"OUTFILE_APPEND", ">", 400, OUTFILE_APPEND},
 												 {"PAREN_LEFT", "(", 1000, PAREN_LEFT},
 												 {"PAREN_RIGHT", ")", 1000, PAREN_RIGHT},
-												 {"TKN_NEWLINE", "newline", 2000, TKN_NEWLINE},
-												 {"LITERAL", NULL, 400, LITERAL}};
+												 {"LITERAL", NULL, 400, LITERAL},
+												 {"TKN_NEWLINE", "newline", 2000, TKN_NEWLINE}};
 
-	if (id > LITERAL || id < OR)
+	if (id > TKN_NEWLINE || id < OR)
 		return (NULL);
 	if (attr == ID)
 		return ((void *)&token_types[id].identifier);

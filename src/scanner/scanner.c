@@ -41,6 +41,8 @@ t_token	*scanner(char *input)
 		if (get_next(&current, &input))
 			return (NULL);
 	}
+	else
+		return (NULL);
 	start = current;
 	while (*input)
 	{
