@@ -13,7 +13,10 @@ NAME	:= minishell
 SRC	:=
 vpath %.c $(SRC_DIR)
 SRC	+= main.c
+vpath %.c $(SRC_DIR)/error
+SRC	+= error.c
 vpath %.c $(SRC_DIR)/scanner
+SRC	+= parenthesis.c
 SRC	+= scanner.c
 SRC	+= token.c
 SRC	+= token_types.c

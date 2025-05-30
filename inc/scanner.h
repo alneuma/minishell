@@ -4,7 +4,8 @@
 # include "token.h"
 
 t_token	*scanner(char *input);
-int		tokens_validate(t_token *token);
+int		tokens_validate(int *valid, char *culprid, t_token *token);
+int		string_validate(int *valid, char *culprid);
 int		preprocess_all_redirects(t_token *tokens);
 void	tokens_redirects_cleanup(t_token *tokens);
 

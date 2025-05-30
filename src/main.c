@@ -75,6 +75,8 @@ int main(int argc, char **argv)//, char **envp)
 	char			*line;
 	t_variable_set	*env;
 	char			*envp[] = {"hello=bye", NULL};
+	int				valid;
+	char			culprid;
 
 	(void)argc;
 	(void)argv;
@@ -94,12 +96,38 @@ int main(int argc, char **argv)//, char **envp)
 			tokens = scanner(line);
 			/*ft_printf("string:\n\"%s\"\n\ntokens:\n", line);*/
 			add_history(line);
+			return_code = string_validate(&valid, &culprid, line);
+			if (return_code || !valid)
+			{
+				free(line);
+				print_error_token(culprid);
+				if (return_code)
+				{
+					return (return_code);
+				}
+				if (!valid)
+					continue ;
+			}
 			free(line);
 			/*tokens_print(tokens);*/
 			if (!tokens)
 				return (1);
-			return_code = tokens_validate(tokens);
+			return_code = tokens_validate(&valid, &culprid, tokens);
+			if (return_code || !valid)
+			{
+				tokens_destroy(&tokens);
+				print_error_token(culprid);
+				if (return_code)
+					return (return_code);
+				if (!valid)
+					continue ;
+			}
 			preprocess_all_redirects(tokens);
+			if (return_code == 0)
+			{
+				tokens_destroy(&tokens);
+				continue ;
+			}
 			tokens_redirects_cleanup(tokens);
 			/*ft_printf("\n\ntokens:\n", line);*/
 			/*tokens_print(tokens);*/
