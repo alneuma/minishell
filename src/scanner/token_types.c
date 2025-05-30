@@ -12,7 +12,9 @@ void	*token_id_get_attribute(t_token_id id, t_token_attribute attr)
 												 {"INFILE", "<", 500, INFILE},
 												 {"OUTFILE", ">", 500, OUTFILE},
 												 {"OUTFILE_APPEND", ">", 500, OUTFILE_APPEND},
-												 {"LITERAL", NULL, 1000, LITERAL},
+												 {"PAREN_LEFT", "(", 1000, PAREN_LEFT},
+												 {"PAREN_RIGHT", ")", 1000, PAREN_RIGHT},
+												 {"LITERAL", NULL, 400, LITERAL},
 												 {"ASSIGNMENT", NULL, 1000, ASSIGNMENT}};
 
 	if (id > LITERAL || id < OR)

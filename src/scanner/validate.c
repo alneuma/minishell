@@ -77,7 +77,7 @@ int	string_validate(int *valid, char *culprit, const char *str)
 			return_code = process_right_paren(valid, *str, stack);
 		else if (paren_is_left(*str))
 			return_code = process_left_paren(*str, stack);
-		if (return_code || valid == 0)
+		if (return_code || *valid == 0)
 		{
 			*culprit = *str;
 			stack_char_destroy(&stack);

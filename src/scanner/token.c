@@ -141,6 +141,7 @@ int	make_token(t_token **token, t_token_id id, char **str)
 	(*token)->left = NULL;
 	(*token)->right = NULL;
 	(*token)->redirects = NULL;
+	(*token)->is_subshell = 0;
 	return (0);
 }
 

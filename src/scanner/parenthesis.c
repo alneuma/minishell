@@ -12,6 +12,7 @@ int	paren_is_left(const char c)
 	{
 		if (c == pairs[i].left)
 			return (1);
+		i++;
 	}
 	return (0);
 }
@@ -25,6 +26,7 @@ int	paren_is_right(const char c)
 	{
 		if (c == pairs[i].right)
 			return (1);
+		i++;
 	}
 	return (0);
 }
@@ -38,6 +40,7 @@ int	paren_is_match(const char left, const char right)
 	{
 		if (left == pairs[i].left)
 			return (right == pairs[i].right);
+		i++;
 	}
 	return (0);
 }

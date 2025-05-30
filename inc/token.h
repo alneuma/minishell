@@ -18,6 +18,8 @@ typedef enum e_token_identifier
 	INFILE,
 	OUTFILE,
 	OUTFILE_APPEND,
+	PAREN_LEFT,
+	PAREN_RIGHT,
 	LITERAL,
 	ASSIGNMENT
 }	t_token_id;
@@ -37,6 +39,7 @@ struct s_token
 	t_token		*parent;
 	char		*literal;
 	char		**argv;
+	int			is_subshell;
 	t_token_id	id;
 };
 

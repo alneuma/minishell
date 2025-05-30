@@ -26,6 +26,7 @@ int		stack_char_pop(char *c, t_stack_char *stack)
 
 	if (stack->size <= 0)
 		return (-1);
+	stack->size--;
 	*c = stack->top->data;
 	tmp = stack->top;
 	stack->top = stack->top->next;
