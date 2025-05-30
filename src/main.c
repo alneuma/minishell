@@ -10,6 +10,7 @@
 #include "expander.h"
 #include "variables.h"
 #include "parser.h"
+#include "error.h"
 
 // #define INPUT "/usr/bin/cat Makefile | head -n 4"
 // #define INPUT "asdfasdf"
@@ -76,7 +77,7 @@ int main(int argc, char **argv)//, char **envp)
 	t_variable_set	*env;
 	char			*envp[] = {"hello=bye", NULL};
 	int				valid;
-	char			culprid;
+	char			culprit;
 
 	(void)argc;
 	(void)argv;
@@ -96,11 +97,11 @@ int main(int argc, char **argv)//, char **envp)
 			tokens = scanner(line);
 			/*ft_printf("string:\n\"%s\"\n\ntokens:\n", line);*/
 			add_history(line);
-			return_code = string_validate(&valid, &culprid, line);
+			return_code = string_validate(&valid, &culprit, line);
 			if (return_code || !valid)
 			{
 				free(line);
-				print_error_token(culprid);
+				print_error_token(culprit);
 				if (return_code)
 				{
 					return (return_code);
@@ -112,11 +113,11 @@ int main(int argc, char **argv)//, char **envp)
 			/*tokens_print(tokens);*/
 			if (!tokens)
 				return (1);
-			return_code = tokens_validate(&valid, &culprid, tokens);
+			return_code = tokens_validate(&valid, &culprit, tokens);
 			if (return_code || !valid)
 			{
 				tokens_destroy(&tokens);
-				print_error_token(culprid);
+				print_error_token(culprit);
 				if (return_code)
 					return (return_code);
 				if (!valid)

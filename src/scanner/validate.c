@@ -1,3 +1,5 @@
+#include <stddef.h>
+#include "token.h"
 #include "data_structures.h"
 #include "parenthesis.h"
 
@@ -13,7 +15,6 @@ int	is_quote(const char c)
 int	process_right_paren(int *valid, const char paren, t_stack_char *stack)
 {
 	char	stack_access;
-	int		return_code;
 
 	*valid = 0;
 	if (stack_char_peek(&stack_access, stack) == 0)
@@ -43,9 +44,7 @@ int	process_right_paren(int *valid, const char paren, t_stack_char *stack)
 int	process_left_paren(const char paren, t_stack_char *stack)
 {
 	char	stack_access;
-	int		return_code;
 
-	*valid = 0;
 	if (stack_char_peek(&stack_access, stack) == 0)
 	{
 		if (is_quote(stack_access))
@@ -67,7 +66,6 @@ int	string_validate(int *valid, char *culprit, const char *str)
 {
 	t_stack_char	*stack;
 	int				return_code;
-	char			paren;
 
 	*valid = 1;
 	return_code = stack_char_init(&stack);
@@ -89,14 +87,14 @@ int	string_validate(int *valid, char *culprit, const char *str)
 	}
 	if (stack_char_size(stack) != 0)
 	{
-		*culprid = '\n';
+		*culprit = '\n';
 		*valid = 0;
 	}
 	stack_char_destroy(&stack);
 	return (0);
 }
 
-int	tokens_validate(int *valid, char *culprid, t_token *token)
+int	tokens_validate(int *valid, char *culprit, t_token *token)
 {
 	t_token_id	id_last;
 
@@ -105,13 +103,13 @@ int	tokens_validate(int *valid, char *culprid, t_token *token)
 	{
 		if (token->id != LITERAL && id_last != LITERAL)
 		{
-			*culprid = token_id_get_lexeme(token->id);
+			*culprit = token_id_get_lexeme(token->id);
 			*valid = 0;
 			return (0);
 		}
 		if (token->right == NULL && token->id != LITERAL)
 		{
-			*culprid = '\n';
+			*culprit = '\n';
 			*valid = 0;
 			return (0);
 		}
