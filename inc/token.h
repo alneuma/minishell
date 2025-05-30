@@ -6,8 +6,8 @@
 typedef struct s_file	t_file;
 typedef struct s_token	t_token;
 
-# define KEEP_LITERAL 1
-# define FREE_LITERAL 0
+# define KEEP_STRING 1
+# define FREE_STRING 0
 
 typedef enum e_token_identifier
 {
@@ -21,7 +21,6 @@ typedef enum e_token_identifier
 	PAREN_LEFT,
 	PAREN_RIGHT,
 	LITERAL,
-	ASSIGNMENT
 }	t_token_id;
 
 struct s_file
@@ -32,13 +31,9 @@ struct s_file
 
 struct s_token
 {
-	t_queue		*redirects;
 	t_token		*left;
 	t_token		*right;
-	t_token		*literals;
-	t_token		*parent;
-	char		*literal;
-	char		**argv;
+	char		*string;
 	int			is_subshell;
 	t_token_id	id;
 };

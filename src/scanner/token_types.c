@@ -14,8 +14,7 @@ void	*token_id_get_attribute(t_token_id id, t_token_attribute attr)
 												 {"OUTFILE_APPEND", ">", 500, OUTFILE_APPEND},
 												 {"PAREN_LEFT", "(", 1000, PAREN_LEFT},
 												 {"PAREN_RIGHT", ")", 1000, PAREN_RIGHT},
-												 {"LITERAL", NULL, 400, LITERAL},
-												 {"ASSIGNMENT", NULL, 1000, ASSIGNMENT}};
+												 {"LITERAL", NULL, 400, LITERAL}};
 
 	if (id > LITERAL || id < OR)
 		return (NULL);
