@@ -77,7 +77,7 @@ int main(int argc, char **argv)//, char **envp)
 	t_variable_set	*env;
 	char			*envp[] = {"hello=bye", NULL};
 	int				valid;
-	char			culprit;
+	t_token_id		culprit;
 
 	(void)argc;
 	(void)argv;

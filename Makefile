@@ -18,20 +18,16 @@ SRC	+= error.c
 vpath %.c $(SRC_DIR)/scanner
 SRC	+= parenthesis.c
 SRC	+= scanner.c
-SRC	+= token.c
-SRC	+= token_types.c
 SRC	+= validate.c
-SRC	+= heredoc.c
-SRC	+= redirects.c
-SRC	+= in_and_outfiles.c  
+SRC	+= literals.c
 vpath %.c $(SRC_DIR)/data_structures/queue
 SRC	+= queue.c
 SRC	+= queue_init.c
 vpath %.c $(SRC_DIR)/data_structures/stack_char
 SRC	+= stack_char.c
 vpath %.c $(SRC_DIR)/execute
-SRC	+= execute.c
-SRC += execute_redirects.c
+# SRC	+= execute.c
+# SRC += execute_redirects.c
 vpath %.c $(SRC_DIR)/variables
 # variable_set
 SRC += variable_set.c
@@ -48,8 +44,13 @@ vpath %.c $(SRC_DIR)/expander
 SRC	+= expander.c
 vpath %.c $(SRC_DIR)/parser
 SRC	+= parser.c
-SRC	+= tree_print.c
+# SRC	+= tree_print.c
 SRC	+= tree_queue.c
+vpath %.c $(SRC_DIR)/token
+SRC	+= token.c
+SRC	+= token_redirects.c
+SRC	+= token_types.c
+SRC	+= token_validate.c
 
 ## objects
 OBJ	:= $(SRC:.c=.o)

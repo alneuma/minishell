@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 #include <stdlib.h>
 #include <errno.h>
 #include "token.h"
@@ -23,7 +26,7 @@ int	tokens_preprocess_redirects(t_token *tokens)
 	{
 		if (token_is_redirect(tokens))
 		{
-			return_code = preprocess_redirect(token);
+			return_code = preprocess_redirect(tokens);
 			if (return_code)
 				return (return_code);
 		}

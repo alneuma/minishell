@@ -1,9 +1,9 @@
 #include <stdlib.h>
+#include <errno.h>
 #include "token.h"
 
 int		is_blank(char c);
 int		in_literal(char *str);
-char	*get_literal(char **str);
 int		make_token(t_token **token, t_token_id id, char **str);
 int		literal_length(char *str);
 

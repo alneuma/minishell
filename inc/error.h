@@ -1,6 +1,8 @@
 #ifndef ERROR_H
 # define ERROR_H
 
-int	print_error_token(const char *culprid);
+# include "token.h"
+
+int	print_error_token(const t_token_id id);
 
 #endif //ERROR_H

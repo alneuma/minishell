@@ -1,12 +1,11 @@
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "scanner_internals.h"
+#include "token.h"
 #include "scanner.h"
+#include "libft.h"
 #include "assignment_strings.h"
-#include "data_structures.h"
 
-static void	free_argv(char **argv);
 int			literal_length(char *str);
 
 void	token_print(t_token *token)
@@ -15,7 +14,7 @@ void	token_print(t_token *token)
 	fstr = "%s:\t%s";
 	if (token->id == PIPE || token->id == AND)
 		fstr = "%s:\t\t%s";
-	ft_printf(fstr, token_id_get_name(token->id), token->literal);
+	ft_printf(fstr, token_id_get_name(token->id), token->string);
 }
 
 void	tokens_print(t_token *tokens)
@@ -30,26 +29,23 @@ void	tokens_print(t_token *tokens)
 
 void	token_destroy(t_token **token, int keep_literal)
 {
-	if ((*token)->literal != NULL && keep_literal == FREE_LITERAL)
-		free((*token)->literal);
-	if ((*token)->argv != NULL)
-		free_argv((*token)->argv);
-	queue_destroy(&(*token)->redirects);
+	if ((*token)->string != NULL && keep_literal == FREE_STRING)
+		free((*token)->string);
 	free(*token);
 	*token = NULL;
 }
 
-static void	free_argv(char **argv)
-{
-	char	**start;
-
-	if (!argv)
-		return ;
-	start = argv;
-	while (*argv)
-		free(*argv++);
-	free(start);
-}
+// static void	free_argv(char **argv)
+// {
+// 	char	**start;
+//
+// 	if (!argv)
+// 		return ;
+// 	start = argv;
+// 	while (*argv)
+// 		free(*argv++);
+// 	free(start);
+// }
 
 int	is_token_of_type(char *str, t_token_id id)
 {
@@ -66,7 +62,7 @@ void	tokens_destroy(t_token **tokens)
 	while (*tokens)
 	{
 		tmp = (*tokens)->right;
-		token_destroy(tokens, FREE_LITERAL);
+		token_destroy(tokens, FREE_STRING);
 		*tokens = tmp;
 	}
 }

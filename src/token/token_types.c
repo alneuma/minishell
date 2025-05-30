@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stddef.h>
-#include "scanner_internals.h"
 #include "scanner.h"
+#include "token_internals.h"
 
 void	*token_id_get_attribute(t_token_id id, t_token_attribute attr)
 {
@@ -14,7 +14,7 @@ void	*token_id_get_attribute(t_token_id id, t_token_attribute attr)
 												 {"OUTFILE_APPEND", ">", 400, OUTFILE_APPEND},
 												 {"PAREN_LEFT", "(", 1000, PAREN_LEFT},
 												 {"PAREN_RIGHT", ")", 1000, PAREN_RIGHT},
-												 {"NEWLINE", "newline", 2000, NEWLINE},
+												 {"TKN_NEWLINE", "newline", 2000, TKN_NEWLINE},
 												 {"LITERAL", NULL, 400, LITERAL}};
 
 	if (id > LITERAL || id < OR)

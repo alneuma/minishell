@@ -9,7 +9,7 @@ typedef struct s_token	t_token;
 # define KEEP_STRING 1
 # define FREE_STRING 0
 
-typedef enum e_token_identifier
+typedef enum e_token_id
 {
 	OR,
 	PIPE,
@@ -21,7 +21,7 @@ typedef enum e_token_identifier
 	PAREN_LEFT,
 	PAREN_RIGHT,
 	LITERAL,
-	NEWLINE
+	TKN_NEWLINE
 }	t_token_id;
 
 struct s_file
@@ -47,6 +47,7 @@ void	token_destroy(t_token **token, int keep_literal);
 int		token_id_get_prec(t_token_id id);
 int		token_type_print(t_token_id id);
 char	*token_id_get_lexeme(t_token_id id);
+char	*token_id_get_name(t_token_id id);
 void	tokens_print(t_token *tokens);
 void	tokens_destroy(t_token **tokens);
 
