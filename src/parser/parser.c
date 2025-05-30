@@ -31,7 +31,7 @@ int	tree_from_tokens(t_token **tree, t_token *tokens)
 			return (1);;
 		tokens = tmp;
 	}
-	return (tree_literals_make_argv(*tree));
+	return (0);
 }
 
 void	parse_tree_destroy(t_token **tree)
@@ -57,21 +57,12 @@ static int	parse_tree_insert(t_token **tree, t_token *new_node)
 	}
 	prec_tree = token_id_get_prec((*tree)->id);
 	prec_node = token_id_get_prec(new_node->id);
+	if (prec_node >= prec_tree)
+		return (parse_tree_insert(&(*tree)->right, new_node));
 	if (prec_node < prec_tree)
 	{
 		new_node->left = *tree;
 		*tree = new_node;
-		return (0);
-	}
-	if (prec_tree < prec_node
-		|| (prec_tree == prec_node && new_node->id != LITERAL))
-		return (parse_tree_insert(&(*tree)->right, new_node));
-	else if (new_node->id == LITERAL)
-	{
-		tmp = *tree;
-		while (tmp->literals)
-			tmp = tmp->literals;
-		tmp->literals = new_node;
 		return (0);
 	}
 	return (1);

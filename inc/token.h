@@ -21,6 +21,7 @@ typedef enum e_token_identifier
 	PAREN_LEFT,
 	PAREN_RIGHT,
 	LITERAL,
+	NEWLINE
 }	t_token_id;
 
 struct s_file
@@ -41,6 +42,7 @@ struct s_token
 // infiles/outfiles
 void	file_destroy(t_file *file);
 
+int		tokens_validate(int *valid, t_token_id *culprit, t_token *token);
 void	token_destroy(t_token **token, int keep_literal);
 int		token_id_get_prec(t_token_id id);
 int		token_type_print(t_token_id id);

@@ -8,12 +8,13 @@ void	*token_id_get_attribute(t_token_id id, t_token_attribute attr)
 	static const t_token_type	token_types[] = {{"OR", "||", 3, OR},
 												 {"PIPE", "|", 4, PIPE},
 												 {"AND", "&&", 2, AND},
-												 {"HEREDOC", "<<", 500, HEREDOC},
-												 {"INFILE", "<", 500, INFILE},
-												 {"OUTFILE", ">", 500, OUTFILE},
-												 {"OUTFILE_APPEND", ">", 500, OUTFILE_APPEND},
+												 {"HEREDOC", "<<", 400, HEREDOC},
+												 {"INFILE", "<", 400, INFILE},
+												 {"OUTFILE", ">", 400, OUTFILE},
+												 {"OUTFILE_APPEND", ">", 400, OUTFILE_APPEND},
 												 {"PAREN_LEFT", "(", 1000, PAREN_LEFT},
 												 {"PAREN_RIGHT", ")", 1000, PAREN_RIGHT},
+												 {"NEWLINE", "newline", 2000, NEWLINE},
 												 {"LITERAL", NULL, 400, LITERAL}};
 
 	if (id > LITERAL || id < OR)

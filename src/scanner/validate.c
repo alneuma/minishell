@@ -1,5 +1,4 @@
 #include <stddef.h>
-#include "token.h"
 #include "data_structures.h"
 #include "parenthesis.h"
 
@@ -91,31 +90,5 @@ int	string_validate(int *valid, char *culprit, const char *str)
 		*valid = 0;
 	}
 	stack_char_destroy(&stack);
-	return (0);
-}
-
-int	tokens_validate(int *valid, char *culprit, t_token *token)
-{
-	t_token_id	id_last;
-
-	id_last = -1;
-	while (token != NULL)
-	{
-		if (token->id != LITERAL && id_last != LITERAL)
-		{
-			*culprit = token_id_get_lexeme(token->id);
-			*valid = 0;
-			return (0);
-		}
-		if (token->right == NULL && token->id != LITERAL)
-		{
-			*culprit = '\n';
-			*valid = 0;
-			return (0);
-		}
-		id_last = token->id;
-		token = token->right;
-	}
-	*valid = 1;
 	return (0);
 }
