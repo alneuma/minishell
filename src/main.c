@@ -68,25 +68,25 @@
 // 	return (0);
 // }
 
-int main(int argc, char **argv)//, char **envp)
+int main(int argc, char **argv, char **envp)
 {
-	t_token			*tokens;
-	t_token			*tree;
-	int				return_code;
-	char			*line;
-	t_variable_set	*env;
-	char			*envp[] = {"hello=bye", NULL};
-	int				valid;
-	t_token_id		culprit;
+	t_token		*tokens;
+	t_token		*tree;
+	int			return_code;
+	char		*line;
+	t_env		env;
+	// char		*envp[] = {"hello=bye", NULL};
+	int			valid;
+	t_token_id	culprit;
 
 	(void)argc;
 	(void)argv;
-	env = variable_set_create();
-	if (env == NULL)
+	env.vars = variable_set_create();
+	if (env.vars == NULL)
 		return (ENOMEM);
 	int	i = 0;
 	while (envp[i] != NULL)
-		return_code = variable_set_assignment_string_add(env, envp[i++], ENV);
+		return_code = variable_set_assignment_string_add(env.vars, envp[i++], ENV);
 	if (return_code)
 		return (return_code);
 	while (1)
@@ -96,7 +96,7 @@ int main(int argc, char **argv)//, char **envp)
 		{
 			tokens = scanner(line);
 			add_history(line);
-			ft_printf("string:\n\"%s\"\n", line);
+			// ft_printf("string:\n\"%s\"\n", line);
 			if (tokens == NULL)
 			{
 				free(line);
@@ -117,8 +117,8 @@ int main(int argc, char **argv)//, char **envp)
 			free(line);
 			if (!tokens)
 				return (1);
-			ft_printf("\n\ntokens:\n");
-			tokens_print(tokens);
+			// ft_printf("\n\ntokens:\n");
+			// tokens_print(tokens);
 			return_code = tokens_validate(&valid, &culprit, tokens);
 			if (return_code || !valid)
 			{
@@ -137,11 +137,10 @@ int main(int argc, char **argv)//, char **envp)
 			}
 			/*ft_printf("\n\ntokens:\n", line);*/
 			/*tokens_print(tokens);*/
-			ft_printf("\ntree:\n");
+			// ft_printf("\ntree:\n");
 			tree = tree_from_tokens(&tokens);
-			print_tree(tree);
-			// if (return_code == 1)
-			// 	return_code = execute(tree, 0, 1, env);
+			// print_tree(tree);
+			return_code = execute(tree, -1, -1, &env);
 			if (tree->string != NULL && !ft_strncmp(tree->string, "exit", 1000))
 				return_code = 100;
 			parse_tree_destroy(&tree);
@@ -150,7 +149,7 @@ int main(int argc, char **argv)//, char **envp)
 			break ;
 	}
 	rl_clear_history();
-	variable_set_destroy(&env);
+	variable_set_destroy(&env.vars);
 	return (return_code);
 }
 

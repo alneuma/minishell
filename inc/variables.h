@@ -1,12 +1,23 @@
 #ifndef VARIABLES_H
 # define VARIABLES_H
 
+# include "token.h"
+
 typedef struct s_variable_set	t_variable_set;
+typedef struct e_env	t_env;
+
+struct e_env
+{
+	t_variable_set	*vars;
+	unsigned char	code;				
+	t_token			*root;
+};
 
 typedef enum e_vartype
 {
 	SHELL,
 	ENV,
+	EXPORT,
 	BOTH
 }	t_vartype;
 

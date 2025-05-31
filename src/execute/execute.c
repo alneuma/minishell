@@ -1,28 +1,17 @@
-#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <scanner.h>
 #include <unistd.h>
 #include <errno.h>
-#include "libft.h"
-#include "execute_internals.h"
 #include "variables.h"
-#include "builtins.h"
+#include "token.h"
+#include "libft.h"
 
-// copied from src/variables/assignment_strings.c
-static char	*assignment_string_key_get(const char *str);
-char	*first_non_assignment(const char **arr);
-int		is_assignment(const char *str);
-int		execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
-int		execute_pipe(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
-int		execute_and(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
-int		execute_or(t_token *tree, int fd_in, int fd_out, t_variable_set *env);
-int		execute_program(const char **argv, int fd_in, int fd_out, t_variable_set *env);
-int		execute_builtin(const char **argv, int fd_in, int fd_out, t_variable_set *env);
-int		send_data(char *heredoc, int infile_fd, int fd_out);
-int		send_heredoc(char *heredoc, int fd);
+int	execute_or(t_token *tree, int fd_in, int fd_out, t_env *env);
+int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env);
+int execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env);
+int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env);
 
-int	execute(t_token *token, int fd_in, int fd_out, t_variable_set *env)
+int	execute(t_token *token, int fd_in, int fd_out, t_env *env)
 {
 	if (token->id == LITERAL)
 		return (execute_literal(token, fd_in, fd_out, env));
@@ -35,176 +24,95 @@ int	execute(t_token *token, int fd_in, int fd_out, t_variable_set *env)
 	return (0);
 }
 
-int	execute_and(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
+int	execute_or(t_token *tree, int fd_in, int fd_out, t_env *env)
 {
 	int	return_code;
 
-	return_code = execute(tree->left, fd_in, -1, env);
-	if (return_code)
-		return (return_code);
-	return (execute(tree->right, -1, fd_out, env));
-}
-
-int	execute_or(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
-{
-	int	return_code;
-
-	return_code = execute(tree->left, fd_in, -1, env);
+	return_code = execute(tree->left, fd_in, fd_out, env);
 	if (!return_code)
 		return (return_code);
-	return (execute(tree->right, -1, fd_out, env));
+	return (execute(tree->right, fd_in, fd_out, env));
 }
 
-// protect close
-int	execute_literal(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
+int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env)
 {
-	int		fds[2];
-	int		return_code;
-	int		infile_fd;
-	int		outfile_fd;
-	char	*heredoc;
+	int	return_code;
 
-	infile_fd = -1;
-	outfile_fd = -1;
-	heredoc = NULL;
-	/*cmd = first_non_assignment((const char **)tree->argv);*/
-	/*if (cmd == NULL)*/
-	/*	return (variable_set_assignment_string_add(env, tree->argv[0], 0));*/
-	return_code = redirect_fds_get(&infile_fd, &outfile_fd, &heredoc, tree);
+	return_code = execute(tree->left, fd_in, fd_out, env);
 	if (return_code)
 		return (return_code);
-	if (heredoc != NULL || infile_fd != -1)
-	{
-		pipe(fds);
-		if (pipe(fds) < 0)
-			return (errno);
-		send_data(heredoc, infile_fd, fds[1]);
-		free(heredoc);
-		return_code = close(fds[1]);
-		if ((return_code < 0 || infile_fd != -1) && close(infile_fd) < 0)
-			return (errno);
-		if (return_code < 0)
-			return (errno);
-		if (is_builtin(*tree->argv))
-		{
-			return_code = execute_builtin((const char **)tree->argv, fds[0], fd_out, env);
-			close(fds[0]);
-			return (return_code);
-		}
-		else
-		{
-			return_code = execute_program((const char **)tree->argv, fds[0], fd_out, env);
-			close(fds[0]);
-			return (return_code);
-		}
-	}
-	if (is_builtin(*tree->argv))
-		return (execute_builtin((const char **)tree->argv, fd_in, fd_out, env));
-	else
-		return (execute_program((const char **)tree->argv, fd_in, fd_out, env));
+	return (execute(tree->right, fd_in, fd_out, env));
 }
 
-// doublecheck return code
-int	send_data(char *heredoc, int infile_fd, int fd_out)
+int execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 {
-	if (heredoc != NULL)
-		return (send_heredoc(heredoc, fd_out));
-	else if (infile_fd != -1)
-		return (write_file(infile_fd, fd_out));
-	return (EINVAL);
-}
-
-// check return codes
-int	send_heredoc(char *heredoc, int fd)
-{
-	if (write(fd, heredoc, ft_strlen(heredoc)) < 0)
-		return (errno);
-	return (0);
-}
-
-int	execute_builtin(const char **argv, int fd_in, int fd_out, t_variable_set *env)
-{
-	int		return_value;
-	char	**tmp_argv;
-	char	*key;
-
-	tmp_argv = (char **)argv;
-	while (is_assignment(*tmp_argv))
-		variable_set_assignment_string_add(env, *tmp_argv++, 0);
-	return_value = builtin_get_func(*tmp_argv)(argv, fd_in, fd_out, env);
-	while (is_assignment(*argv))
-	{	
-		key = assignment_string_key_get(*argv++);
-		if (key == NULL)
-			return (ENOMEM);
-		variable_set_var_remove(env, key);
-		free(key);
-	}
-	return (return_value);
-}
-
-int	execute_program(const char **argv, int fd_in, int fd_out, t_variable_set *env)
-{
-	char	**envp;
 	pid_t	pid;
-	int		status;
-	char	*cmd;
+	int		return_code;
+	int		fds[2];
 
+	if (pipe(fds) < 0)
+		return (errno);
 	pid = fork();
 	if (pid < 0)
 		return (errno);
 	else if (pid == 0)
 	{
-		if (fd_in >= 0)
-			dup2(fd_in, 0);
-		if (fd_out >= 0)
-			dup2(fd_out, 1);
-		cmd = ft_strjoin("/usr/bin/", argv[0]);
-		if (cmd == NULL)
-			return (ENOMEM);
-		envp = variable_set_array_get(env, ENV);
-		if (envp == NULL)
-			return (ENOMEM);
-		execve(cmd, (char *const *)argv, envp);
+		close(fds[0]);
+		dup2(fds[1], 1);
+		return_code = execute(tree->left, fd_in, fds[1], env);
+		close(fds[1]);
+		return (return_code);
 	}
 	else if (pid > 0)
 	{
-		waitpid(pid, &status, 0);
-		return (WEXITSTATUS(status));
+		close(fds[1]);
+		waitpid(pid, &return_code, 0);
 	}
-	return (0);
-}
-
-// deal with return codes
-int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_variable_set *env)
-{
-	int	fds[2];
-	int	return_code;
-
-	if (pipe(fds) < 0)
+	pid = fork();
+	if (pid < 0)
 		return (errno);
-	return_code = execute(tree->left, fd_in, fds[1], env);
-	close(fds[1]);
-	return_code = execute(tree->right, fds[0], fd_out, env);
-	close(fds[0]);	
-	return (return_code);
+	else if (pid == 0)
+	{
+		dup2(fds[0], 0);
+		return_code = execute(tree->right, fds[0], fd_out, env);
+		close(fds[0]);
+		return (return_code);
+	}
+	else if (pid > 0)
+	{
+		close(fds[0]);
+		waitpid(pid, &return_code, 0);
+	}
+	return (WEXITSTATUS(return_code));
 }
 
-// copied from src/variables/assignment_strings.c
-static char	*assignment_string_key_get(const char *str)
+int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 {
-	char	*key;
-	char	*equal;
-	int		len;
+	pid_t	pid;
+	int		return_code;
 
-	equal = ft_strchr(str, '=');
-	len = equal - str;
-	if (equal != str && ft_strchr(str, '+') == equal - 1)
-		len--;
-	key = (char *)malloc(len + 1);
-	if (key == NULL)
-		return (NULL);
-	ft_memcpy(key, str, len);
-	key[len] = '\0';
-	return (key);
+	return_code = 0;
+	pid = fork();
+	if (pid < 0)
+		return (errno);
+	else if (pid == 0)
+	{
+		char	*cmd = ft_strjoin("/usr/bin/", tree->string);
+		if (cmd == NULL)
+			return (ENOMEM);
+		char	*argv[3];
+		argv[0] = tree->string;
+		argv[1] = "TODO.md";
+		argv[2] = NULL;
+		char	**envp = variable_set_array_get(env->vars, ENV);
+		execve(cmd, argv, envp);
+		return (errno);
+	}
+	else if (pid > 0)
+		waitpid(pid, &return_code, 0);
+	if (fd_in != -1)
+		close(fd_in);
+	if (fd_out != -1)
+		close(fd_out);
+	return (WEXITSTATUS(return_code));
 }
