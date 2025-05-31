@@ -14,7 +14,7 @@ char		*expand_get_key(const char *str);
 char		*expand_parameter(const t_variable_set *env, const char *str);
 static void	parse_tree_insert(t_token **tree, t_token *new_node);
 
-t_tokens	*tree_from_tokens(t_token **tokens)
+t_token	*tree_from_tokens(t_token **tokens)
 {
 	t_token	*tree;
 	t_token	*tmp;
@@ -23,7 +23,7 @@ t_tokens	*tree_from_tokens(t_token **tokens)
 	while (*tokens != NULL)
 	{
 		tmp = *tokens;
-		(*tokens) = tokens->right;
+		(*tokens) = (*tokens)->right;
 		if (tmp->id == PAREN_LEFT)
 		{
 			token_destroy(&tmp, FREE_STRING);
@@ -32,7 +32,7 @@ t_tokens	*tree_from_tokens(t_token **tokens)
 		else if (tmp->id == PAREN_RIGHT)
 		{
 			token_destroy(&tmp, FREE_STRING);
-			tree->subshell = 1;
+			tree->is_subshell = 1;
 			return (tree);
 		}
 		else

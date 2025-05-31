@@ -138,7 +138,7 @@ int main(int argc, char **argv)//, char **envp)
 			/*ft_printf("\n\ntokens:\n", line);*/
 			/*tokens_print(tokens);*/
 			ft_printf("\ntree:\n");
-			tree_from_tokens(&tree, tokens);
+			tree = tree_from_tokens(&tokens);
 			print_tree(tree);
 			// if (return_code == 1)
 			// 	return_code = execute(tree, 0, 1, env);
