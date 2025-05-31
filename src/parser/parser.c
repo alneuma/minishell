@@ -61,15 +61,22 @@ static void	parse_tree_insert(t_token **tree, t_token *new_node)
 	int		prec_node;
 
 	if (*tree == NULL)
-		*tree = new_node;
-	prec_tree = token_id_get_prec((*tree)->id);
-	prec_node = token_id_get_prec(new_node->id);
-	if (prec_node >= prec_tree || new_node->is_subshell > (*tree)->is_subshell)
 	{
-		parse_tree_insert(&(*tree)->right, new_node);
+		*tree = new_node;
 		return ;
 	}
-	if (prec_node < prec_tree)
+	prec_tree = token_id_get_prec((*tree)->id);
+	prec_node = token_id_get_prec(new_node->id);
+	if (new_node->is_subshell > (*tree)->is_subshell)
+		parse_tree_insert(&(*tree)->right, new_node);
+	else if (new_node->is_subshell < (*tree)->is_subshell)
+	{
+		new_node->left = *tree;
+		*tree = new_node;
+	}
+	else if (prec_node >= prec_tree)
+		parse_tree_insert(&(*tree)->right, new_node);
+	else if (prec_node < prec_tree)
 	{
 		new_node->left = *tree;
 		*tree = new_node;

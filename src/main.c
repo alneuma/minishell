@@ -142,7 +142,7 @@ int main(int argc, char **argv)//, char **envp)
 			print_tree(tree);
 			// if (return_code == 1)
 			// 	return_code = execute(tree, 0, 1, env);
-			if (!ft_strncmp(tree->string, "exit", 1000))
+			if (tree->string != NULL && !ft_strncmp(tree->string, "exit", 1000))
 				return_code = 100;
 			parse_tree_destroy(&tree);
 		}

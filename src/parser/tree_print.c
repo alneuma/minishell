@@ -6,6 +6,9 @@
 void	print_tree_node(const t_token *tree)
 {
 	ft_printf("%s: %s", token_id_get_lexeme(tree->id), tree->string);
+	if (tree->is_subshell)
+		ft_printf("(subshell)");
+
 }
 
 int	print_tree(t_token *tree)
