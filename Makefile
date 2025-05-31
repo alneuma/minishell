@@ -42,6 +42,7 @@ vpath %.c $(SRC_DIR)/assignment_strings
 SRC	+= assignment_strings.c
 vpath %.c $(SRC_DIR)/expander
 SRC	+= expander.c
+SRC	+= remove_quotes.c
 vpath %.c $(SRC_DIR)/parser
 SRC	+= parser.c
 SRC	+= tree_print.c

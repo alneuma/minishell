@@ -5,6 +5,7 @@
 #include <errno.h>
 #include "token.h"
 #include "libft.h"
+#include "expander.h"
 #include "defs.h"
 
 static int	heredoc_append_line(char **doc, char **line);
@@ -38,14 +39,19 @@ int	tokens_preprocess_redirects(t_token *tokens)
 static int	preprocess_redirect(t_token *token)
 {
 	t_token	*tmp;
+	char	*eof;
 
-	if (token->right == NULL)
+	if (token->right == NULL || token->right->id != LITERAL)
 		return (0);
 	tmp = token->right;
 	token->right = token->right->right;
 	if (token->id == HEREDOC)
 	{
-		token->string = heredoc_get_doc(P2, tmp->string);
+		eof = str_remove_quotes(tmp->string);
+		if (eof == NULL)
+			return (ENOMEM);
+		token->string = heredoc_get_doc(P2, eof);
+		free(eof);
 		token_destroy(&tmp, FREE_STRING);
 		if (token->string == NULL)
 			return (ENOMEM);

@@ -21,6 +21,4 @@ int		stack_char_push(char c, t_stack_char *stack);
 int		stack_char_init(t_stack_char **stack);
 void	stack_char_destroy(t_stack_char **stack);
 
-// list string
-
 #endif //DATA_STRUCTURES_H
