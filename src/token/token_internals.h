@@ -4,10 +4,10 @@
 // precedence == -1 -> infinity
 typedef struct s_token_type
 {
-	char				*name;
-	char				*lexeme;
-	int					precedence;
-	t_token_id	identifier;
+	char		*name;
+	char		*lexeme;
+	int			prec;
+	t_token_id	id;
 }	t_token_type;
 
 typedef enum e_token_attribute

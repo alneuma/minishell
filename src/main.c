@@ -106,7 +106,7 @@ int main(int argc, char **argv)//, char **envp)
 			if (return_code || !valid)
 			{
 				free(line);
-				print_error_token(&culprit);
+				print_error_token(culprit);
 				if (return_code)
 				{
 					return (return_code);

@@ -23,6 +23,8 @@ int	tokens_valid_neighbours(t_token *left, t_token *right)
 		right_id = right->id;
 	if (left_id == LITERAL)
 		return (right_id != PAREN_LEFT);
+	if (left_id == PAREN_LEFT)
+		return (right_id == LITERAL);
 	if (left_id == PAREN_RIGHT)
 		return (right_id != LITERAL);
 	if (token_id_is_redirect(left_id))

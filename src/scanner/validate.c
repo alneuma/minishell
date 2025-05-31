@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include "data_structures.h"
 #include "parenthesis.h"
+#include "token.h"
 
 int	is_quote(const char c);
 int	process_right_paren(int *valid, const char paren, t_stack_char *stack);
@@ -61,7 +62,7 @@ int	process_left_paren(const char paren, t_stack_char *stack)
 	return (stack_char_push(paren, stack));
 }
 
-int	string_validate(int *valid, char *culprit, const char *str)
+int	string_validate(int *valid, t_token_id *culprit, const char *str)
 {
 	t_stack_char	*stack;
 	int				return_code;
@@ -78,7 +79,7 @@ int	string_validate(int *valid, char *culprit, const char *str)
 			return_code = process_left_paren(*str, stack);
 		if (return_code || *valid == 0)
 		{
-			*culprit = *str;
+			*culprit = token_string_get_id(str);
 			stack_char_destroy(&stack);
 			return (return_code);
 		}

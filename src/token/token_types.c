@@ -2,64 +2,76 @@
 #include <stddef.h>
 #include "scanner.h"
 #include "token_internals.h"
+#include "libft.h"
 
-void	*token_id_get_attribute(t_token_id id, t_token_attribute attr)
-{
-	static const t_token_type	token_types[] = {{"OR", "||", 3, OR},
-												 {"PIPE", "|", 4, PIPE},
-												 {"AND", "&&", 2, AND},
-												 {"HEREDOC", "<<", 400, HEREDOC},
-												 {"INFILE", "<", 400, INFILE},
-												 {"OUTFILE", ">", 400, OUTFILE},
-												 {"OUTFILE_APPEND", ">", 400, OUTFILE_APPEND},
-												 {"PAREN_LEFT", "(", 1000, PAREN_LEFT},
-												 {"PAREN_RIGHT", ")", 1000, PAREN_RIGHT},
-												 {"LITERAL", NULL, 400, LITERAL},
-												 {"TKN_NEWLINE", "newline", 2000, TKN_NEWLINE}};
-
-	if (id > TKN_NEWLINE || id < OR)
-		return (NULL);
-	if (attr == ID)
-		return ((void *)&token_types[id].identifier);
-	else if (attr == LEXEME)
-		return ((void **)&token_types[id].lexeme);
-	else if (attr == PRECEDENCE)
-		return ((void *)&token_types[id].precedence);
-	else if (attr == NAME)
-		return ((void **)&token_types[id].name);
-	return (NULL);
-}
+static const t_token_type	g_token_types[] = {{"OR", "||", 3, OR},
+	{"PIPE", "|", 4, PIPE}, {"AND", "&&", 2, AND},
+	{"HEREDOC", "<<", 400, HEREDOC}, {"INFILE", "<", 400, INFILE},
+	{"OUTFILE", ">", 400, OUTFILE},
+	{"OUTFILE_APPEND", ">>", 400, OUTFILE_APPEND},
+	{"PAREN_LEFT", "(", 1000, PAREN_LEFT},
+	{"PAREN_RIGHT", ")", 1000, PAREN_RIGHT},
+	{"LITERAL", NULL, 400, LITERAL},
+	{"TKN_NEWLINE", "newline", 2000, TKN_NEWLINE}};
 
 int	token_id_get_prec(t_token_id id)
 {
-	int	*prec_ptr;
+	size_t	i;
 
-	prec_ptr = (int *)token_id_get_attribute(id, PRECEDENCE);
-	return (*prec_ptr);
-}
-
-t_token_id	token_id_get_id(t_token_id id)
-{
-	t_token_id	*id_ptr;
-
-	id_ptr = (t_token_id *)token_id_get_attribute(id, ID);
-	return (*id_ptr);
+	i = 0;
+	while (i < sizeof(g_token_types)/sizeof(*g_token_types))
+	{
+		if (g_token_types[i].id == id)
+			return (g_token_types[i].prec);
+		i++;
+	}
+	return (-1);
 }
 
 char *token_id_get_lexeme(t_token_id id)
 {
-	char **lexeme_ptr;
+	size_t	i;
 
-	lexeme_ptr = (char **)token_id_get_attribute(id, LEXEME);
-	return (*lexeme_ptr);
+	i = 0;
+	while (i < sizeof(g_token_types)/sizeof(*g_token_types))
+	{
+		if (g_token_types[i].id == id)
+			return (g_token_types[i].lexeme);
+		i++;
+	}
+	return (NULL);
 }
 
 char *token_id_get_name(t_token_id id)
 {
-	char **name_ptr;
+	size_t	i;
 
-	name_ptr = (char **)token_id_get_attribute(id, NAME);
-	return (*name_ptr);
+	i = 0;
+	while (i < sizeof(g_token_types)/sizeof(*g_token_types))
+	{
+		if (g_token_types[i].id == id)
+			return (g_token_types[i].name);
+		i++;
+	}
+	return (NULL);
+}
+
+// returns LITERAL when nothing else is valid
+t_token_id	token_string_get_id(const char *str)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < sizeof(g_token_types)/sizeof(*g_token_types))
+	{
+		if (g_token_types[i].lexeme == NULL)
+			continue ;
+		if (ft_strncmp(g_token_types[i].lexeme,
+				 str, ft_strlen(g_token_types[i].lexeme)) == 0)
+			return (g_token_types[i].id);
+		i++;
+	}
+	return (LITERAL);
 }
 
 int	token_type_print(t_token_id id)
@@ -72,4 +84,3 @@ int	token_type_print(t_token_id id)
 						 token_id_get_prec(id),
 						 token_id_get_lexeme(id)));
 }
-

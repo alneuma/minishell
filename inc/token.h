@@ -39,17 +39,18 @@ struct s_token
 	t_token_id	id;
 };
 
-// infiles/outfiles
-void	file_destroy(t_file *file);
+// token
+int			tokens_validate(int *valid, t_token_id *culprit, t_token *token);
+void		token_destroy(t_token **token, int keep_literal);
+int			token_type_print(t_token_id id);
+void		tokens_print(t_token *tokens);
+void		tokens_destroy(t_token **tokens);
+int			tokens_preprocess_redirects(t_token *tokens);
 
-int		tokens_validate(int *valid, t_token_id *culprit, t_token *token);
-void	token_destroy(t_token **token, int keep_literal);
-int		token_id_get_prec(t_token_id id);
-int		token_type_print(t_token_id id);
-char	*token_id_get_lexeme(t_token_id id);
-char	*token_id_get_name(t_token_id id);
-void	tokens_print(t_token *tokens);
-void	tokens_destroy(t_token **tokens);
-int		tokens_preprocess_redirects(t_token *tokens);
+// token id
+int			token_id_get_prec(t_token_id id);
+char		*token_id_get_lexeme(t_token_id id);
+char		*token_id_get_name(t_token_id id);
+t_token_id	token_string_get_id(const char *str);
 
 #endif //TOKEN_H

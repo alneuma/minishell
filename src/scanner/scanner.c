@@ -35,7 +35,7 @@ t_token	*scanner(char *input)
 	if (!*input)
 		return (NULL);
 	while (*input && is_blank(*input))
-		input++;;
+		input++;
 	if (*input)
 	{
 		if (get_next(&current, &input))
@@ -48,6 +48,8 @@ t_token	*scanner(char *input)
 	{
 		while (*input && is_blank(*input))
 			input++;
+		if (*input == '\0')
+			return (start);
 		if (get_next(&current->right, &input))
 		{
 			tokens_destroy(&start);
