@@ -5,31 +5,44 @@
 #include "variables.h"
 #include "data_structures.h"
 
-static int	parse_tree_insert(t_token **tree, t_token *new_node);
-
-int		expand_str(char **new_str, const t_variable_set *env, const char *str);
-int		expand_string_write(char *expansion, const t_variable_set, const char *str);
-int		expand_string_length(int *length, const t_variable_set *env, const char *str);
-int		expand_get_value_length(const t_variable_set *env, const char *key);
+int			expand_str(char **new_str, const t_variable_set *env, const char *str);
+int			expand_string_write(char *expansion, const t_variable_set, const char *str);
+int			expand_string_length(int *length, const t_variable_set *env, const char *str);
+int			expand_get_value_length(const t_variable_set *env, const char *key);
 // *str should point to first character after '$'
-char	*expand_get_key(const char *str);
-char	*expand_parameter(const t_variable_set *env, const char *str);
+char		*expand_get_key(const char *str);
+char		*expand_parameter(const t_variable_set *env, const char *str);
+static void	parse_tree_insert(t_token **tree, t_token *new_node);
 
-int	tree_from_tokens(t_token **tree, t_token *tokens)
+t_tokens	*tree_from_tokens(t_token **tokens)
 {
+	t_token	*tree;
 	t_token	*tmp;
 
-	*tree = NULL;
-	while (tokens != NULL)
+	tree = NULL;
+	while (*tokens != NULL)
 	{
-		tmp = tokens->right;
-		tokens->right = NULL;
-		tokens->left = NULL;
-		if (parse_tree_insert(tree, tokens))
-			return (1);;
-		tokens = tmp;
+		tmp = *tokens;
+		(*tokens) = tokens->right;
+		if (tmp->id == PAREN_LEFT)
+		{
+			token_destroy(&tmp, FREE_STRING);
+			parse_tree_insert(&tree, tree_from_tokens(tokens));
+		}
+		else if (tmp->id == PAREN_RIGHT)
+		{
+			token_destroy(&tmp, FREE_STRING);
+			tree->subshell = 1;
+			return (tree);
+		}
+		else
+		{
+			tmp->right = NULL;
+			tmp->left = NULL;
+			parse_tree_insert(&tree, tmp);
+		}
 	}
-	return (0);
+	return (tree);
 }
 
 void	parse_tree_destroy(t_token **tree)
@@ -42,27 +55,25 @@ void	parse_tree_destroy(t_token **tree)
 	*tree = NULL;
 }
 
-static int	parse_tree_insert(t_token **tree, t_token *new_node)
+static void	parse_tree_insert(t_token **tree, t_token *new_node)
 {
 	int		prec_tree;
 	int		prec_node;
 
 	if (*tree == NULL)
-	{
 		*tree = new_node;
-		return (0);
-	}
 	prec_tree = token_id_get_prec((*tree)->id);
 	prec_node = token_id_get_prec(new_node->id);
-	if (prec_node >= prec_tree)
-		return (parse_tree_insert(&(*tree)->right, new_node));
+	if (prec_node >= prec_tree || new_node->is_subshell > (*tree)->is_subshell)
+	{
+		parse_tree_insert(&(*tree)->right, new_node);
+		return ;
+	}
 	if (prec_node < prec_tree)
 	{
 		new_node->left = *tree;
 		*tree = new_node;
-		return (0);
 	}
-	return (1);
 }
 
 // int	tree_literals_make_argv(t_token *tree)
