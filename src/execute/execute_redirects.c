@@ -13,7 +13,8 @@ int	is_fatal(int error);
 
 // fd_in: incomming from the redirect
 // fd_out: outgoing from the redirect
-int	redirect_fds_get(int *error, int *infile_fd, int *outfile_fd, t_token **token)
+int	redirect_fds_get(int *error, int *infile_fd, int *outfile_fd,
+		t_token **tokens)
 {
 	t_token	*p;
 	t_token	*tmp;
@@ -82,6 +83,7 @@ int	heredoc(int *error, int *infile_fd, const char *heredoc)
 	if (write(fds[1], hd_exp, ft_strlen(hd_exp)) < 0)
 		*error = errno;
 	// TODO: protect close()
+	free(hd_exp);
 	close (fds[1]);
 	if (is_fatal(*error))
 		return (*error);
