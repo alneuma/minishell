@@ -5,103 +5,119 @@
 #include <stdlib.h>
 #include "token.h"
 
-// int	write_file(int fd_out, int fd_in);
-int	redirect_file_open(int *fd, t_file *file);
+int	redirect_open(int *error, int *infile_fd, int *outfile_fd, t_token *tmp);
+int	heredoc(int *error, int *infile_fd, const char *heredoc);
+int	infile_open(int *error, int *infile_fd, const char *file);
+int	outfile_open(int *error, int *infile_fd, int *outfile_fd, const char *file);
+int	is_fatal(int error);
 
 // fd_in: incomming from the redirect
 // fd_out: outgoing from the redirect
-int	redirect_fds_get(int *infile_fd, int *outfile_fd, char **hdoc, t_token *token)
+int	redirect_fds_get(int *error, int *infile_fd, int *outfile_fd, t_token **token)
 {
+	t_token	*p;
+	t_token	*tmp;
 	int		return_code;
-	t_file	*file;
 
-	*outfile_fd = -1;
 	*infile_fd = -1;
-	*hdoc = NULL;
-	return_code = 0;
-	while (queue_get_size(token->redirects) > 0)
+	*outfile_fd = -1;
+	p = *tokens;
+	*error = 0;
+	while (p != NULL && is_redirect(p->id))
 	{
-		queue_dequeue((void **)&file, token->redirects);
-		if (file->type == INFILE)
-		{
-			free(*hdoc);
-			*hdoc = NULL;
-			return_code = redirect_file_open(infile_fd, file);
-		}
-		else if (file->type == OUTFILE || file->type == OUTFILE_APPEND)
-			return_code = redirect_file_open(outfile_fd, file);
-		else if (file->type == HEREDOC)
-		{
-			free(*hdoc);
-			*hdoc = file->file;
-			file->file = NULL;
-			if (*infile_fd >= 0 && close(*infile_fd) < 0)
-			{
-				file_destroy(file);
-				infile_fd = -1;
-				return (errno);
-			}
-			*infile_fd = -1;
-		}
-		file_destroy(file);
+		tmp = p;
+		p = p->next;
+		return_code = process_redirect(error, infile_fd, outfile_fd, tmp);
 		if (return_code)
 			return (return_code);
-	}
-	return (0);
-}
-
-// int func(int, int)
-// {
-// 	if (last_in >= 0)
-// 	{
-// 		return_code = write_file(fd_out, last_in);	
-// 		if (return_code)
-// 			return (return_code);
-// 	}
-// 	if (last_out >= 0)
-// 	{
-// 		return_code = write_file(fd_in, last_out);	
-// 		if (return_code)
-// 			return (return_code);
-// 	}
-// }
-
-int	redirect_file_open(int *fd, t_file *file)
-{
-	if (*fd != -1 && close(*fd) < 0)
-		return (errno);
-	if (file->type == INFILE)
-		*fd = open(file->file, O_RDONLY);
-	else if (file->type == OUTFILE)
-		*fd = open(file->file, O_WRONLY | O_CREAT);
-	else if (file->type == OUTFILE_APPEND)
-		*fd = open(file->file, O_WRONLY | O_CREAT | O_APPEND);
-	if (*fd < 0)
-		return (errno);
-	return (0);
-}
-
-int	write_file(int fd_in, int fd_out)
-{
-	char	b;
-	ssize_t	bytes;
-
-	bytes = 1;
-	while (bytes > 0)
-	{
-		bytes = read(fd_in, &b, 1);
-		if (bytes < 0)
-		{
-			close(fd_in);
-			return (errno);
-		}
-		if (bytes == 0)
+		if (*error)
 			return (0);
-		if (write(fd_out, &b, 1) < 0)
+		token_destroy(&tmp, FREE_STRING);
+	}
+	*tokens = p;
+	while (p != NULL)
+	{
+		if (is_redirect(p->next->id))
 		{
-			close(fd_out);
-			return (errno);
+			tmp = p->next;
+			p->next = p->next->next;
+			return_code = process_redirect(error, infile_fd, outfile_fd, tmp);
+			if (return_code)
+				return (return_code);
+			if (*error)
+				return (0);
+			token_destroy(&tmp, FREE_STRING);
 		}
+		p = p->next;
 	}
 	return (0);
+}
+
+int	redirect_open(int *error, int *infile_fd, int *outfile_fd, t_token *tmp)
+{
+	if (tmp->id == HEREDOC)
+		return (heredoc_open(error, infile_fd, tmp->string));
+	else if (tmp->id == INFILE)
+		return (infile_open(error, infile_fd, tmp->string));
+	else if (tmp->id == OUTFILE || tmp->id == OUTFILE_APPEND)
+		return (outfile_open(error, outfile_fd, tmp->string));
+	return (0)
+}
+
+int	heredoc(int *error, int *infile_fd, const char *heredoc)
+{
+	char	*hd_exp;
+	int		fds[2];
+	int		return_code;
+
+	// TODO: protect close()
+	if (*infile_fd != -1)
+		close (*infile_fd);
+	hd_exp = heredoc_expand(heredoc);
+	if (hd_exp == NULL)
+		return (ENOMEM);
+	if (pipe(fds) < 0)
+		return (errno);
+	*infile_fd = fds[0];
+	if (write(fds[1], hd_exp, ft_strlen(hd_exp)) < 0)
+		*error = errno;
+	// TODO: protect close()
+	close (fds[1]);
+	if (is_fatal(*error))
+		return (*error);
+	return (0);
+}
+
+int	infile_open(int *error, int *infile_fd, const char *file)
+{
+	// TODO: protect close()
+	if (*infile_fd != -1)
+		close (*infile_fd);
+	*infile_fd = open(file->file, O_RDONLY);
+	if (*infile_fd < 0)
+		*error = errno;
+	if (is_fatal(*error))
+		return (*error);
+	return (0);
+}
+
+int	outfile_open(int *error, int *infile_fd, int *outfile_fd, const char *file)
+{
+	// TODO: protect close()
+	if (*outfile_fd != -1)
+		close (*outfile_fd);
+	if (file->type == OUTFILE)
+		*outfile_fd = open(file->file, O_WRONLY | O_CREAT);
+	else if (file->type == OUTFILE_APPEND)
+		*outfile_fd = open(file->file, O_WRONLY | O_CREAT | O_APPEND);
+	if (*outfile_fd < 0)
+		*error = errno;
+	if (is_fatal(*error))
+		return (*error);
+	return (0);
+}
+
+int	is_fatal(int error)
+{
+	return (error == ENOMEM);
 }
