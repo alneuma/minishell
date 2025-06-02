@@ -1,6 +1,10 @@
-int		is_space(const char c);
-void	skip_through_word(const char *str);
-int		str_num_words(const char *str);
+#include "libft.h"
+#include "utils.h"
+
+static char	*next_word(const char **str);
+static int	write_words_from_token(char **argv, int *idx, const t_token *token);
+static int	str_num_words(const char *str);
+static void	skip_through_word(const char *str);
 
 char	**tokens_make_argv(const t_token *tokens)
 {
@@ -16,7 +20,7 @@ char	**tokens_make_argv(const t_token *tokens)
 		words += str_num_words(p->string);
 		p = p->next;
 	}
-	argv = (char **)calloc(sizeof(*argv) * (words + 1));
+	argv = (char **)ft_calloc(words + 1, sizeof(*argv));
 	if (argv == NULL)
 		return (NULL);
 	words = 0;
@@ -33,7 +37,7 @@ char	**tokens_make_argv(const t_token *tokens)
 	return (argv);
 }
 
-char	*next_word(const char **str)
+static char	*next_word(const char **str)
 {
 	char	*new_word;
 	char	*p;
@@ -51,7 +55,7 @@ char	*next_word(const char **str)
 	return (new_word);
 }
 
-int	write_words_from_token(char **argv, int *idx, const t_token *token)
+static int	write_words_from_token(char **argv, int *idx, const t_token *token)
 {
 	char	*str;
 
@@ -66,19 +70,14 @@ int	write_words_from_token(char **argv, int *idx, const t_token *token)
 	return (0);
 }
 
-int	is_space(const char c)
-{
-	return (c == ' ' || c == '\t' || c == '\n');
-}
-
-int	str_num_words(const char *str)
+static int	str_num_words(const char *str)
 {
 	int		words;
 
 	words = 0;
 	while (*str)
 	{
-		while (*str && is_space(*str))
+		while (*str && is_blank(*str))
 			str++;
 		if (*str == '\0')
 			return (words);
@@ -90,12 +89,12 @@ int	str_num_words(const char *str)
 
 // does not need to check for '\0' in the inner loop
 // as correct syntax is assumed
-void	skip_through_word(const char *str)
+static void	skip_through_word(const char *str)
 {
 	char	quote;
 
 	quote = 0;
-	while (**str != '\0' && !is_space(**str))
+	while (**str != '\0' && !is_blank(**str))
 	{
 		if (is_quote(**str))
 		{

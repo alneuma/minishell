@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "variables.h"
 #include "libft.h"
+#include "utils.h"
 
 void	expand_write_single_quoted(char **expansion, char **str);
 int		expand_write_val(char **expansion, char **str, const t_variable_set *env);
@@ -11,12 +12,6 @@ int		expand_string_write(char *expansion, const t_variable_set *env, char *str);
 int		expand_string_length(int *length, const t_variable_set *env,
 			const char *str);
 int		expand_get_value_length(const t_variable_set *env, const char *key);
-
-// copied from token.c
-static int	is_blank(char c)
-{
-	return (c == ' ' || c == '\t' || c == '\n');
-}
 
 int	expand_str(char **new_str, const t_variable_set *env, const char *str)
 {

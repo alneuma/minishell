@@ -17,7 +17,6 @@ int					token_print_lexeme(t_token_id id);
 int					make_token(t_token **token,
 						t_token_id id, char **str);
 int					get_next(t_token **token, char **input);
-int					is_blank(char c);
 void				token_print(t_token *token);
 
 #endif //SCANNER_INTERNALS_H
