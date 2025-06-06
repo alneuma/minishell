@@ -4,11 +4,12 @@
 #include <errno.h>
 #include <stdlib.h>
 #include "token.h"
+#include "libft.h"
 
 int	redirect_open(int *error, int *infile_fd, int *outfile_fd, t_token *tmp);
 int	heredoc(int *error, int *infile_fd, const char *heredoc);
-int	infile_open(int *error, int *infile_fd, const char *file);
-int	outfile_open(int *error, int *infile_fd, int *outfile_fd, const char *file);
+int	infile_open(int *error, int *infile_fd, const t_token *rd);
+int	outfile_open(int *error, int *outfile_fd, const t_token *rd);
 int	is_fatal(int error);
 
 // fd_in: incomming from the redirect
@@ -24,11 +25,11 @@ int	redirect_fds_get(int *error, int *infile_fd, int *outfile_fd,
 	*outfile_fd = -1;
 	p = *tokens;
 	*error = 0;
-	while (p != NULL && is_redirect(p->id))
+	while (p != NULL && token_id_is_redirect(p->id))
 	{
 		tmp = p;
-		p = p->next;
-		return_code = process_redirect(error, infile_fd, outfile_fd, tmp);
+		p = p->right;
+		return_code = redirect_open(error, infile_fd, outfile_fd, tmp);
 		if (return_code)
 			return (return_code);
 		if (*error)
@@ -38,18 +39,18 @@ int	redirect_fds_get(int *error, int *infile_fd, int *outfile_fd,
 	*tokens = p;
 	while (p != NULL)
 	{
-		if (is_redirect(p->next->id))
+		if (token_id_is_redirect(p->right->id))
 		{
-			tmp = p->next;
-			p->next = p->next->next;
-			return_code = process_redirect(error, infile_fd, outfile_fd, tmp);
+			tmp = p->right;
+			p->right = p->right->right;
+			return_code = redirect_open(error, infile_fd, outfile_fd, tmp);
 			if (return_code)
 				return (return_code);
 			if (*error)
 				return (0);
 			token_destroy(&tmp, FREE_STRING);
 		}
-		p = p->next;
+		p = p->right;
 	}
 	return (0);
 }
@@ -57,19 +58,18 @@ int	redirect_fds_get(int *error, int *infile_fd, int *outfile_fd,
 int	redirect_open(int *error, int *infile_fd, int *outfile_fd, t_token *tmp)
 {
 	if (tmp->id == HEREDOC)
-		return (heredoc_open(error, infile_fd, tmp->string));
+		return (heredoc_open(error, infile_fd, tmp));
 	else if (tmp->id == INFILE)
-		return (infile_open(error, infile_fd, tmp->string));
+		return (infile_open(error, infile_fd, tmp));
 	else if (tmp->id == OUTFILE || tmp->id == OUTFILE_APPEND)
-		return (outfile_open(error, outfile_fd, tmp->string));
-	return (0)
+		return (outfile_open(error, outfile_fd, tmp));
+	return (0);
 }
 
 int	heredoc(int *error, int *infile_fd, const char *heredoc)
 {
 	char	*hd_exp;
 	int		fds[2];
-	int		return_code;
 
 	// TODO: protect close()
 	if (*infile_fd != -1)
@@ -90,12 +90,12 @@ int	heredoc(int *error, int *infile_fd, const char *heredoc)
 	return (0);
 }
 
-int	infile_open(int *error, int *infile_fd, const char *file)
+int	infile_open(int *error, int *infile_fd, const t_token *rd)
 {
 	// TODO: protect close()
 	if (*infile_fd != -1)
 		close (*infile_fd);
-	*infile_fd = open(file->file, O_RDONLY);
+	*infile_fd = open(rd->string, O_RDONLY);
 	if (*infile_fd < 0)
 		*error = errno;
 	if (is_fatal(*error))
@@ -103,15 +103,15 @@ int	infile_open(int *error, int *infile_fd, const char *file)
 	return (0);
 }
 
-int	outfile_open(int *error, int *infile_fd, int *outfile_fd, const char *file)
+int	outfile_open(int *error, int *outfile_fd, const t_token *rd)
 {
 	// TODO: protect close()
 	if (*outfile_fd != -1)
 		close (*outfile_fd);
-	if (file->type == OUTFILE)
-		*outfile_fd = open(file->file, O_WRONLY | O_CREAT);
-	else if (file->type == OUTFILE_APPEND)
-		*outfile_fd = open(file->file, O_WRONLY | O_CREAT | O_APPEND);
+	if (rd->id == OUTFILE)
+		*outfile_fd = open(rd->string, O_WRONLY | O_CREAT);
+	else if (rd->id == OUTFILE_APPEND)
+		*outfile_fd = open(rd->string, O_WRONLY | O_CREAT | O_APPEND);
 	if (*outfile_fd < 0)
 		*error = errno;
 	if (is_fatal(*error))

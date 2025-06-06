@@ -1,8 +1,8 @@
 #include <errno.h>
 #include <stdlib.h>
+#include "utils.h"
 #include "libft.h"
 
-static int	is_quote(const char c);
 // counts the number of matching quotes
 static int	str_count_quotes(const char *str);
 
@@ -31,11 +31,6 @@ char	*str_remove_quotes(const char *str)
 	}
 	new_str[i] = '\0';
 	return (new_str);
-}
-
-static int	is_quote(const char c)
-{
-	return (c == '\'' || c == '"');
 }
 
 // counts the number of unquoted quotes

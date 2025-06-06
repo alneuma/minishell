@@ -2,15 +2,10 @@
 #include "data_structures.h"
 #include "parenthesis.h"
 #include "token.h"
+#include "utils.h"
 
-int	is_quote(const char c);
 int	process_right_paren(int *valid, const char paren, t_stack_char *stack);
 int	process_left_paren(const char paren, t_stack_char *stack);
-
-int	is_quote(const char c)
-{
-	return (c == '\'' || c == '"');
-}
 
 int	process_right_paren(int *valid, const char paren, t_stack_char *stack)
 {

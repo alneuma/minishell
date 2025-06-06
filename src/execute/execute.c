@@ -1,10 +1,12 @@
 #include <sys/types.h>
+#include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <errno.h>
 #include "variables.h"
 #include "token.h"
 #include "libft.h"
+#include "execute_internals.h"
 
 int	execute_or(t_token *tree, int fd_in, int fd_out, t_env *env);
 int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env);
@@ -100,12 +102,13 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 		char	*cmd = ft_strjoin("/usr/bin/", tree->string);
 		if (cmd == NULL)
 			return (ENOMEM);
-		char	*argv[3];
-		argv[0] = tree->string;
-		argv[1] = "TODO.md";
-		argv[2] = NULL;
+		// char	**argv = {NULL};
+		char	**argv = tokens_make_argv(tree);
 		char	**envp = variable_set_array_get(env->vars, ENV);
 		execve(cmd, argv, envp);
+		argv_destroy(&envp);
+		argv_destroy(&argv);
+		free(cmd);
 		return (errno);
 	}
 	else if (pid > 0)

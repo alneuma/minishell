@@ -4,6 +4,7 @@
 #include <errno.h>
 #include "scanner_internals.h"
 #include "scanner.h"
+#include "utils.h"
 
 // overwrites input to point directly after the read lexeme
 // success	-> 0

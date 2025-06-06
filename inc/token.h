@@ -40,6 +40,7 @@ struct s_token
 };
 
 // token
+int			token_id_is_redirect(t_token_id id);
 int			tokens_validate(int *valid, t_token_id *culprit, t_token *token);
 void		token_destroy(t_token **token, int keep_literal);
 int			token_type_print(t_token_id id);

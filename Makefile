@@ -25,8 +25,12 @@ SRC	+= queue.c
 SRC	+= queue_init.c
 vpath %.c $(SRC_DIR)/data_structures/stack_char
 SRC	+= stack_char.c
+vpath %.c $(SRC_DIR)/utils
+SRC	+= utils_string.c
 vpath %.c $(SRC_DIR)/execute
 SRC	+= execute.c
+SRC	+= execute_argv.c
+# SRC	+= execute_redirects.c
 # SRC += execute_redirects.c
 vpath %.c $(SRC_DIR)/environment
 # variable_set
