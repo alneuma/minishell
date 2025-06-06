@@ -103,7 +103,7 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 		if (cmd == NULL)
 			return (ENOMEM);
 		// char	**argv = {NULL};
-		char	**argv = tokens_make_argv(tree);
+		char	**argv = tokens_make_argv(tree, (const t_variable_set *)env->vars);
 		char	**envp = variable_set_array_get(env->vars, ENV);
 		execve(cmd, argv, envp);
 		argv_destroy(&envp);

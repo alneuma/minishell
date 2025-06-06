@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <errno.h>
+#include "expander.h"
 #include "variables.h"
 #include "variables_internals.h"
 #include "assignment_strings.h"
@@ -36,14 +37,22 @@ int	variable_set_assignment_string_add(t_variable_set *env, const char *str,
 {
 	char	*key;
 	char	*val;
+	char	*tmp;
 	int		return_code;
 
 	key = assignment_string_key_get(str);
 	if (key == NULL)
 		return (ENOMEM);
-	val = assignment_string_val_get(str);
+	tmp = assignment_string_val_get(str);
+	if (tmp == NULL)
+	{
+		free(key);
+		return (ENOMEM);
+	}
+	val = str_remove_quotes(tmp);
 	if (val == NULL)
 	{
+		free(tmp);
 		free(key);
 		return (ENOMEM);
 	}
