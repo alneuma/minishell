@@ -7,8 +7,8 @@
 #include "token.h"
 
 static char	*next_word(char **str);
-static int	write_words_from_token(char **argv, int *idx, const t_token *token, const t_variable_set *vars);
-static int	str_num_words(char *str, const t_variable_set *vars);
+static int	write_words_from_token(char **argv, int *idx, const t_token *token);
+static int	str_num_words(char *str);
 static void	skip_through_word(char **str);
 
 void	argv_destroy(char ***argv)
@@ -22,7 +22,7 @@ void	argv_destroy(char ***argv)
 	*argv = NULL;
 }
 		
-char	**tokens_make_argv(const t_token *tokens, const t_variable_set *vars)
+char	**tokens_make_argv(const t_token *tokens)
 {
 	char	**argv;
 	int		words;
@@ -33,7 +33,7 @@ char	**tokens_make_argv(const t_token *tokens, const t_variable_set *vars)
 	words = 0;
 	while (p != NULL)
 	{
-		words += str_num_words(p->string, vars);
+		words += str_num_words(p->string);
 		p = p->right;
 	}
 	argv = (char **)ft_calloc(words + 1, sizeof(*argv));
@@ -42,7 +42,7 @@ char	**tokens_make_argv(const t_token *tokens, const t_variable_set *vars)
 	words = 0;
 	while (tokens != NULL)
 	{
-		return_value = write_words_from_token(argv, &words, tokens, vars);
+		return_value = write_words_from_token(argv, &words, tokens);
 		if (return_value)
 		{
 			argv_destroy(&argv);
@@ -71,14 +71,11 @@ static char	*next_word(char **str)
 	return (new_word);
 }
 
-static int	write_words_from_token(char **argv, int *idx, const t_token *token, const t_variable_set *vars)
+static int	write_words_from_token(char **argv, int *idx, const t_token *token)
 {
-	char	*str;
-	int		return_code;
+	char *str;
 
-	return_code = expand_str(&str, vars, token->string);
-	if (return_code != 0)
-		return (return_code);
+	str = (char *)token->string;
 	while (*str != '\0')
 	{
 		argv[*idx] = next_word(&str);
@@ -89,28 +86,20 @@ static int	write_words_from_token(char **argv, int *idx, const t_token *token, c
 	return (0);
 }
 
-static int	str_num_words(char *str, const t_variable_set *vars)
+static int	str_num_words(char *str)
 {
 	int		words;
-	char	*tmp;
-	int		return_code;
 
-
-	return_code = expand_str(&tmp, vars, str);
-	if (return_code != 0)
-		return (return_code);
 	words = 0;
-	str = tmp;
-	while (*tmp)
+	while (*str)
 	{
-		while (*tmp && is_blank(*tmp))
-			tmp++;
-		if (*tmp == '\0')
+		while (*str && is_blank(*str))
+			str++;
+		if (*str == '\0')
 			return (words);
 		words++;
-		skip_through_word(&tmp);
+		skip_through_word(&str);
 	}
-	free(str);
 	return (words);
 }
 

@@ -3,17 +3,35 @@
 #include "variables.h"
 #include "libft.h"
 #include "utils.h"
+#include "expander.h"
 
 void	expand_write_single_quoted(char **expansion, char **str);
-int		expand_write_val(char **expansion, char **str, const t_variable_set *env);
-int		expand_get_length(int *len, const char *str, const t_variable_set *env);
+int		expand_write_val(char **expansion, char **str, const t_env *env);
+int		expand_get_length(int *len, const char *str, const t_env *env);
 char	*expand_get_key(const char *key_start);
-int		expand_string_write(char *expansion, const t_variable_set *env, char *str);
-int		expand_string_length(int *length, const t_variable_set *env,
+int		expand_string_write(char *expansion, const t_env *env, char *str);
+int		expand_string_length(int *length, const t_env *env,
 			const char *str);
-int		expand_get_value_length(const t_variable_set *env, const char *key);
+int		expand_get_value_length(const t_env *env, const char *key);
 
-int	expand_str(char **new_str, const t_variable_set *env, const char *str)
+int	expand_tokens(t_token *tokens, const t_env *env)
+{
+	char	*tmp;
+	int		return_code;
+	
+	while (tokens != NULL)
+	{
+		return_code = expand_str(&tmp, env, tokens->string);
+		if (return_code != 0)
+			return (return_code);
+		free(tokens->string);
+		tokens->string = tmp;
+		tokens = tokens->right;
+	}
+	return (0);
+}
+		
+int	expand_str(char **new_str, const t_env *env, const char *str)
 {
 	int		length;
 	int		return_code;
@@ -33,7 +51,7 @@ int	expand_str(char **new_str, const t_variable_set *env, const char *str)
 	return (return_code);
 }
 
-int	expand_string_write(char *expansion, const t_variable_set *env, char *str)
+int	expand_string_write(char *expansion, const t_env *env, char *str)
 {
 	int	return_code;
 	int	quoted_double;
@@ -66,7 +84,7 @@ void	expand_write_single_quoted(char **expansion, char **str)
 	*(*expansion)++ = *(*str)++;
 }
 
-int	expand_write_val(char **expansion, char **str, const t_variable_set *env)
+int	expand_write_val(char **expansion, char **str, const t_env *env)
 {
 	char	*key;
 	char	*val;
@@ -75,14 +93,14 @@ int	expand_write_val(char **expansion, char **str, const t_variable_set *env)
 	if (key == NULL)
 		return (ENOMEM);
 	*str += ft_strlen(key) + 1;
-	val = variable_set_var_get_ref(env, key);
+	val = variable_set_var_get_ref(env->vars, key);
 	free(key);
 	while (*val != '\0')
 		*(*expansion)++ = *val++;
 	return (0);
 }
 
-int	expand_string_length(int *length, const t_variable_set *env, const char *str)
+int	expand_string_length(int *length, const t_env *env, const char *str)
 {
 	int	i;
 	int	tmp;
@@ -111,7 +129,7 @@ int	expand_string_length(int *length, const t_variable_set *env, const char *str
 }
 
 
-int	expand_get_length(int *len, const char *str, const t_variable_set *env)
+int	expand_get_length(int *len, const char *str, const t_env *env)
 {
 	char	*key;
 
@@ -125,11 +143,11 @@ int	expand_get_length(int *len, const char *str, const t_variable_set *env)
 	return (0);
 }
 
-int	expand_get_value_length(const t_variable_set *env, const char *key)
+int	expand_get_value_length(const t_env *env, const char *key)
 {
 	char	*value;
 
-	value = variable_set_var_get_ref(env, key);
+	value = variable_set_var_get_ref(env->vars, key);
 	if (value == NULL)
 		return (0);
 	return (ft_strlen(value));

@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include "variables.h"
+#include "expander.h"
 #include "token.h"
 #include "libft.h"
 #include "execute_internals.h"
@@ -101,8 +102,10 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 		return (errno);
 	else if (pid == 0)
 	{
-		// char	**argv = {NULL};
-		char	**argv = tokens_make_argv(tree, (const t_variable_set *)env->vars);
+		return_code = expand_tokens(tree, env);
+		if (return_code != 0)
+			return (return_code);
+		char	**argv = tokens_make_argv(tree);
 		char const	*str = "/usr/bin/";
 		char	*cmd = ft_strjoin(str, argv[0]);
 		if (cmd == NULL)
