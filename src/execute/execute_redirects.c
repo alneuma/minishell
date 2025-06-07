@@ -38,9 +38,11 @@ int	redirect_fds_get(int *error, int *infile_fd, int *outfile_fd,
 		token_destroy(&tmp, FREE_STRING);
 	}
 	*tokens = p;
-	while (p != NULL)
+	if (p == NULL)
+		return (0);
+	while (p != NULL && p->right != NULL)
 	{
-		if (token_id_is_redirect(p->right->id))
+		if (token_id_is_redirect(tmp->id))
 		{
 			tmp = p->right;
 			p->right = p->right->right;

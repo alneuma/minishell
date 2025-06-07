@@ -120,8 +120,8 @@ int main(int argc, char **argv, char **envp)
 			free(line);
 			if (!tokens)
 				return (1);
-			// ft_printf("\n\ntokens:\n");
-			// tokens_print(tokens);
+			ft_printf("\n\ntokens:\n");
+			tokens_print(tokens);
 			return_code = tokens_validate(&valid, &culprit, tokens);
 			if (return_code || !valid)
 			{
