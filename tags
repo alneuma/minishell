@@ -36,8 +36,8 @@ CC	libft/Makefile	/^CC					:= cc$/;"	m
 CC	libft/dir_libft/Makefile	/^CC					:= cc$/;"	m
 CC	libft/dir_printf/Makefile	/^CC				:= cc$/;"	m
 CFLAGS	Makefile	/^CFLAGS		:=$/;"	m
-CFLAGS	libft/Makefile	/^CFLAGS				:= -Wall -Wextra -Werror --pedantic$/;"	m
-CFLAGS	libft/dir_libft/Makefile	/^CFLAGS				:= -Wall -Wextra -Werror --pedantic$/;"	m
+CFLAGS	libft/Makefile	/^CFLAGS				:= -Wall -Wextra -Werror --pedantic -g3$/;"	m
+CFLAGS	libft/dir_libft/Makefile	/^CFLAGS				:= -Wall -Wextra -Werror --pedantic -g3$/;"	m
 CFLAGS	libft/dir_printf/Makefile	/^CFLAGS			:= -Wall -Wextra -Werror --pedantic$/;"	m
 CONVERSION_H	libft/dir_printf/inc/conversion.h	/^# define CONVERSION_H$/;"	d
 CPPFLAGS	Makefile	/^CPPFLAGS	:=$/;"	m
@@ -206,13 +206,14 @@ execute_literal	src/execute/execute.c	/^int	execute_literal(t_token *tree, int f
 execute_or	src/execute/execute.c	/^int	execute_or(t_token *tree, int fd_in, int fd_out, t_env *env)$/;"	f	typeref:typename:int
 execute_pipe	src/execute/execute.c	/^int execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)$/;"	f	typeref:typename:int
 expand_get_key	src/expander/expander.c	/^char	*expand_get_key(const char *key_start)$/;"	f	typeref:typename:char *
-expand_get_length	src/expander/expander.c	/^int	expand_get_length(int *len, const char *str, const t_variable_set *env)$/;"	f	typeref:typename:int
-expand_get_value_length	src/expander/expander.c	/^int	expand_get_value_length(const t_variable_set *env, const char *key)$/;"	f	typeref:typename:int
-expand_str	src/expander/expander.c	/^int	expand_str(char **new_str, const t_variable_set *env, const char *str)$/;"	f	typeref:typename:int
-expand_string_length	src/expander/expander.c	/^int	expand_string_length(int *length, const t_variable_set *env, const char *str)$/;"	f	typeref:typename:int
-expand_string_write	src/expander/expander.c	/^int	expand_string_write(char *expansion, const t_variable_set *env, char *str)$/;"	f	typeref:typename:int
+expand_get_length	src/expander/expander.c	/^int	expand_get_length(int *len, const char *str, const t_env *env)$/;"	f	typeref:typename:int
+expand_get_value_length	src/expander/expander.c	/^int	expand_get_value_length(const t_env *env, const char *key)$/;"	f	typeref:typename:int
+expand_str	src/expander/expander.c	/^int	expand_str(char **new_str, const t_env *env, const char *str)$/;"	f	typeref:typename:int
+expand_string_length	src/expander/expander.c	/^int	expand_string_length(int *length, const t_env *env, const char *str)$/;"	f	typeref:typename:int
+expand_string_write	src/expander/expander.c	/^int	expand_string_write(char *expansion, const t_env *env, char *str)$/;"	f	typeref:typename:int
+expand_tokens	src/expander/expander.c	/^int	expand_tokens(t_token *tokens, const t_env *env)$/;"	f	typeref:typename:int
 expand_write_single_quoted	src/expander/expander.c	/^void	expand_write_single_quoted(char **expansion, char **str)$/;"	f	typeref:typename:void
-expand_write_val	src/expander/expander.c	/^int	expand_write_val(char **expansion, char **str, const t_variable_set *env)$/;"	f	typeref:typename:int
+expand_write_val	src/expander/expander.c	/^int	expand_write_val(char **expansion, char **str, const t_env *env)$/;"	f	typeref:typename:int
 fclean	Makefile	/^fclean: clean$/;"	t
 fclean	libft/Makefile	/^fclean: clean$/;"	t
 fclean	libft/dir_libft/Makefile	/^fclean: clean$/;"	t
@@ -453,7 +454,7 @@ token_print	src/token/token.c	/^void	token_print(t_token *token)$/;"	f	typeref:t
 token_string_get_id	src/token/token_types.c	/^t_token_id	token_string_get_id(const char *str)$/;"	f	typeref:typename:t_token_id
 token_type_print	src/token/token_types.c	/^int	token_type_print(t_token_id id)$/;"	f	typeref:typename:int
 tokens_destroy	src/token/token.c	/^void	tokens_destroy(t_token **tokens)$/;"	f	typeref:typename:void
-tokens_make_argv	src/execute/execute_argv.c	/^char	**tokens_make_argv(const t_token *tokens, const t_variable_set *vars)$/;"	f	typeref:typename:char **
+tokens_make_argv	src/execute/execute_argv.c	/^char	**tokens_make_argv(const t_token *tokens)$/;"	f	typeref:typename:char **
 tokens_preprocess_redirects	src/token/token_redirects.c	/^int	tokens_preprocess_redirects(t_token *tokens)$/;"	f	typeref:typename:int
 tokens_print	src/token/token.c	/^void	tokens_print(t_token *tokens)$/;"	f	typeref:typename:void
 tokens_valid_neighbours	src/token/token_validate.c	/^int	tokens_valid_neighbours(t_token *left, t_token *right)$/;"	f	typeref:typename:int
@@ -490,4 +491,4 @@ vars	inc/variables.h	/^	t_variable_set	*vars;$/;"	m	struct:e_env	typeref:typenam
 width	libft/dir_printf/inc/conversion.h	/^	ssize_t	width;$/;"	m	struct:s_spec	typeref:typename:ssize_t
 words_write	libft/dir_libft/ft_split.c	/^static int	words_write(char **arr, char const *s, char c)$/;"	f	typeref:typename:int	file:
 write_word_and_skip	libft/dir_libft/ft_split.c	/^static const char	*write_word_and_skip(char **dst, const char *src,$/;"	f	typeref:typename:const char *	file:
-write_words_from_token	src/execute/execute_argv.c	/^static int	write_words_from_token(char **argv, int *idx, const t_token *token, const t_variable_/;"	f	typeref:typename:int	file:
+write_words_from_token	src/execute/execute_argv.c	/^static int	write_words_from_token(char **argv, int *idx, const t_token *token)$/;"	f	typeref:typename:int	file:

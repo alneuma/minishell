@@ -11,6 +11,7 @@ int	heredoc(int *error, int *infile_fd, const char *heredoc);
 int	infile_open(int *error, int *infile_fd, const t_token *rd);
 int	outfile_open(int *error, int *outfile_fd, const t_token *rd);
 int	is_fatal(int error);
+int	heredoc_open(int *error, int *infile_fd, const t_token *token);
 
 // fd_in: incomming from the redirect
 // fd_out: outgoing from the redirect
@@ -66,24 +67,19 @@ int	redirect_open(int *error, int *infile_fd, int *outfile_fd, t_token *tmp)
 	return (0);
 }
 
-int	heredoc(int *error, int *infile_fd, const char *heredoc)
+int	heredoc_open(int *error, int *infile_fd, const t_token *token)
 {
-	char	*hd_exp;
 	int		fds[2];
 
 	// TODO: protect close()
 	if (*infile_fd != -1)
 		close (*infile_fd);
-	hd_exp = heredoc_expand(heredoc);
-	if (hd_exp == NULL)
-		return (ENOMEM);
 	if (pipe(fds) < 0)
 		return (errno);
 	*infile_fd = fds[0];
-	if (write(fds[1], hd_exp, ft_strlen(hd_exp)) < 0)
+	if (write(fds[1], token->string, ft_strlen(token->string)) < 0)
 		*error = errno;
 	// TODO: protect close()
-	free(hd_exp);
 	close (fds[1]);
 	if (is_fatal(*error))
 		return (*error);

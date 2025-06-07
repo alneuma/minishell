@@ -30,7 +30,7 @@ SRC	+= utils_string.c
 vpath %.c $(SRC_DIR)/execute
 SRC	+= execute.c
 SRC	+= execute_argv.c
-# SRC	+= execute_redirects.c
+SRC	+= execute_redirects.c
 # SRC += execute_redirects.c
 vpath %.c $(SRC_DIR)/environment
 # variable_set

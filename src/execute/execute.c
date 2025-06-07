@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include <sys/types.h>
 #include <stdlib.h>
 #include <sys/wait.h>
@@ -102,7 +100,14 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 		return (errno);
 	else if (pid == 0)
 	{
+		int infile_fd;
+		int outfile_fd;
+		int		error;
+	
 		return_code = expand_tokens(tree, env);
+		if (return_code != 0)
+			return (return_code);
+		return_code = redirect_fds_get(&error, &infile_fd, &outfile_fd, &tree);
 		if (return_code != 0)
 			return (return_code);
 		char	**argv = tokens_make_argv(tree);
@@ -111,8 +116,15 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 		if (cmd == NULL)
 			return (ENOMEM);
 		char	**envp = variable_set_array_get(env->vars, ENV);
+		if (infile_fd != -1)
+			dup2(infile_fd, 0);
+		if (outfile_fd != -1)
+			dup2(outfile_fd, 1);
 		execve(cmd, argv, envp);
-		perror("");
+		if (infile_fd != -1)
+			close(infile_fd);
+		if (outfile_fd != -1)
+			close(outfile_fd);
 		argv_destroy(&envp);
 		argv_destroy(&argv);
 		free(cmd);
