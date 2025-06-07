@@ -6,7 +6,7 @@ NAME_LIBFT			:= $(DIR_LIBFT)/$(NAME_LIBFT)
 DIR_PRINTF			:= dir_printf
 NAME_PRINTF			:= libftprintf.a
 NAME_PRINTF			:= $(DIR_PRINTF)/$(NAME_PRINTF)
-CFLAGS				:= -Wall -Wextra -Werror --pedantic
+CFLAGS				:= -Wall -Wextra -Werror --pedantic -g3
 
 AR					:= ar
 ARFLAGS				:= csr

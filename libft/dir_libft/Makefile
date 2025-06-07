@@ -56,7 +56,7 @@ OBJS_BONUS			:= $(SRCS_BONUS:%.c=%.o)
 
 CC					:= cc
 NAME				:= libft.a
-CFLAGS				:= -Wall -Wextra -Werror --pedantic
+CFLAGS				:= -Wall -Wextra -Werror --pedantic -g3
 
 AR					:= ar
 ARFLAGS				:= csr

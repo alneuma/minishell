@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include <sys/types.h>
 #include <stdlib.h>
 #include <sys/wait.h>
@@ -99,13 +101,15 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 		return (errno);
 	else if (pid == 0)
 	{
-		char	*cmd = ft_strjoin("/usr/bin/", tree->string);
-		if (cmd == NULL)
-			return (ENOMEM);
 		// char	**argv = {NULL};
 		char	**argv = tokens_make_argv(tree, (const t_variable_set *)env->vars);
+		char const	*str = "/usr/bin/";
+		char	*cmd = ft_strjoin(str, argv[0]);
+		if (cmd == NULL)
+			return (ENOMEM);
 		char	**envp = variable_set_array_get(env->vars, ENV);
 		execve(cmd, argv, envp);
+		perror("");
 		argv_destroy(&envp);
 		argv_destroy(&argv);
 		free(cmd);
