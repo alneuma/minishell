@@ -3,7 +3,6 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <errno.h>
-#include <stdio.h>
 #include "variables.h"
 #include "expander.h"
 #include "token.h"
@@ -89,6 +88,87 @@ int execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 		waitpid(pid, &return_code, 0);
 	}
 	return (WEXITSTATUS(return_code));
+}
+
+int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env)
+{
+	
+}
+
+int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
+{
+	pid_t	pid;
+	char	*cmd;
+	char	**envp;
+
+	pid = fork();
+	if (pid < 0)
+		return (errno);
+	else if (pid == 0)
+	{
+		char const	*str = "/usr/bin/";
+		cmd = ft_strjoin(str, argv[0]);
+		if (cmd == NULL)
+			return (ENOMEM);
+		envp = variable_set_array_get(env->vars, ENV);
+		if (infile_fd != -1)
+			dup2(infile_fd, 0);
+		if (outfile_fd != -1)
+			dup2(outfile_fd, 1);
+		execve(cmd, argv, envp);
+		if (infile_fd != -1)
+			close(infile_fd);
+		if (outfile_fd != -1)
+			close(outfile_fd);
+		argv_destroy(&envp);
+		argv_destroy(&argv);
+		free(cmd);
+		return (errno);
+	}
+	else if (pid > 0)
+		waitpid(pid, &return_code, 0);
+	if (fd_in != -1)
+		close(fd_in);
+	if (fd_out != -1)
+		close(fd_out);
+	return (WEXITSTATUS(return_code));
+}
+
+int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
+{
+	char	**argv;
+	int		return_code;
+	int		infile_fd;
+	int		outfile_fd;
+
+	return_code = expand_tokens(tree, env);
+	if (return_code != 0)
+		return (return_code);
+	return_code = execute_preprocess_redirects(&env->code, &infile_fd,
+					&outfile_fd, &tree);
+	if (infile_fd != -1)
+	{
+		if (fd_in != -1)
+			close(fd_in);
+		fd_in = infile_fd;
+	}
+	if (outfile_fd != -1)
+	{
+		if (fd_out != -1)
+			close(fd_out);
+		fd_out = outfile_fd;
+	}
+	if (return_code != 0)
+		return (return_code);
+	argv = tokens_make_argv(tree);
+	if (argv == NULL)
+		return (ENOMEM);
+	if (builtin(argv[0]))
+		return_code = execute_builtin(argv, fd_in, fd_out, env);
+	else
+		return_code = execute_extern(argv, fd_in, fd_out, env);
+	argv_destroy(&argv);
+	return (return_code);
 }
 
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)

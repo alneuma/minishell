@@ -9,7 +9,7 @@ typedef struct e_env	t_env;
 struct e_env
 {
 	t_variable_set	*vars;
-	unsigned char	code;				
+	int				code;				
 	t_token			*root;
 };
 

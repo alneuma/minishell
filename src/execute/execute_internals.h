@@ -10,5 +10,7 @@ int		write_file(int fd_in, int fd_out);
 int		tokens_delete_redirect(t_token **tokens);
 int		redirect_fds_get(int *error, int *infile_fd, int *outfile_fd,
 			t_token *tokens);
+int		execute_preprocess_redirects(int *error, int *infile_fd,
+			int *outfile_fd, t_token **tokens);
 
 #endif //EXECUTE_INTERNALS_H

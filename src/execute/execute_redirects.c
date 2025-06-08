@@ -1,4 +1,5 @@
 #include <sys/stat.h>
+#include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
@@ -13,7 +14,22 @@ int	outfile_open(int *error, int *outfile_fd, const t_token *rd);
 int	is_fatal(int error);
 int	heredoc_open(int *error, int *infile_fd, const t_token *token);
 
-int	tokens_delete_redirect(t_token **tokens)
+int	execute_preprocess_redirects(int *error, int *infile_fd, int *outfile_fd, t_token **tokens)
+{
+	int	return_code;
+
+	return_code = redirect_fds_get(error, infile_fd, outfile_fd, *tokens);
+	if (return_code != 0)
+		return (return_code);
+	if (error != 0)
+	{
+		perror(SHELL_NAME);
+		return (0);
+	}
+	return (tokens_delete_redirect(tree));
+}
+
+int	tokens_delete_redirects(t_token **tokens)
 {
 	t_token	*p;
 	t_token	*tmp;
