@@ -2,5 +2,7 @@
 *.a
 *.o
 *.out
+*.md
+*.d
 tags
 minishell
