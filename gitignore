@@ -4,5 +4,6 @@
 *.out
 *.md
 *.d
+*.sh
 tags
 minishell
