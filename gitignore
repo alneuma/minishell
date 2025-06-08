@@ -1,0 +1,6 @@
+*.txt
+*.a
+*.o
+*.out
+tags
+minishell

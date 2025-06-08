@@ -13,47 +13,54 @@ int	outfile_open(int *error, int *outfile_fd, const t_token *rd);
 int	is_fatal(int error);
 int	heredoc_open(int *error, int *infile_fd, const t_token *token);
 
-// fd_in: incomming from the redirect
-// fd_out: outgoing from the redirect
-int	redirect_fds_get(int *error, int *infile_fd, int *outfile_fd,
-		t_token **tokens)
+int	tokens_delete_redirect(t_token **tokens)
 {
 	t_token	*p;
 	t_token	*tmp;
-	int		return_code;
 
-	*infile_fd = -1;
-	*outfile_fd = -1;
 	p = *tokens;
-	*error = 0;
 	while (p != NULL && token_id_is_redirect(p->id))
 	{
 		tmp = p;
 		p = p->right;
-		return_code = redirect_open(error, infile_fd, outfile_fd, tmp);
-		if (return_code)
-			return (return_code);
-		if (*error)
-			return (0);
 		token_destroy(&tmp, FREE_STRING);
 	}
 	*tokens = p;
-	if (p == NULL)
-		return (0);
-	while (p != NULL && p->right != NULL)
+	while (p != NULL)
 	{
-		if (token_id_is_redirect(tmp->id))
+		if (p->right != NULL && token_id_is_redirect(p->right->id))
 		{
 			tmp = p->right;
 			p->right = p->right->right;
-			return_code = redirect_open(error, infile_fd, outfile_fd, tmp);
+			token_destroy(&tmp, FREE_STRING);
+		}
+		else
+			p = p->right;
+	}
+	return (0);
+}
+
+// fd_in: incomming from the redirect
+// fd_out: outgoing from the redirect
+int	redirect_fds_get(int *error, int *infile_fd, int *outfile_fd,
+		t_token *tokens)
+{
+	int	return_code;
+
+	*infile_fd = -1;
+	*outfile_fd = -1;
+	*error = 0;
+	while (tokens != NULL)
+	{
+		if (token_id_is_redirect(tokens->id))
+		{
+			return_code = redirect_open(error, infile_fd, outfile_fd, tokens);
 			if (return_code)
 				return (return_code);
 			if (*error)
 				return (0);
-			token_destroy(&tmp, FREE_STRING);
 		}
-		p = p->right;
+		tokens = tokens->right;
 	}
 	return (0);
 }
@@ -107,9 +114,9 @@ int	outfile_open(int *error, int *outfile_fd, const t_token *rd)
 	if (*outfile_fd != -1)
 		close (*outfile_fd);
 	if (rd->id == OUTFILE)
-		*outfile_fd = open(rd->string, O_WRONLY | O_CREAT);
+		*outfile_fd = open(rd->string, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	else if (rd->id == OUTFILE_APPEND)
-		*outfile_fd = open(rd->string, O_WRONLY | O_CREAT | O_APPEND);
+		*outfile_fd = open(rd->string, O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	if (*outfile_fd < 0)
 		*error = errno;
 	if (is_fatal(*error))

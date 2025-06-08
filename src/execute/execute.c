@@ -3,9 +3,11 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <errno.h>
+#include <stdio.h>
 #include "variables.h"
 #include "expander.h"
 #include "token.h"
+#include "defs.h"
 #include "libft.h"
 #include "execute_internals.h"
 
@@ -16,7 +18,7 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_env *env)
 {
-	if (token->id == LITERAL)
+	if (token->id == LITERAL || token_id_is_redirect(token->id))
 		return (execute_literal(token, fd_in, fd_out, env));
 	if (token->id == PIPE)
 		return (execute_pipe(token, fd_in, fd_out, env));
@@ -107,7 +109,15 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 		return_code = expand_tokens(tree, env);
 		if (return_code != 0)
 			return (return_code);
-		return_code = redirect_fds_get(&error, &infile_fd, &outfile_fd, &tree);
+		return_code = redirect_fds_get(&error, &infile_fd, &outfile_fd, tree);
+		if (return_code != 0)
+			return (return_code);
+		if (error != 0)
+		{
+			perror(SHELL_NAME);
+			return (0);
+		}
+		return_code = tokens_delete_redirect(&tree);
 		if (return_code != 0)
 			return (return_code);
 		char	**argv = tokens_make_argv(tree);

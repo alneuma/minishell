@@ -289,9 +289,9 @@ get_literal	src/scanner/literals.c	/^char *get_literal(char **str)$/;"	f	typeref
 get_next	src/scanner/scanner.c	/^int	get_next(t_token **token, char **input)$/;"	f	typeref:typename:int
 get_sign	libft/dir_printf/src/target_put_utils.c	/^char	get_sign(int n, t_spec *spec)$/;"	f	typeref:typename:char
 glob	src/wildcards.c	/^int	glob(const char *pattern, const char *str)$/;"	f	typeref:typename:int
-heredoc	src/execute/execute_redirects.c	/^int	heredoc(int *error, int *infile_fd, const char *heredoc)$/;"	f	typeref:typename:int
 heredoc_append_line	src/token/token_redirects.c	/^static int	heredoc_append_line(char **doc, char **line)$/;"	f	typeref:typename:int	file:
 heredoc_get_doc	src/token/token_redirects.c	/^static char	*heredoc_get_doc(const char *prompt, const char *eof)$/;"	f	typeref:typename:char *	file:
+heredoc_open	src/execute/execute_redirects.c	/^int	heredoc_open(int *error, int *infile_fd, const t_token *token)$/;"	f	typeref:typename:int
 id	inc/token.h	/^	t_token_id	id;$/;"	m	struct:s_token	typeref:typename:t_token_id
 id	src/token/token_internals.h	/^	t_token_id	id;$/;"	m	struct:s_token_type	typeref:typename:t_token_id
 in_literal	src/scanner/literals.c	/^int	in_literal(char *str)$/;"	f	typeref:typename:int
@@ -453,6 +453,7 @@ token_is_redirect	src/token/token_redirects.c	/^int	token_is_redirect(t_token *t
 token_print	src/token/token.c	/^void	token_print(t_token *token)$/;"	f	typeref:typename:void
 token_string_get_id	src/token/token_types.c	/^t_token_id	token_string_get_id(const char *str)$/;"	f	typeref:typename:t_token_id
 token_type_print	src/token/token_types.c	/^int	token_type_print(t_token_id id)$/;"	f	typeref:typename:int
+tokens_delete_redirect	src/execute/execute_redirects.c	/^int	tokens_delete_redirect(t_token **tokens)$/;"	f	typeref:typename:int
 tokens_destroy	src/token/token.c	/^void	tokens_destroy(t_token **tokens)$/;"	f	typeref:typename:void
 tokens_make_argv	src/execute/execute_argv.c	/^char	**tokens_make_argv(const t_token *tokens)$/;"	f	typeref:typename:char **
 tokens_preprocess_redirects	src/token/token_redirects.c	/^int	tokens_preprocess_redirects(t_token *tokens)$/;"	f	typeref:typename:int

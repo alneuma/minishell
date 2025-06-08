@@ -50,9 +50,9 @@ int	variable_set_assignment_string_add(t_variable_set *env, const char *str,
 		return (ENOMEM);
 	}
 	val = str_remove_quotes(tmp);
+	free(tmp);
 	if (val == NULL)
 	{
-		free(tmp);
 		free(key);
 		return (ENOMEM);
 	}
