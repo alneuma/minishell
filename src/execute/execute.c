@@ -6,6 +6,7 @@
 #include "variables.h"
 #include "expander.h"
 #include "token.h"
+#include "builtins.h"
 #include "defs.h"
 #include "libft.h"
 #include "execute_internals.h"
@@ -14,6 +15,8 @@ int	execute_or(t_token *tree, int fd_in, int fd_out, t_env *env);
 int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env);
 int execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env);
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env);
+int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env);
+int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_env *env)
 {
@@ -92,7 +95,18 @@ int execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 
 int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env)
 {
-	
+	int	return_code;
+
+	if (fd_in == -1)
+		fd_in = 0;
+	if (fd_out == -1)
+		fd_out = 1;
+	return_code = builtin_get_func(argv[0])((const char **)argv, fd_in, fd_out, env);
+	if (fd_in != 0)
+		close(fd_in);
+	if (fd_out != 1)
+		close(fd_out);
+	return (return_code);
 }
 
 int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
@@ -100,7 +114,9 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 	pid_t	pid;
 	char	*cmd;
 	char	**envp;
+	int		return_code;
 
+	return_code = 0;
 	pid = fork();
 	if (pid < 0)
 		return (errno);
@@ -111,15 +127,15 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 		if (cmd == NULL)
 			return (ENOMEM);
 		envp = variable_set_array_get(env->vars, ENV);
-		if (infile_fd != -1)
-			dup2(infile_fd, 0);
-		if (outfile_fd != -1)
-			dup2(outfile_fd, 1);
+		if (fd_in != -1)
+			dup2(fd_in, 0);
+		if (fd_out != -1)
+			dup2(fd_out, 1);
 		execve(cmd, argv, envp);
-		if (infile_fd != -1)
-			close(infile_fd);
-		if (outfile_fd != -1)
-			close(outfile_fd);
+		if (fd_in != -1)
+			close(fd_in);
+		if (fd_out != -1)
+			close(fd_out);
 		argv_destroy(&envp);
 		argv_destroy(&argv);
 		free(cmd);
@@ -163,68 +179,10 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 	argv = tokens_make_argv(tree);
 	if (argv == NULL)
 		return (ENOMEM);
-	if (builtin(argv[0]))
+	if (is_builtin(argv[0]))
 		return_code = execute_builtin(argv, fd_in, fd_out, env);
 	else
 		return_code = execute_extern(argv, fd_in, fd_out, env);
 	argv_destroy(&argv);
 	return (return_code);
-}
-
-int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
-{
-	pid_t	pid;
-	int		return_code;
-
-	return_code = 0;
-	pid = fork();
-	if (pid < 0)
-		return (errno);
-	else if (pid == 0)
-	{
-		int infile_fd;
-		int outfile_fd;
-		int		error;
-	
-		return_code = expand_tokens(tree, env);
-		if (return_code != 0)
-			return (return_code);
-		return_code = redirect_fds_get(&error, &infile_fd, &outfile_fd, tree);
-		if (return_code != 0)
-			return (return_code);
-		if (error != 0)
-		{
-			perror(SHELL_NAME);
-			return (0);
-		}
-		return_code = tokens_delete_redirect(&tree);
-		if (return_code != 0)
-			return (return_code);
-		char	**argv = tokens_make_argv(tree);
-		char const	*str = "/usr/bin/";
-		char	*cmd = ft_strjoin(str, argv[0]);
-		if (cmd == NULL)
-			return (ENOMEM);
-		char	**envp = variable_set_array_get(env->vars, ENV);
-		if (infile_fd != -1)
-			dup2(infile_fd, 0);
-		if (outfile_fd != -1)
-			dup2(outfile_fd, 1);
-		execve(cmd, argv, envp);
-		if (infile_fd != -1)
-			close(infile_fd);
-		if (outfile_fd != -1)
-			close(outfile_fd);
-		argv_destroy(&envp);
-		argv_destroy(&argv);
-		free(cmd);
-		return (errno);
-	}
-	else if (pid > 0)
-		waitpid(pid, &return_code, 0);
-	if (fd_in != -1)
-		close(fd_in);
-	if (fd_out != -1)
-		close(fd_out);
-	return (WEXITSTATUS(return_code));
 }
