@@ -21,10 +21,11 @@ int	execute_preprocess_redirects(int *error, int *infile_fd, int *outfile_fd, t_
 {
 	int	return_code;
 
+	*error = 0;
 	return_code = redirect_fds_get(error, infile_fd, outfile_fd, *tokens);
 	if (return_code != 0)
 		return (return_code);
-	if (error != 0)
+	if (*error != 0)
 	{
 		perror(SHELL_NAME);
 		return (0);
@@ -133,7 +134,7 @@ int	outfile_open(int *error, int *outfile_fd, const t_token *rd)
 	if (*outfile_fd != -1)
 		close (*outfile_fd);
 	if (rd->id == OUTFILE)
-		*outfile_fd = open(rd->string, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+		*outfile_fd = open(rd->string, O_TRUNC | O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	else if (rd->id == OUTFILE_APPEND)
 		*outfile_fd = open(rd->string, O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	if (*outfile_fd < 0)
