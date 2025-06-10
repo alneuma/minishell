@@ -53,8 +53,9 @@ int	expand_str(char **new_str, const t_env *env, const char *str)
 
 int	expand_string_write(char *expansion, const t_env *env, char *str)
 {
-	int	return_code;
-	int	quoted_double;
+	char	*tmp_str;
+	int		return_code;
+	int		quoted_double;
 
 	quoted_double = 0;
 	while (*str != '\0')
@@ -63,7 +64,17 @@ int	expand_string_write(char *expansion, const t_env *env, char *str)
 			quoted_double = 1 - quoted_double;
 		if (*str == '\'' && !quoted_double)
 			expand_write_single_quoted(&expansion, &str);
-		if (*str == '$')
+		if (*str == '$' && *(str + 1) == '?')
+		{
+			tmp_str = ft_itoa(env->code);
+			if (tmp_str == NULL)
+				return (ENOMEM);
+			ft_memcpy(expansion, tmp_str, ft_strlen(tmp_str));
+			expansion += ft_strlen(tmp_str);
+			str += 2;
+			free(tmp_str);
+		}
+		else if (*str == '$')
 		{
 			return_code = expand_write_val(&expansion, &str, env);
 			if (return_code)
@@ -102,15 +113,25 @@ int	expand_write_val(char **expansion, char **str, const t_env *env)
 
 int	expand_string_length(int *length, const t_env *env, const char *str)
 {
-	int	i;
-	int	tmp;
-	int	return_value;
+	char	*tmp_str;
+	int		i;
+	int		tmp;
+	int		return_value;
 
 	i = 0;
 	*length = 0;
 	while (str[i] != '\0')
 	{
-		if (str[i] == '$')
+		if (str[i] == '$' && str[i + 1] == '?')
+		{
+			tmp_str = ft_itoa(env->code);
+			if (tmp_str == NULL)
+				return (ENOMEM);
+			*length += ft_strlen(tmp_str);
+			free(tmp_str);
+			i += 2;
+		}
+		else if (str[i] == '$')
 		{
 			return_value = expand_get_length(&tmp, &str[i], env);
 			*length += tmp;

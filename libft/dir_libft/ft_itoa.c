@@ -4,10 +4,10 @@ static size_t	count_digits(unsigned int n);
 
 char	*ft_itoa(int n)
 {
+	char			*str;
 	unsigned int	un;
 	size_t			negative;
 	size_t			digits;
-	char			*str;
 
 	negative = 1;
 	un = (unsigned int)n;
