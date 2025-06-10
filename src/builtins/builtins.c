@@ -1,7 +1,9 @@
 #include <stddef.h>
+#include <unistd.h>
 #include "variables.h"
 #include "assignment_strings.h"
 #include "libft.h"
+#include "defs.h"
 
 int	(*builtin_get_func(const char *cmd))(const char **, int, int, t_env *);
 
@@ -55,15 +57,30 @@ int	is_builtin(const char *cmd)
 
 int builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
 {
+	int	return_code;
+	
 	(void)fd_in;
 	(void)fd_out;
 	(void)env;
 	if (string_array_get_len(argv) != 2)
 	{
-		ft_dprintf(2, "minishell: cd: too many arguments\n");
-		return (-1);
+		ft_dprintf(2, "%s: cd: too many arguments\n", SHELL_NAME);
+		env->code = 1;
+		return (0);
 	}
-	// logic here
+	if (chdir(argv[1]) < 0)
+	{
+		env->code = errno;
+		if (is_fatal(errno))
+			return (errno);
+		perror("cd");
+	}
+	else
+	{
+
+int				variable_set_var_set(t_variable_set *env, const char *key,
+					const char *val, int is_export);
+
 	return (0);
 }
 
@@ -71,18 +88,24 @@ int builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
 int builtin_echo(const char **argv, int fd_in, int fd_out, t_env *env)
 {
 	int	i;
+	int	opt_n;
 
 	(void)fd_in;
-	(void)fd_out;
 	(void)env;
 	i = 1;
+	opt_n = 0;
+	if (ft_srlen(argv[1]) == 2 && argv[1][0] == '-' && argv[1][1] == 'n')
+		opt_n = 1;
+	i += opt_n;
 	while (argv[i] != NULL)
 	{
 		if (i > 1)
-			ft_printf(" ");
-		ft_printf("%s", argv[i++]);
+			ft_dprintf(fd_out, " ");
+		ft_dprintf(fd_out, "%s", argv[i++]);
 	}
-	ft_printf("\n");
+	if (!opt_n)
+		ft_dprintf(fd_out, "\n");
+	env->code = 0;
 	return (0);
 }
 
@@ -133,7 +156,10 @@ int builtin_pwd(const char **argv, int fd_in, int fd_out, t_env *env)
 	(void)argv;
 	(void)fd_in;
 	pwd = variable_set_var_get(env->vars, "PWD");
+	if (pwd == NULL)
+		return (ENOMEM);
 	ft_dprintf(fd_out, "%s\n", pwd);
+	env->code = 0;
 	return (0);
 }
 

@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "token.h"
 #include "defs.h"
+#include "error.h"
 #include "libft.h"
 #include "execute_internals.h"
 
@@ -13,7 +14,6 @@ int	redirect_open(int *error, int *infile_fd, int *outfile_fd, t_token *tmp);
 int	heredoc(int *error, int *infile_fd, const char *heredoc);
 int	infile_open(int *error, int *infile_fd, const t_token *rd);
 int	outfile_open(int *error, int *outfile_fd, const t_token *rd);
-int	is_fatal(int error);
 int	heredoc_open(int *error, int *infile_fd, const t_token *token);
 int	tokens_delete_redirects(t_token **tokens);
 
@@ -142,9 +142,4 @@ int	outfile_open(int *error, int *outfile_fd, const t_token *rd)
 	if (is_fatal(*error))
 		return (*error);
 	return (0);
-}
-
-int	is_fatal(int error)
-{
-	return (error == ENOMEM);
 }

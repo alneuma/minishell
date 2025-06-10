@@ -3,6 +3,11 @@
 #include "libft.h"
 #include "defs.h"
 
+int	is_fatal(int error)
+{
+	return (error == ENOMEM);
+}
+
 int	print_error_token(const t_token_id id)
 {
 	return (ft_dprintf(2, "%s: syntax error near unexpected token `%s'\n",

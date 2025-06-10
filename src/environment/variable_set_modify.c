@@ -7,8 +7,6 @@
 #include "assignment_strings.h"
 #include "libft.h"
 
-static int	variable_set_var_set(t_variable_set *env, const char *key,
-				const char *val, int is_export);
 static int	variable_set_var_append(t_variable_set *env, const char *key,
 				const char *val, int is_export);
 
@@ -88,8 +86,8 @@ static int	variable_set_var_append(t_variable_set *env, const char *key,
 	return (0);
 }
 
-static int	variable_set_var_set(t_variable_set *env, const char *key,
-				const char *val, const int is_export)
+int	variable_set_var_set(t_variable_set *env, const char *key,
+		const char *val, const int is_export)
 {
 	t_variable	*p;
 

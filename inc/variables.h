@@ -45,5 +45,7 @@ int				variable_set_assignment_string_add(t_variable_set *env,
 int				variable_set_var_type_set(t_variable_set *env, const char *key,
 					const t_vartype vartype);
 void			variable_set_var_remove(t_variable_set *env, const char *key);
+int				variable_set_var_set(t_variable_set *env, const char *key,
+					const char *val, int is_export);
 
 #endif //VARIABLES_H
