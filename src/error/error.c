@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <errno.h>
 #include "token.h"
 #include "libft.h"
 #include "defs.h"

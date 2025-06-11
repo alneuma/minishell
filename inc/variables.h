@@ -10,7 +10,6 @@ struct e_env
 {
 	t_variable_set	*vars;
 	int				code;				
-	t_token			*root;
 };
 
 typedef enum e_vartype

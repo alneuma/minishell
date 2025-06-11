@@ -1,6 +1,10 @@
+#include <linux/limits.h>
 #include <stddef.h>
 #include <unistd.h>
+#include <errno.h>
+#include <stdio.h>
 #include "variables.h"
+#include "error.h"
 #include "assignment_strings.h"
 #include "libft.h"
 #include "defs.h"
@@ -57,16 +61,29 @@ int	is_builtin(const char *cmd)
 
 int builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
 {
-	int	return_code;
+	char	cwd[PATH_MAX];
+	int		return_code;
+	char	*old_cwd;
+	char	*pwd;
+	char	*check;
 	
 	(void)fd_in;
 	(void)fd_out;
-	(void)env;
 	if (string_array_get_len(argv) != 2)
 	{
 		ft_dprintf(2, "%s: cd: too many arguments\n", SHELL_NAME);
 		env->code = 1;
 		return (0);
+	}
+	old_cwd = variable_set_var_get_ref(env->vars, "OLDPWD");
+	pwd = variable_set_var_get_ref(env->vars, "PWD");
+	if (old_cwd != NULL)
+	{	
+		if (pwd == NULL)
+			pwd = "";
+		return_code = variable_set_var_set(env->vars, "OLDPWD", pwd, 0);
+		if (return_code)
+			return (return_code);
 	}
 	if (chdir(argv[1]) < 0)
 	{
@@ -75,13 +92,18 @@ int builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
 			return (errno);
 		perror("cd");
 	}
-	else
+	if (pwd == NULL || *pwd == '\0')
+		return (0);
+	check = getcwd(cwd, PATH_MAX - 1);
+	if (check == NULL)
 	{
-
-int				variable_set_var_set(t_variable_set *env, const char *key,
-					const char *val, int is_export);
-
-	return (0);
+		env->code = errno;
+		if (is_fatal(errno))
+			return (errno);
+		perror(SHELL_NAME);
+		return (0);
+	}		
+	return (variable_set_var_set(env->vars, "PWD", cwd, 0));
 }
 
 // -n missing
@@ -94,7 +116,7 @@ int builtin_echo(const char **argv, int fd_in, int fd_out, t_env *env)
 	(void)env;
 	i = 1;
 	opt_n = 0;
-	if (ft_srlen(argv[1]) == 2 && argv[1][0] == '-' && argv[1][1] == 'n')
+	if (ft_strlen(argv[1]) == 2 && argv[1][0] == '-' && argv[1][1] == 'n')
 		opt_n = 1;
 	i += opt_n;
 	while (argv[i] != NULL)
@@ -151,15 +173,21 @@ int builtin_export(const char **argv, int fd_in, int fd_out, t_env *env)
 
 int builtin_pwd(const char **argv, int fd_in, int fd_out, t_env *env)
 {
-	char	*pwd;
-
+	char	cwd[PATH_MAX];
+	char	*check;
+		
 	(void)argv;
 	(void)fd_in;
-	pwd = variable_set_var_get(env->vars, "PWD");
-	if (pwd == NULL)
-		return (ENOMEM);
-	ft_dprintf(fd_out, "%s\n", pwd);
-	env->code = 0;
+	check = getcwd(cwd, PATH_MAX - 1);
+	if (check == NULL)
+	{
+		env->code = errno;
+		if (is_fatal(errno))
+			return (errno);
+		perror(SHELL_NAME);
+		return (0);
+	}		
+	ft_dprintf(fd_out, "%s\n", cwd);
 	return (0);
 }
 
