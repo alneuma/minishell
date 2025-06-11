@@ -92,6 +92,8 @@ int main(int argc, char **argv, char **envp)
 	// return_code = variable_set_assignment_string_add(env.vars, "var=\"at Makefile\"", ENV);
 	// if (return_code)
 	// 	return (return_code);
+	env.code = 0;
+	env.exit = 0;
 	while (1)
 	{
 		line = readline("$> ");
@@ -144,16 +146,14 @@ int main(int argc, char **argv, char **envp)
 			tree = tree_from_tokens(&tokens);
 			// print_tree(tree);
 			return_code = execute(tree, -1, -1, &env);
-			if (tree->string != NULL && !ft_strncmp(tree->string, "exit", 1000))
-				return_code = 100;
 			parse_tree_destroy(&tree);
 		}
-		if (return_code == 100)
+		if (env.exit == 1)
 			break ;
 	}
 	rl_clear_history();
 	variable_set_destroy(&env.vars);
-	return (return_code);
+	return (env.code);
 }
 
 // int main(void)

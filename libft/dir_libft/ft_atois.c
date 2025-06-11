@@ -6,7 +6,7 @@
 // str valid integer representation	-> 1
 // else								-> 0 (value in *n unpredictable)
 //
-int	ft_atois(int *n, char *str)
+int	ft_atois(int *n, const char *str)
 {
 	unsigned int	digit;
 	unsigned int	un;

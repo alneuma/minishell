@@ -72,7 +72,7 @@ t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 void	*realloc(void *ptr, size_t size);
 int		ft_arr_int_invert(int *arr, size_t num_elems);
 int		ft_arr_invert(void *arr, void *tmp, size_t nm_els, size_t sze_el);
-int		ft_atois(int *n, char *str);
+int		ft_atois(int *n, const char *str);
 int		ft_strcmp(const char *str1, const char *str2);
 int		ft_atof(float *x, char *str);
 void	*ft_bsearch(const void *key, t_array arr,

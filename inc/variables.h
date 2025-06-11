@@ -9,7 +9,8 @@ typedef struct e_env	t_env;
 struct e_env
 {
 	t_variable_set	*vars;
-	int				code;				
+	int				code;
+	int				exit;
 };
 
 typedef enum e_vartype
@@ -35,7 +36,7 @@ char			**variable_set_array_get(const t_variable_set *env,
 					const t_vartype vartype);
 
 // display
-void			variable_set_print_by_type(const int fd,
+int				variable_set_print_by_type(const int fd,
 					const t_variable_set *env, const t_vartype vartype);
 
 // modify

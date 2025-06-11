@@ -77,7 +77,7 @@ int		ft_snprintf(char *buffer, size_t bufsz, const char *format, ...);
 void	*realloc(void *ptr, size_t size);
 int		ft_arr_int_invert(int *arr, size_t num_elems);
 int		ft_arr_invert(void *arr, void *tmp, size_t nm_els, size_t sze_el);
-int		ft_atois(int *n, char *str);
+int		ft_atois(int *n, const char *str);
 int		ft_strcmp(const char *str1, const char *str2);
 int		ft_atof(float *x, char *str);
 void	*ft_bsearch(const void *key, t_array arr,

@@ -69,6 +69,7 @@ int builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
 	
 	(void)fd_in;
 	(void)fd_out;
+	env->code = 0;
 	if (string_array_get_len(argv) > 2)
 	{
 		ft_dprintf(2, "%s: cd: too many arguments\n", SHELL_NAME);
@@ -99,6 +100,7 @@ int builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
 			env->code = errno;
 			if (is_fatal(errno))
 				return (errno);
+			ft_dprintf(2, "%s: ", SHELL_NAME);
 			perror("cd");
 			return (0);
 		}
@@ -110,6 +112,7 @@ int builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
 			env->code = errno;
 			if (is_fatal(errno))
 				return (errno);
+			ft_dprintf(2, "%s: ", SHELL_NAME);
 			perror("cd");
 		}
 	}
@@ -121,7 +124,8 @@ int builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
 		env->code = errno;
 		if (is_fatal(errno))
 			return (errno);
-		perror(SHELL_NAME);
+		ft_dprintf(2, "%s: ", SHELL_NAME);
+		perror("cd");
 		return (0);
 	}		
 	return (variable_set_var_set(env->vars, "PWD", cwd, 0));
@@ -156,17 +160,31 @@ int builtin_env(const char **argv, int fd_in, int fd_out, t_env *env)
 {
 	(void)argv;
 	(void)fd_in;
-	variable_set_print_by_type(fd_out, env->vars, ENV);
-	return (0);
+	return (variable_set_print_by_type(fd_out, env->vars, ENV));
 }
 
 int builtin_exit(const char **argv, int fd_in, int fd_out, t_env *env)
 {
-	(void)argv;
+	int	code;
+
 	(void)fd_in;
-	(void)fd_out;
-	(void)env;
-	return (100);
+	code = 0;
+	write(fd_out, "exit\n", 5); 
+	if (string_array_get_len(argv) > 2)
+	{
+		ft_dprintf(2, "%s: exit: too many arguments\n", SHELL_NAME);
+		env->code = 2;
+		return (0);
+	}
+	if (argv[1] != NULL && !ft_atois(&code, argv[1]))
+	{
+		ft_dprintf(2, "%s: exit: invalid argument\n", SHELL_NAME);
+		env->code = 1;
+		return (0);
+	}
+	env->code = code;
+	env->exit = 1;
+	return (0);
 }
 
 // can not deal with non assignment variables yet
