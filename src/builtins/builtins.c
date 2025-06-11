@@ -63,21 +63,21 @@ int builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
 {
 	char	cwd[PATH_MAX];
 	int		return_code;
-	char	*old_cwd;
+	char	*old_pwd;
 	char	*pwd;
 	char	*check;
 	
 	(void)fd_in;
 	(void)fd_out;
-	if (string_array_get_len(argv) != 2)
+	if (string_array_get_len(argv) > 2)
 	{
 		ft_dprintf(2, "%s: cd: too many arguments\n", SHELL_NAME);
 		env->code = 1;
 		return (0);
 	}
-	old_cwd = variable_set_var_get_ref(env->vars, "OLDPWD");
+	old_pwd = variable_set_var_get_ref(env->vars, "OLDPWD");
 	pwd = variable_set_var_get_ref(env->vars, "PWD");
-	if (old_cwd != NULL)
+	if (old_pwd != NULL)
 	{	
 		if (pwd == NULL)
 			pwd = "";
@@ -85,12 +85,33 @@ int builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
 		if (return_code)
 			return (return_code);
 	}
-	if (chdir(argv[1]) < 0)
+	if (string_array_get_len(argv) == 1)
 	{
-		env->code = errno;
-		if (is_fatal(errno))
-			return (errno);
-		perror("cd");
+		check = variable_set_var_get_ref(env->vars, "HOME");
+		if (check == NULL)
+		{
+			ft_dprintf(2, "%s: cd: HOME not set\n", SHELL_NAME);
+			env->code = 1;
+			return (0);
+		}
+		if (chdir(check) < 0)
+		{
+			env->code = errno;
+			if (is_fatal(errno))
+				return (errno);
+			perror("cd");
+			return (0);
+		}
+	}
+	else
+	{
+		if (chdir(argv[1]) < 0)
+		{
+			env->code = errno;
+			if (is_fatal(errno))
+				return (errno);
+			perror("cd");
+		}
 	}
 	if (pwd == NULL || *pwd == '\0')
 		return (0);
@@ -135,8 +156,7 @@ int builtin_env(const char **argv, int fd_in, int fd_out, t_env *env)
 {
 	(void)argv;
 	(void)fd_in;
-	(void)fd_out;
-	variable_set_print_by_type(env->vars, ENV);
+	variable_set_print_by_type(fd_out, env->vars, ENV);
 	return (0);
 }
 

@@ -20,7 +20,8 @@ struct s_variable_set
 };
 
 // variable
-int			variable_assignment_string_print(t_variable *entry);
+int			variable_assignment_string_print(const int fd,
+				const t_variable *entry);
 char		*variable_assignment_string_get(const t_variable *entry);
 int			variable_var_replace(t_variable *entry, const char *val,
 				const int is_export);

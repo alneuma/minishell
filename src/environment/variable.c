@@ -50,9 +50,9 @@ void	variable_destroy(t_variable **entry)
 	*entry = NULL;
 }
 
-int	variable_assignment_string_print(t_variable *entry)
+int	variable_assignment_string_print(const int fd, const t_variable *entry)
 {
-	if (ft_printf("%s=%s", entry->key, entry->value) < 0)
+	if (ft_dprintf(fd, "%s=%s", entry->key, entry->value) < 0)
 		return (EIO);
 	return (0);
 }
