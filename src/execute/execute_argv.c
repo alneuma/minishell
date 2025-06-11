@@ -11,17 +11,6 @@ static int	write_words_from_token(char **argv, int *idx, const t_token *token);
 static int	str_num_words(char *str);
 static void	skip_through_word(char **str);
 
-void	argv_destroy(char ***argv)
-{
-	int i;
-
-	i = 0;
-	while ((*argv)[i] != NULL)
-		free((*argv)[i++]);
-	free(*argv);
-	*argv = NULL;
-}
-		
 char	**tokens_make_argv(const t_token *tokens)
 {
 	char	**argv;

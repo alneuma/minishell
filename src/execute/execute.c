@@ -7,6 +7,7 @@
 #include "expander.h"
 #include "token.h"
 #include "builtins.h"
+#include "utils.h"
 #include "defs.h"
 #include "libft.h"
 #include "execute_internals.h"
