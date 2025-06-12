@@ -17,57 +17,6 @@
 
 #define P1 "$> "
 
-// #define STR "\"'$SHELL'\""
-// int	main(int argc, char **argv, char **envp)
-// {
-// 	t_variable_set	*env;
-// 	char			*str_exp;
-//
-// 	(void)argc;
-// 	(void)argv;
-// 	(void)envp;
-// 	env = variable_set_create();
-// 	if (env == NULL)
-// 		return (1);
-// 	while (*envp)
-// 		variable_set_assignment_string_add(env, *envp++, 1);
-// 	variable_set_print_by_type(env, BOTH);
-// 	expand_str(&str_exp, env, STR);
-// 	ft_printf("\n%s\n", str_exp);
-// 	return (0);
-// }
-
-// #define P1 "$ "
-//
-// #define ENVP ep
-// int	main(int argc, char **argv, char **envp)
-// {
-// 	t_variable_set	*env;
-// 	int				return_code;
-// 	char			*val;
-// 	char			*key = "asdf";
-// 	char			*ep[] = {"hello=bye", "yo=why?", "this=that", NULL};
-//
-// 	(void)argc;
-// 	(void)argv;
-// 	(void)envp;
-// 	env = variable_set_create();
-// 	if (env == NULL)
-// 		return (1);
-// 	return_code = variable_set_array_feed(env, ENVP);
-// 	ft_printf("ret = %d\n", variable_set_val_get(&val, env, key));
-// 	if (return_code)
-// 	{
-// 		variable_set_destroy(&env);
-// 		return (1);
-// 	}
-// 	variable_set_print(env);
-// 	ft_printf("key = %s\nval = %s\n", key, val);
-// 	free(val);
-// 	variable_set_destroy(&env);
-// 	return (0);
-// }
-
 int main(int argc, char **argv, char **envp)
 {
 	t_token		*tokens;
@@ -96,6 +45,8 @@ int main(int argc, char **argv, char **envp)
 	env.exit = 0;
 	while (1)
 	{
+		if (env.exit == 1)
+			break ;
 		line = readline("$> ");
 		if (line != NULL && *line != '\0')
 		{
@@ -148,71 +99,82 @@ int main(int argc, char **argv, char **envp)
 			return_code = execute(tree, -1, -1, &env);
 			parse_tree_destroy(&tree);
 		}
-		if (env.exit == 1)
-			break ;
 	}
 	rl_clear_history();
 	variable_set_destroy(&env.vars);
 	return (env.code);
 }
 
-// int main(void)
+// int	cmp_vars(const void *var1_void, const void *var2_void)
 // {
-// 	t_token	*tokens;
-// 	t_token	*tree;
-// 	int		return_code;
-// 	char	*line;
+// 	const unsigned char	*var1;
+// 	const unsigned char	*var2;
+// 	int			i;
 //
-// 	line = readline("$ ");
-// 	ft_printf("string:\n\"%s\"\n\ntokens:\n", line);
-// 	tokens = scanner(line);
-// 	free(line);
-// 	if (!tokens)
+// 	var1 = (const unsigned char *)var1_void;
+// 	var2 = (const unsigned char *)var2_void;
+// 	i = 0;
+// 	while (var1[i] != '\0' && var1[i] == var2[i])
+// 		i++;
+// 	if (var1[i] < var2[i])
+// 		return (-1);
+// 	if (var1[i] > var2[i])
 // 		return (1);
-// 	tokens_print(tokens);
-// 	ft_printf("\ntree:\n");
-// 	tree_from_tokens(&tree, tokens);
-// 	print_tree(tree);
-// 	ft_printf("\noutput:\n");
-// 	return_code = execute(tree, 0, 1);
-// 	parse_tree_destroy(&tree);
-// 	ft_printf("\nreturns: %d\n", return_code);
-// 	return (return_code);
+// 	return (0);
 // }
-
+//
+// char	*strs[] = {"ab", "xyz", "uvw", "abc", "a", NULL};
+//
 // int	main(void)
 // {
-// 	char	*line01;
-// 	char	*line02;
-// 	char	*line03;
+// 	t_array	arr;
+// 	int		i;
 //
-// 	free(NULL);
-// 	while (1)
-// 	{
-// 		line01 = readline(PROMPT);
-// 		if (line01 == NULL)
-// 			return (0);
-// 		line02 = readline(PROMPT);
-// 		if (line02 == NULL)
-// 		{
-// 			free(line01);
-// 			return (0);
-// 		}
-// 		line03 = readline(PROMPT);
-// 		if (line03 == NULL)
-// 		{
-// 			free(line01);
-// 			free(line02);
-// 			return (0);
-// 		}
-// 		ft_printf("readline 01: %s\n", line01);
-// 		ft_printf("readline 02: %s\n", line02);
-// 		ft_printf("readline 03: %s\n", line03);
-// 		add_history(line01);
-// 		add_history(line02);
-// 		add_history(line03);
-// 		free(line01);
-// 		free(line02);
-// 		free(line03);
-// 	}
+// 	i = 0;
+// 	while (strs[i] != NULL)
+// 		ft_printf("%s\n", strs[i++]);
+// 	arr.base = strs;
+// 	arr.size = sizeof(char *);
+// 	arr.nmemb = sizeof(strs) / sizeof(*strs) - 1;
+// 	ft_qsort(arr, cmp_vars);
+// 	ft_printf("\n");
+// 	i = 0;
+// 	while (strs[i] != NULL)
+// 		ft_printf("%s\n", strs[i++]);
+// 	return (0);
+// }
+
+// int	cmp_int(const void *a, const void *b)
+// {
+// 	int x;
+// 	int	y;
+//
+// 	x = *(int *)a;
+// 	y = *(int *)b;
+// 	if (x < y)
+// 		return (-1);
+// 	if (x > y)
+// 		return (1);
+// 	return (0);
+// }
+//
+// int	array[] = {15, 0, -6, 2, 777847};
+//
+// int	main(void)
+// {
+// 	t_array	arr;
+// 	size_t	i;
+//
+// 	arr.nmemb = sizeof(array) / sizeof(int);
+// 	i = 0;
+// 	while (i < arr.nmemb)
+// 		ft_printf("%d\n", array[i++]);
+// 	arr.base = array;
+// 	arr.size = sizeof(int);
+// 	ft_qsort(arr, cmp_int);
+// 	ft_printf("\n");
+// 	i = 0;
+// 	while (i < arr.nmemb)
+// 		ft_printf("%d\n", array[i++]);
+// 	return (0);
 // }

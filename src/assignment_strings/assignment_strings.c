@@ -59,7 +59,7 @@ int	is_assignment(const char *str)
 		return (0);
 	if (quote_double != NULL && quote_double < equal)
 		return (0);
-	if ((equal - str > 2 && str[1] == '+') || equal - str > 1)
+	if ((equal - str >= 2 && str[1] == '+') || equal - str >= 1)
 		return (1);
 	return (0);
 }

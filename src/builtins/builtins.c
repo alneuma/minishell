@@ -245,6 +245,7 @@ int builtin_export(const char **argv, int fd_in, int fd_out, t_env *env)
 	(void)fd_out;
 	if (string_array_get_len(argv) == 1)
 		return (variable_set_print_by_type_sorted(fd_out, env->vars, ENV));
+	argv++;
 	while (*argv != NULL)
 	{
 		if (is_assignment(*argv))
