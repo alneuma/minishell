@@ -20,7 +20,7 @@ int execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env);
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env);
 int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env);
 int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env);
-int	execute_child(t_token *tree, int fd_in, int fd_out, t_env *env);
+int	execute_child(pid_t *pid, t_token *tree, int fds[2], t_env *env);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_env *env)
 {
@@ -58,52 +58,62 @@ int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env)
 int execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 {
 	int		return_code;
-	int		fds[2];
+	int		fds_1[2];
+	int		fds_2[2];
+	pid_t	pid_1;
+	pid_t	pid_2;
 
-	if (pipe(fds) < 0)
+	if (pipe(fds_1) < 0)
 		return (errno);
-	return_code = execute_child(tree->left, fd_in, fds[1], env);
+	fds_2[0] = fds_1[0];
+	fds_1[0] = fd_in;
+	fds_2[1] = fd_out;
+	return_code = execute_child(&pid_1, tree->left, fds_1, env);
 	if (return_code)
 	{
-		close(fds[0]);
+		close(fds_2[0]);
 		return (return_code);
 	}
-	return (execute_child(tree->right, fds[0], fd_out, env));
+	return_code = execute_child(&pid_2, tree->right, fds_2, env);
+	if (return_code)
+		return (return_code);
+	waitpid(pid_1, &return_code, 0);
+	waitpid(pid_2, &return_code, 0);
+	env->code = WEXITSTATUS(return_code);
+	return (0);
 }
 
-int	execute_child(t_token *tree, int fd_in, int fd_out, t_env *env)
+int	execute_child(pid_t *pid, t_token *tree, int fds[2], t_env *env)
 {
-	pid_t	pid;
 	int		return_code;
 
 	return_code = 0;
-	pid = fork();
-	if (pid < 0)
+	*pid = fork();
+	if (*pid < 0)
 	{
-		if (fd_in != -1)
-			close(fd_in);
-		if (fd_out != -1)
-			close(fd_out);
+		if (fds[0] != -1)
+			close(fds[0]);
+		if (fds[1] != -1)
+			close(fds[1]);
 		return (errno);
 	}
-	else if (pid == 0)
+	else if (*pid == 0)
 	{
-		return_code = execute(tree, fd_in, fd_out, env);
-		if (fd_in != -1)
-			close(fd_in);
-		if (fd_out != -1)
-			close(fd_out);
-		return (return_code);
+		return_code = execute(tree, fds[0], fds[1], env);
+		if (fds[0] != -1)
+			close(fds[0]);
+		if (fds[1] != -1)
+			close(fds[1]);
+		exit(return_code);
 	}
-	else if (pid > 0)
+	else if (*pid > 0)
 	{
-		if (fd_in != -1)
-			close(fd_in);
-		if (fd_out != -1)
-			close(fd_out);
-		waitpid(pid, &return_code, 0);
+		if (fds[0] != -1)
+			close(fds[0]);
+		if (fds[1] != -1)
+			close(fds[1]);
 	}
-	return (WEXITSTATUS(return_code));
+	return (0);
 }
 
 int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env)
