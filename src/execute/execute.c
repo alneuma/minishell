@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include <sys/types.h>
 #include <stdlib.h>
 #include <sys/wait.h>
@@ -142,14 +144,15 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 			dup2(fd_in, 0);
 		if (fd_out != -1)
 			dup2(fd_out, 1);
-		return_code = execve(cmd, argv, envp);
+		execve(cmd, argv, envp);
 		if (fd_in != -1)
 			close(fd_in);
 		if (fd_out != -1)
 			close(fd_out);
 		argv_destroy(&envp);
 		free(cmd);
-		return (return_code);
+		perror("execve");
+		exit(errno);
 	}
 	else if (pid > 0)
 		waitpid(pid, &return_code, 0);
