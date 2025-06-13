@@ -23,7 +23,7 @@ int	in_literal(char *str)
 	return (1);
 }
 
-char *get_literal(char **str)
+char	*get_literal(char **str)
 {
 	int		len;
 	char	*new_literal;

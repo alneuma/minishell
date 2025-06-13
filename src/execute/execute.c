@@ -114,6 +114,7 @@ int	execute_child(pid_t *pid, t_token *tree, int fds[2], t_env *env)
 			close(fds[0]);
 		if (fds[1] != -1)
 			close(fds[1]);
+		return (0);
 	}
 	return (0);
 }

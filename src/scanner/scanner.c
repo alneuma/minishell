@@ -35,27 +35,19 @@ t_token	*scanner(char *input)
 	start = NULL;
 	if (!*input)
 		return (NULL);
-	while (*input && is_blank(*input))
-		input++;
-	if (*input)
-	{
-		if (get_next(&current, &input))
-			return (NULL);
-	}
-	else
-		return (NULL);
-	start = current;
 	while (*input)
 	{
 		while (*input && is_blank(*input))
 			input++;
 		if (*input == '\0')
 			return (start);
-		if (get_next(&current->right, &input))
+		if (get_next(&current, &input))
 		{
 			tokens_destroy(&start);
 			return (NULL);
 		}
+		if (start == NULL)
+			start = current;
 		current = current->right;
 	}
 	return (start);
