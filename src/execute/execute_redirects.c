@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include "token.h"
+#include "expander.h"
 #include "defs.h"
 #include "error.h"
 #include "libft.h"
@@ -88,6 +89,13 @@ int	redirect_fds_get(int *error, int *infile_fd, int *outfile_fd,
 
 int	redirect_open(int *error, int *infile_fd, int *outfile_fd, t_token *tmp)
 {
+	char	*str_no_quotes;
+
+	str_no_quotes = str_remove_quotes(tmp->string);
+	if (str_no_quotes == NULL)
+		return (ENOMEM);
+	free(tmp->string);
+	tmp->string = str_no_quotes;
 	if (tmp->id == HEREDOC)
 		return (heredoc_open(error, infile_fd, tmp));
 	else if (tmp->id == INFILE)

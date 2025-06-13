@@ -64,7 +64,7 @@ int	expand_string_write(char *expansion, const t_env *env, char *str)
 			quoted_double = 1 - quoted_double;
 		if (*str == '\'' && !quoted_double)
 			expand_write_single_quoted(&expansion, &str);
-		if (*str == '$' && *(str + 1) == '?')
+		else if (*str == '$' && *(str + 1) == '?')
 		{
 			tmp_str = ft_itoa(env->code);
 			if (tmp_str == NULL)
@@ -182,13 +182,15 @@ char	*expand_get_key(const char *key_start)
 
 	if (*key_start != '$')
 		return (NULL);
-	i = 1;
-	while (key_start[i] != '\0' && !is_blank(key_start[i]) && key_start[i] != '"' && key_start[i] != '\'')
+	key_start++;
+	i = 0;
+	while (key_start[i] != '\0' && !is_blank(key_start[i])
+			&& key_start[i] != '"' && key_start[i] != '\'')
 		i++;
-	key = (char *)malloc(i - 1);
+	key = (char *)malloc(i + 1);
 	if (key == NULL)
 		return (NULL);
-	ft_memcpy(key, key_start + 1, i - 1);
-	key[i - 1] = '\0';
+	ft_memcpy(key, key_start, i);
+	key[i] = '\0';
 	return (key);
 }
