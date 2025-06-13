@@ -17,7 +17,8 @@ int	outfile_open(int *error, int *outfile_fd, const t_token *rd);
 int	heredoc_open(int *error, int *infile_fd, const t_token *token);
 int	tokens_delete_redirects(t_token **tokens);
 
-int	execute_preprocess_redirects(int *error, int *infile_fd, int *outfile_fd, t_token **tokens)
+int	process_redirects(int *error, int *infile_fd, int *outfile_fd,
+		t_token **tokens)
 {
 	int	return_code;
 
@@ -96,11 +97,11 @@ int	redirect_open(int *error, int *infile_fd, int *outfile_fd, t_token *tmp)
 	return (0);
 }
 
+// TODO: protect close()
 int	heredoc_open(int *error, int *infile_fd, const t_token *token)
 {
 	int		fds[2];
 
-	// TODO: protect close()
 	if (*infile_fd != -1)
 		close (*infile_fd);
 	if (pipe(fds) < 0)
@@ -108,16 +109,15 @@ int	heredoc_open(int *error, int *infile_fd, const t_token *token)
 	*infile_fd = fds[0];
 	if (write(fds[1], token->string, ft_strlen(token->string)) < 0)
 		*error = errno;
-	// TODO: protect close()
 	close (fds[1]);
 	if (is_fatal(*error))
 		return (*error);
 	return (0);
 }
 
+// TODO: protect close()
 int	infile_open(int *error, int *infile_fd, const t_token *rd)
 {
-	// TODO: protect close()
 	if (*infile_fd != -1)
 		close (*infile_fd);
 	*infile_fd = open(rd->string, O_RDONLY);
@@ -128,15 +128,17 @@ int	infile_open(int *error, int *infile_fd, const t_token *rd)
 	return (0);
 }
 
+// TODO: protect close()
 int	outfile_open(int *error, int *outfile_fd, const t_token *rd)
 {
-	// TODO: protect close()
 	if (*outfile_fd != -1)
 		close (*outfile_fd);
 	if (rd->id == OUTFILE)
-		*outfile_fd = open(rd->string, O_TRUNC | O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+		*outfile_fd = open(rd->string, O_TRUNC | O_WRONLY | O_CREAT,
+				S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	else if (rd->id == OUTFILE_APPEND)
-		*outfile_fd = open(rd->string, O_WRONLY | O_CREAT | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+		*outfile_fd = open(rd->string, O_WRONLY | O_CREAT | O_APPEND,
+				S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	if (*outfile_fd < 0)
 		*error = errno;
 	if (is_fatal(*error))

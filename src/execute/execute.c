@@ -16,11 +16,12 @@
 
 int	execute_or(t_token *tree, int fd_in, int fd_out, t_env *env);
 int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env);
-int execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env);
+int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env);
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env);
 int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env);
 int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env);
 int	execute_child(pid_t *pid, t_token *tree, int fds[2], t_env *env);
+int	call_execve(char **argv, int fd_in, int fd_out, t_env *env);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_env *env)
 {
@@ -55,7 +56,7 @@ int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env)
 	return (execute(tree->right, fd_in, fd_out, env));
 }
 
-int execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
+int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 {
 	int		return_code;
 	int		fds_1[2];
@@ -124,7 +125,8 @@ int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env)
 		fd_in = 0;
 	if (fd_out == -1)
 		fd_out = 1;
-	return_code = builtin_get_func(argv[0])((const char **)argv, fd_in, fd_out, env);
+	return_code = builtin_get_func(argv[0])((const char **)argv, fd_in, fd_out,
+			env);
 	if (fd_in != 0)
 		close(fd_in);
 	if (fd_out != 1)
@@ -135,8 +137,6 @@ int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env)
 int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 {
 	pid_t	pid;
-	char	*cmd;
-	char	**envp;
 	int		return_code;
 
 	return_code = 0;
@@ -144,26 +144,7 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 	if (pid < 0)
 		return (errno);
 	else if (pid == 0)
-	{
-		char const	*str = "/usr/bin/";
-		cmd = ft_strjoin(str, argv[0]);
-		if (cmd == NULL)
-			return (ENOMEM);
-		envp = variable_set_array_get(env->vars, ENV);
-		if (fd_in != -1)
-			dup2(fd_in, 0);
-		if (fd_out != -1)
-			dup2(fd_out, 1);
-		execve(cmd, argv, envp);
-		if (fd_in != -1)
-			close(fd_in);
-		if (fd_out != -1)
-			close(fd_out);
-		argv_destroy(&envp);
-		free(cmd);
-		perror("execve");
-		exit(errno);
-	}
+		exit(call_execve(argv, fd_in, fd_out, env));
 	else if (pid > 0)
 		waitpid(pid, &return_code, 0);
 	if (fd_in != -1)
@@ -172,6 +153,31 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 		close(fd_out);
 	env->code = WEXITSTATUS(return_code);
 	return (0);
+}
+
+int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
+{
+	char	*cmd;
+	char	**envp;
+	char const	*str = "/usr/bin/";
+
+	cmd = ft_strjoin(str, argv[0]);
+	if (cmd == NULL)
+		return (ENOMEM);
+	envp = variable_set_array_get(env->vars, ENV);
+	if (fd_in != -1)
+		dup2(fd_in, 0);
+	if (fd_out != -1)
+		dup2(fd_out, 1);
+	execve(cmd, argv, envp);
+	if (fd_in != -1)
+		close(fd_in);
+	if (fd_out != -1)
+		close(fd_out);
+	argv_destroy(&envp);
+	free(cmd);
+	perror("execve");
+	exit(errno);
 }
 
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
@@ -184,8 +190,8 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 	return_code = expand_tokens(tree, env);
 	if (return_code != 0)
 		return (return_code);
-	return_code = execute_preprocess_redirects(&env->code, &infile_fd,
-					&outfile_fd, &tree);
+	return_code = process_redirects(&env->code, &infile_fd,
+			&outfile_fd, &tree);
 	if (infile_fd != -1)
 	{
 		if (fd_in != -1)

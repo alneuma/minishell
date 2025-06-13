@@ -13,10 +13,10 @@ static void	skip_through_word(char **str);
 
 char	**tokens_make_argv(const t_token *tokens)
 {
-	char	**argv;
-	int		words;
+	char			**argv;
+	int				words;
 	const t_token	*p;
-	int		return_value;
+	int				return_value;
 
 	p = tokens;
 	words = 0;
@@ -62,7 +62,7 @@ static char	*next_word(char **str)
 
 static int	write_words_from_token(char **argv, int *idx, const t_token *token)
 {
-	char *str;
+	char	*str;
 
 	str = (char *)token->string;
 	while (*str != '\0')
