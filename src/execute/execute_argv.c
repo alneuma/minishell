@@ -109,7 +109,6 @@ static void	skip_through_word(char **str)
 				*str += 1;
 			quote = 0;
 		}
-		else
-			*str += 1;
+		*str += 1;
 	}
 }

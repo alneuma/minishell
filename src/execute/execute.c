@@ -22,6 +22,7 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env);
 int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env);
 int	execute_child(pid_t *pid, t_token *tree, int fds[2], t_env *env);
 int	call_execve(char **argv, int fd_in, int fd_out, t_env *env);
+int	argv_remove_quotes(char **argv);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_env *env)
 {
@@ -209,10 +210,32 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 	argv = tokens_make_argv(tree);
 	if (argv == NULL)
 		return (ENOMEM);
+	return_code = argv_remove_quotes(argv);
+	if (return_code != 0)
+	{
+		argv_destroy(&argv);
+		return (return_code);
+	}
 	if (is_builtin(argv[0]))
 		return_code = execute_builtin(argv, fd_in, fd_out, env);
 	else
 		return_code = execute_extern(argv, fd_in, fd_out, env);
 	argv_destroy(&argv);
 	return (return_code);
+}
+
+int	argv_remove_quotes(char **argv)
+{
+	char	*str_no_quotes;
+
+	while (*argv != NULL)
+	{
+		str_no_quotes = str_remove_quotes(*argv);
+		if (str_no_quotes == NULL)
+			return (ENOMEM);
+		free(*argv);
+		*argv = str_no_quotes;
+		argv++;
+	}
+	return (0);
 }

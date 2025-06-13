@@ -38,9 +38,9 @@ int main(int argc, char **argv, char **envp)
 		return_code = variable_set_assignment_string_add(env.vars, envp[i++], ENV);
 	if (return_code)
 		return (return_code);
-	// return_code = variable_set_assignment_string_add(env.vars, "var=\"at Makefile\"", ENV);
-	// if (return_code)
-	// 	return (return_code);
+	return_code = variable_set_assignment_string_add(env.vars, "var=\"at Makefile\"", ENV);
+	if (return_code)
+		return (return_code);
 	env.code = 0;
 	env.exit = 0;
 	while (1)
