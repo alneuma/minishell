@@ -50,14 +50,6 @@ int main(int argc, char **argv, char **envp)
 		line = readline("$> ");
 		if (line != NULL && *line != '\0')
 		{
-			tokens = scanner(line);
-			add_history(line);
-			// ft_printf("string:\n\"%s\"\n", line);
-			if (tokens == NULL)
-			{
-				free(line);
-				continue ;
-			}
 			return_code = string_validate(&valid, &culprit, line);
 			if (return_code || !valid)
 			{
@@ -70,7 +62,14 @@ int main(int argc, char **argv, char **envp)
 				if (!valid)
 					continue ;
 			}
-			free(line);
+			tokens = scanner(line);
+			add_history(line);
+			// ft_printf("string:\n\"%s\"\n", line);
+			if (tokens == NULL)
+			{
+				free(line);
+				continue ;
+			}
 			if (!tokens)
 				return (1);
 			// ft_printf("\n\ntokens:\n");

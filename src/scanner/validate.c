@@ -6,6 +6,8 @@
 
 int	process_right_paren(int *valid, const char paren, t_stack_char *stack);
 int	process_left_paren(const char paren, t_stack_char *stack);
+int	string_validates_process_char(int *valid, t_token_id *culprit,
+		const char *str, t_stack_char *stack);
 
 int	process_right_paren(int *valid, const char paren, t_stack_char *stack)
 {
@@ -68,13 +70,9 @@ int	string_validate(int *valid, t_token_id *culprit, const char *str)
 		return (return_code);
 	while (*str != '\0')
 	{
-		if (paren_is_right(*str))
-			return_code = process_right_paren(valid, *str, stack);
-		else if (paren_is_left(*str))
-			return_code = process_left_paren(*str, stack);
+		return_code = string_validates_process_char(valid, culprit, str, stack);
 		if (return_code || *valid == 0)
 		{
-			*culprit = token_string_get_id(str);
 			stack_char_destroy(&stack);
 			return (return_code);
 		}
@@ -86,5 +84,23 @@ int	string_validate(int *valid, t_token_id *culprit, const char *str)
 		*valid = 0;
 	}
 	stack_char_destroy(&stack);
+	return (0);
+}
+
+int	string_validates_process_char(int *valid, t_token_id *culprit,
+		const char *str, t_stack_char *stack)
+{
+	int	return_code;
+
+	return_code = 0;
+	if (paren_is_right(*str))
+		return_code = process_right_paren(valid, *str, stack);
+	else if (paren_is_left(*str))
+		return_code = process_left_paren(*str, stack);
+	if (return_code || *valid == 0)
+	{
+		*culprit = token_string_get_id(str);
+		return (return_code);
+	}
 	return (0);
 }
