@@ -56,7 +56,7 @@ t_token	*scanner(char *input)
 t_token	*get_first(char **input)
 {
 	t_token	*first;
-	
+
 	while (**input && is_blank(**input))
 		*input += 1;
 	if (get_next(&first, input))

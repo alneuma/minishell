@@ -60,22 +60,21 @@ int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env)
 int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 {
 	int		return_code;
-	int		fds_1[2];
-	int		fds_2[2];
+	int		fds_1[3];
+	int		fds_2[3];
 	pid_t	pid_1;
 	pid_t	pid_2;
 
-	if (pipe(fds_1) < 0)
+	if (pipe(fds_2) < 0)
 		return (errno);
-	fds_2[0] = fds_1[0];
 	fds_1[0] = fd_in;
+	fds_1[1] = fds_2[1];
+	fds_1[2] = fds_2[0];
+	fds_2[2] = fds_2[1];
 	fds_2[1] = fd_out;
 	return_code = execute_child(&pid_1, tree->left, fds_1, env);
 	if (return_code)
-	{
-		close(fds_2[0]);
 		return (return_code);
-	}
 	return_code = execute_child(&pid_2, tree->right, fds_2, env);
 	if (return_code)
 		return (return_code);
@@ -93,6 +92,7 @@ int	execute_child(pid_t *pid, t_token *tree, int fds[2], t_env *env)
 	*pid = fork();
 	if (*pid < 0)
 	{
+		close(fds[2]);
 		if (fds[0] != -1)
 			close(fds[0]);
 		if (fds[1] != -1)
@@ -101,12 +101,13 @@ int	execute_child(pid_t *pid, t_token *tree, int fds[2], t_env *env)
 	}
 	else if (*pid == 0)
 	{
-		return_code = execute(tree, fds[0], fds[1], env);
+		close(fds[2]);
+		execute(tree, fds[0], fds[1], env);
 		if (fds[0] != -1)
 			close(fds[0]);
 		if (fds[1] != -1)
 			close(fds[1]);
-		exit(return_code);
+		exit(errno);
 	}
 	else if (*pid > 0)
 	{
