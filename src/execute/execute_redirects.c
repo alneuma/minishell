@@ -29,8 +29,11 @@ int	process_redirects(int *error, int *infile_fd, int *outfile_fd,
 		return (return_code);
 	if (*error != 0)
 	{
+		if (*infile_fd != -1)
+			close(*infile_fd);
+		if (*outfile_fd != -1)
+			close(*outfile_fd);
 		perror(SHELL_NAME);
-		return (0);
 	}
 	return (tokens_delete_redirects(tokens));
 }

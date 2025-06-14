@@ -194,7 +194,7 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 	fds[0] = fd_in;
 	fds[1] = fd_out;
 	return_code = prepare_params(&argv, tree, fds, env);
-	if (return_code != 0)
+	if (return_code || env->code)
 		return (return_code);
 	if (is_builtin(argv[0]))
 		return_code = execute_builtin(argv, fd_in, fd_out, env);
@@ -215,6 +215,8 @@ int	prepare_params(char ***argv, t_token *tree, int fds[2], t_env *env)
 		return (return_code);
 	return_code = process_redirects(&env->code, &infile_fd,
 			&outfile_fd, &tree);
+	if (return_code || env->code)
+		return (return_code);
 	assign_redirect_fds(&fds[0], &fds[1], &infile_fd, &outfile_fd);
 	if (return_code != 0)
 		return (return_code);
