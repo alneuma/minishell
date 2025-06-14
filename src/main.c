@@ -17,6 +17,13 @@
 
 #define P1 "$> "
 
+// int	func(t_env *env)
+// {
+// 	char	*line;
+//
+// 	line = readline(P1);
+// 	if (line == NULL)
+
 int main(int argc, char **argv, char **envp)
 {
 	t_token		*tokens;
@@ -63,15 +70,14 @@ int main(int argc, char **argv, char **envp)
 					continue ;
 			}
 			tokens = scanner(line);
-			add_history(line);
 			// ft_printf("string:\n\"%s\"\n", line);
 			if (tokens == NULL)
 			{
 				free(line);
-				continue ;
-			}
-			if (!tokens)
 				return (1);
+			}
+			add_history(line);
+			free(line);
 			// ft_printf("\n\ntokens:\n");
 			// tokens_print(tokens);
 			return_code = tokens_validate(&valid, &culprit, tokens);
@@ -98,6 +104,8 @@ int main(int argc, char **argv, char **envp)
 			return_code = execute(tree, -1, -1, &env);
 			parse_tree_destroy(&tree);
 		}
+		if (line != NULL && *line == '\0')
+			free(line);
 	}
 	rl_clear_history();
 	variable_set_destroy(&env.vars);
