@@ -23,6 +23,8 @@ int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env);
 int	execute_child(pid_t *pid, t_token *tree, int fds[2], t_env *env);
 int	call_execve(char **argv, int fd_in, int fd_out, t_env *env);
 int	argv_remove_quotes(char **argv);
+int	prepare_params(char ***argv, t_token *tree, int fds[2], t_env *env);
+int	assign_redirect_fds(int *fd_in, int *fd_out, int *infile_fd, int *outfile_fd);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_env *env)
 {
@@ -186,6 +188,24 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 {
 	char	**argv;
+	int		fds[2];
+	int		return_code;
+
+	fds[0] = fd_in;
+	fds[1] = fd_out;
+	return_code = prepare_params(&argv, tree, fds, env);
+	if (return_code != 0)
+		return (return_code);
+	if (is_builtin(argv[0]))
+		return_code = execute_builtin(argv, fd_in, fd_out, env);
+	else
+		return_code = execute_extern(argv, fd_in, fd_out, env);
+	argv_destroy(&argv);
+	return (return_code);
+}
+
+int	prepare_params(char ***argv, t_token *tree, int fds[2], t_env *env)
+{
 	int		return_code;
 	int		infile_fd;
 	int		outfile_fd;
@@ -195,35 +215,36 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 		return (return_code);
 	return_code = process_redirects(&env->code, &infile_fd,
 			&outfile_fd, &tree);
-	if (infile_fd != -1)
-	{
-		if (fd_in != -1)
-			close(fd_in);
-		fd_in = infile_fd;
-	}
-	if (outfile_fd != -1)
-	{
-		if (fd_out != -1)
-			close(fd_out);
-		fd_out = outfile_fd;
-	}
+	assign_redirect_fds(&fds[0], &fds[1], &infile_fd, &outfile_fd);
 	if (return_code != 0)
 		return (return_code);
-	argv = tokens_make_argv(tree);
-	if (argv == NULL)
+	*argv = tokens_make_argv(tree);
+	if (*argv == NULL)
 		return (ENOMEM);
-	return_code = argv_remove_quotes(argv);
+	return_code = argv_remove_quotes(*argv);
 	if (return_code != 0)
 	{
-		argv_destroy(&argv);
+		argv_destroy(argv);
 		return (return_code);
 	}
-	if (is_builtin(argv[0]))
-		return_code = execute_builtin(argv, fd_in, fd_out, env);
-	else
-		return_code = execute_extern(argv, fd_in, fd_out, env);
-	argv_destroy(&argv);
-	return (return_code);
+	return (0);
+}
+
+int	assign_redirect_fds(int *fd_in, int *fd_out, int *infile_fd, int *outfile_fd)
+{
+	if (*infile_fd != -1)
+	{
+		if (*fd_in != -1)
+			close(*fd_in);
+		*fd_in = *infile_fd;
+	}
+	if (*outfile_fd != -1)
+	{
+		if (*fd_out != -1)
+			close(*fd_out);
+		*fd_out = *outfile_fd;
+	}
+	return (0);
 }
 
 int	argv_remove_quotes(char **argv)

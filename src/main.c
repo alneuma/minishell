@@ -78,6 +78,7 @@ int main(int argc, char **argv, char **envp)
 			}
 			add_history(line);
 			free(line);
+			line = NULL;
 			// ft_printf("\n\ntokens:\n");
 			// tokens_print(tokens);
 			return_code = tokens_validate(&valid, &culprit, tokens);
