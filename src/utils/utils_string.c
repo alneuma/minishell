@@ -1,4 +1,12 @@
 #include <stdlib.h>
+#include <unistd.h>
+
+int	close_fd_safe(int fd)
+{
+	if (fd >= 0)
+		return (close(fd));
+	return (0);
+}
 
 int	is_quote(const char c)
 {
