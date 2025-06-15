@@ -16,11 +16,9 @@
 
 int	execute_or(t_token *tree, int fd_in, int fd_out, t_env *env);
 int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env);
-int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env);
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env);
 int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env);
 int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env);
-int	execute_child(pid_t *pid, t_token *tree, int fds[2], t_env *env);
 int	call_execve(char **argv, int fd_in, int fd_out, t_env *env);
 int	argv_remove_quotes(char **argv);
 int	prepare_params(char ***argv, t_token *tree, int fds[2], t_env *env);
@@ -59,62 +57,6 @@ int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env)
 	if (return_code)
 		return (return_code);
 	return (execute(tree->right, fd_in, fd_out, env));
-}
-
-int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
-{
-	int		return_code;
-	int		fds_1[3];
-	int		fds_2[3];
-	pid_t	pid_1;
-	pid_t	pid_2;
-
-	if (pipe(fds_2) < 0)
-		return (errno);
-	fds_1[0] = fd_in;
-	fds_1[1] = fds_2[1];
-	fds_1[2] = fds_2[0];
-	fds_2[2] = fds_2[1];
-	fds_2[1] = fd_out;
-	return_code = execute_child(&pid_1, tree->left, fds_1, env);
-	if (return_code)
-		return (return_code);
-	return_code = execute_child(&pid_2, tree->right, fds_2, env);
-	if (return_code)
-		return (return_code);
-	waitpid(pid_1, &return_code, 0);
-	waitpid(pid_2, &return_code, 0);
-	env->code = WEXITSTATUS(return_code);
-	return (0);
-}
-
-int	execute_child(pid_t *pid, t_token *tree, int fds[2], t_env *env)
-{
-	int		return_code;
-
-	*pid = fork();
-	if (*pid < 0)
-	{
-		close_fd_safe(fds[2]);
-		close_fd_safe(fds[1]);
-		close_fd_safe(fds[0]);
-		return (errno);
-	}
-	else if (*pid == 0)
-	{
-		close_fd_safe(fds[2]);
-		execute(tree, fds[0], fds[1], env);
-		close_fd_safe(fds[1]);
-		close_fd_safe(fds[0]);
-		exit(errno);
-	}
-	else if (*pid > 0)
-	{
-		return_code = close_fd_safe(fds[1]);
-		return_code |= close_fd_safe(fds[0]);
-		return (return_code);
-	}
-	return (0);
 }
 
 int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env)
@@ -156,155 +98,26 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 {
 	char	**envp;
-	char	**pathv;
+	char	*cmd;
 
-	pathv = get_pathv(env); 
-	if (pathv == NULL)
-		return (ENOMEM);
 	envp = variable_set_array_get(env->vars, ENV);
 	if (envp == NULL)
-	{
-		argv_destroy(&pathv);
 		return (ENOMEM);
-	}
 	if (fd_in != -1)
 		dup2(fd_in, 0);
 	if (fd_out != -1)
 		dup2(fd_out, 1);
-	execve_apply_path(argv, pathv, envp);
+	cmd = NULL;
+	if (!get_cmd(&cmd, argv, env))
+		execve(cmd, argv, envp);
 	if (fd_in != -1)
 		close(fd_in);
 	if (fd_out != -1)
 		close(fd_out);
-	argv_destroy(&pathv);
 	argv_destroy(&envp);
+	free(cmd);
 	perror("execve");
 	exit(errno);
-}
-
-int	apply_path_relative(char **cmd, const char *str, t_env *env)
-{
-	char	*cwd;
-
-	*cmd = getcwd(cwd, PATH_MAX - 1);
-	if (*cmd == NULL)
-	{
-		env->code = errno;
-		if (is_fatal(errno))
-			return (errno);
-		ft_dprintf(2, "%s: ", SHELL_NAME);
-		perror("");
-		return (0);
-	}		
-	*cmd = ft_strjoin(cwd, str);
-	free(cwd);
-	if (*cmd == NULL)
-		return (ENOMEM);
-	if (access(*cmd, X_OK) < 0)
-	{
-		env->code = errno;
-		if (is_fatal(errno))
-			return (errno);
-		ft_dprintf(2, "%s: %s:", SHELL_NAME, str);
-		perror("");
-	}
-	return (0):
-}
-
-int	func(char **cmd, char **argv, t_env *env)
-{
-	if (argv[0][0] == '.' && argv[0][1] == '/')
-		return (apply_path_relative(cmd, argv[0], env));
-	else
-		return (apply_path(cmd, argv[0], env));
-}
-
-int	apply_path(char **cmd, const char *str, t_env *env)
-{
-	char	**pathv;
-	char	*tmp;
-
-	pathv = get_pathv(env); 
-	if (pathv == NULL)
-		return (ENOMEM);
-	while (*pathv != NULL)
-	{
-		*cmd = ft_strjoin(*pathv, str);
-		if (*cmd == NULL)
-			return (ENOMEM);
-		if (access(*cmd, X_OK) >= 0)
-			return (0);
-		free(*cmd);
-		pathv++;
-	}
-	return (errno);
-}
-
-int	execve_apply_path(char **argv, char **pathv, char **envp)
-{
-	char	*cmd;
-	char	*tmp;
-	int		return_code;
-
-	return_code = 0;
-	while (*pathv != NULL)
-	{
-		if ((*pathv)[ft_strlen(*pathv)] == '/')
-			cmd = ft_strjoin(*pathv, *argv);
-		else
-		{
-			tmp = ft_strjoin(*pathv, "/");
-			if (tmp == NULL)
-				return (NULL);
-			cmd = ft_strjoin(tmp, *argv);
-			free(tmp);
-		}
-		if (cmd == NULL)
-			return (ENOMEM);
-		return_code = execve(cmd, argv, envp);
-		free(cmd);
-		pathv++;
-	}
-	return (return_code);
-}
-
-int	get_pathv(char ***pathv, t_env *env)
-{
-	char	*tmp;
-	int		return_code;
-
-	tmp = variable_set_var_get(env->vars, "PATH");
-	if (tmp == NULL)
-		return (ENOMEM);
-	*pathv = ft_split(tmp, ':');
-	free(tmp);
-	if (*pathv == NULL)
-		return (ENOMEM);
-	return_code = append_slashes(*pathv);
-	if (return_code)
-		argv_destroy(pathv);
-	return (return_code);
-}
-
-int	append_slashes(char **pathv)
-{
-	char	*tmp;
-	int		i;
-
-	i = 0;
-	while (pathv[i] != NULL)
-	{
-		if (pathv[i][ft_strlen(pathv[i]) - 1)] != '/')
-		{
-			tmp = ft_strjoin(pathv[i], "/");
-			if (tmp == NULL)
-				return (ENOMEM);
-			free(pathv[i]);
-			pathv[i] = tmp;
-		}
-		i++;
-	}
-	return (0);
 }
 
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)

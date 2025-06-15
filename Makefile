@@ -31,6 +31,8 @@ vpath %.c $(SRC_DIR)/execute
 SRC	+= execute.c
 SRC	+= execute_argv.c
 SRC	+= execute_redirects.c
+SRC	+= execute_pipe.c
+SRC	+= execute_get_cmd.c
 vpath %.c $(SRC_DIR)/environment
 # variable_set
 SRC += variable_set.c
