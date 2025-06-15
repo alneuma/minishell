@@ -182,6 +182,64 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 	exit(errno);
 }
 
+int	apply_path_relative(char **cmd, const char *str, t_env *env)
+{
+	char	*cwd;
+
+	*cmd = getcwd(cwd, PATH_MAX - 1);
+	if (*cmd == NULL)
+	{
+		env->code = errno;
+		if (is_fatal(errno))
+			return (errno);
+		ft_dprintf(2, "%s: ", SHELL_NAME);
+		perror("");
+		return (0);
+	}		
+	*cmd = ft_strjoin(cwd, str);
+	free(cwd);
+	if (*cmd == NULL)
+		return (ENOMEM);
+	if (access(*cmd, X_OK) < 0)
+	{
+		env->code = errno;
+		if (is_fatal(errno))
+			return (errno);
+		ft_dprintf(2, "%s: %s:", SHELL_NAME, str);
+		perror("");
+	}
+	return (0):
+}
+
+int	func(char **cmd, char **argv, t_env *env)
+{
+	if (argv[0][0] == '.' && argv[0][1] == '/')
+		return (apply_path_relative(cmd, argv[0], env));
+	else
+		return (apply_path(cmd, argv[0], env));
+}
+
+int	apply_path(char **cmd, const char *str, t_env *env)
+{
+	char	**pathv;
+	char	*tmp;
+
+	pathv = get_pathv(env); 
+	if (pathv == NULL)
+		return (ENOMEM);
+	while (*pathv != NULL)
+	{
+		*cmd = ft_strjoin(*pathv, str);
+		if (*cmd == NULL)
+			return (ENOMEM);
+		if (access(*cmd, X_OK) >= 0)
+			return (0);
+		free(*cmd);
+		pathv++;
+	}
+	return (errno);
+}
+
 int	execve_apply_path(char **argv, char **pathv, char **envp)
 {
 	char	*cmd;
@@ -210,17 +268,43 @@ int	execve_apply_path(char **argv, char **pathv, char **envp)
 	return (return_code);
 }
 
-char	**get_pathv(t_env *env)
+int	get_pathv(char ***pathv, t_env *env)
 {
-	char	**pathv;
-	char	*path;
+	char	*tmp;
+	int		return_code;
 
-	path = variable_set_var_get(env->vars, "PATH");
-	if (path == NULL)
-		return (NULL);
-	pathv = ft_split(path, ':');
-	free(path);
-	return (pathv);
+	tmp = variable_set_var_get(env->vars, "PATH");
+	if (tmp == NULL)
+		return (ENOMEM);
+	*pathv = ft_split(tmp, ':');
+	free(tmp);
+	if (*pathv == NULL)
+		return (ENOMEM);
+	return_code = append_slashes(*pathv);
+	if (return_code)
+		argv_destroy(pathv);
+	return (return_code);
+}
+
+int	append_slashes(char **pathv)
+{
+	char	*tmp;
+	int		i;
+
+	i = 0;
+	while (pathv[i] != NULL)
+	{
+		if (pathv[i][ft_strlen(pathv[i]) - 1)] != '/')
+		{
+			tmp = ft_strjoin(pathv[i], "/");
+			if (tmp == NULL)
+				return (ENOMEM);
+			free(pathv[i]);
+			pathv[i] = tmp;
+		}
+		i++;
+	}
+	return (0);
 }
 
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
