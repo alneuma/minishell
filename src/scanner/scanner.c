@@ -6,7 +6,7 @@
 #include "scanner.h"
 #include "utils.h"
 
-t_token	*get_first(char **input);
+t_token	*get_first(t_token **first, char **input);
 
 // overwrites input to point directly after the read lexeme
 // success	-> 0
@@ -28,38 +28,36 @@ int	get_next(t_token **token, char **input)
 	return (make_token(token, LITERAL, input));
 }
 
-t_token	*scanner(char *input)
+int	scanner(t_token **tokens, char *input)
 {
 	t_token	*current;
 	t_token	*start;
+	int		return_code;
 
-	current = get_first(&input);
-	if (current == NULL)
-		return (NULL);
-	start = current;
+	return_code = get_first(&current, &input);
+	if (return_code)
+		return (return_code);
+	*tokens = current;
 	while (*input)
 	{
 		while (*input && is_blank(*input))
 			input++;
 		if (*input == '\0')
-			return (start);
-		if (get_next(&current->right, &input))
+			return (0);
+		return_code = get_next(&current->right, &input);
+		if (return_code)
 		{
 			tokens_destroy(&start);
-			return (NULL);
+			return (return_code);
 		}
 		current = current->right;
 	}
-	return (start);
+	return (return_code);
 }
 
-t_token	*get_first(char **input)
+t_token	*get_first(t_token **first, char **input)
 {
-	t_token	*first;
-
 	while (**input && is_blank(**input))
 		*input += 1;
-	if (get_next(&first, input))
-		return (NULL);
-	return (first);
+	return (get_next(first, input));
 }

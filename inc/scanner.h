@@ -3,7 +3,7 @@
 
 # include "token.h"
 
-t_token	*scanner(char *input);
+int		scanner(t_token **tokens, char *input);
 int		string_validate(int *valid, t_token_id *culprit, const char *str);
 int		preprocess_all_redirects(t_token *tokens);
 void	tokens_redirects_cleanup(t_token *tokens);
