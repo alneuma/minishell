@@ -21,6 +21,55 @@
 int	shell_iteration(t_env *env);
 int	env_initialize(t_env *env, char **envp);
 void	env_clear(t_env *env);
+int	preprocess_tokens(t_token *tokens, int *valid, t_env *env);
+int	get_line(char **line, int *valid, t_env *env);
+
+int	get_line(char **line, int *valid, t_env *env)
+{
+	int			return_code;
+	t_token_id	culprit;
+
+ 	*line = readline(P1);
+ 	if (*line == NULL || **line == '\0')
+	{
+		free(*line);
+		*line = NULL;
+		return (0);
+	}
+	return_code = string_validate(valid, &culprit, *line);
+	if (return_code)
+	{
+		free(*line);
+		return (return_code);
+	}
+	if (!*valid)
+	{
+		free(*line);
+		print_error_token(culprit);
+		env->code = ERROR_SYNTAX;
+		return (0);
+	}
+	add_history(*line);
+	return (0);
+}
+
+int	preprocess_tokens(t_token *tokens, int *valid, t_env *env)
+{
+	int			return_code;
+	t_token_id	culprit;
+
+	return_code = tokens_validate(valid, &culprit, tokens);
+	if (return_code)
+		return (return_code);
+	if (!*valid)
+		print_error_token(culprit);
+	return_code	= tokens_preprocess_redirects(tokens);
+	if (return_code)
+		return (return_code);
+	if (!*valid)
+		env->code = ERROR_SYNTAX;
+	return (0);
+}
 
 int	shell_iteration(t_env *env)
 {
@@ -29,51 +78,22 @@ int	shell_iteration(t_env *env)
 	t_token		*tree;
 	int			return_code;
 	int			valid;
-	t_token_id	culprit;
 
- 	line = readline(P1);
- 	if (line == NULL || *line == '\0')
-	{
-		free(line);
-		return (0);
-	}
-	return_code = string_validate(&valid, &culprit, line);
-	if (return_code)
-	{
+	return_code = get_line(&line, &valid, env);
+	if (return_code || !valid || line == NULL)
+	{	
 		free(line);
 		return (return_code);
 	}
-	if (!valid)
-	{
-		free(line);
-		print_error_token(culprit);
-		env->code = ERROR_SYNTAX;
-		return (0);
-	}
-	add_history(line);
 	return_code = scanner(&tokens, line);
 	free(line);
 	if (return_code)
 		return (return_code);
-	return_code = tokens_validate(&valid, &culprit, tokens);
-	if (return_code)
-	{
+	return_code = preprocess_tokens(tokens, &valid, env);
+	if (return_code || !valid)
+	{	
 		tokens_destroy(&tokens);
-		return (return_code);
-	}
-	if (!valid)
-		print_error_token(culprit);
-	return_code	= tokens_preprocess_redirects(tokens);
-	if (return_code)
-	{
-		tokens_destroy(&tokens);
-		return (return_code);
-	}
-	if (!valid)
-	{
-		tokens_destroy(&tokens);
-		env->code = ERROR_SYNTAX;
-		return (0);
+		return(return_code);
 	}
 	tree = tree_from_tokens(&tokens);
 	return_code = execute(tree, -1, -1, env);
