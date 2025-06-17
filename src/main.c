@@ -16,6 +16,7 @@
 // #define INPUT "asdfasdf"
 
 #define P1 "$> "
+#define ERROR_SYNTAX 2
 
 int	shell_iteration(t_env *env);
 int	env_initialize(t_env *env, char **envp);
@@ -46,6 +47,7 @@ int	shell_iteration(t_env *env)
 	{
 		free(line);
 		print_error_token(culprit);
+		env->code = ERROR_SYNTAX;
 		return (0);
 	}
 	add_history(line);
@@ -70,6 +72,7 @@ int	shell_iteration(t_env *env)
 	if (!valid)
 	{
 		tokens_destroy(&tokens);
+		env->code = ERROR_SYNTAX;
 		return (0);
 	}
 	tree = tree_from_tokens(&tokens);
