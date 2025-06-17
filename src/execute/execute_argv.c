@@ -10,36 +10,64 @@ static char	*next_word(char **str);
 static int	write_words_from_token(char **argv, int *idx, const t_token *token);
 static int	str_num_words(char *str);
 static void	skip_through_word(char **str);
+int	argv_populate(char **argv, const t_token *tokens);
+int	argv_create(char ***argv, const t_token *tokens);
 
-char	**tokens_make_argv(const t_token *tokens)
+int	argv_create(char ***argv, const t_token *tokens)
 {
-	char			**argv;
-	int				words;
-	const t_token	*p;
-	int				return_value;
+	int	words;
 
-	p = tokens;
-	words = 0;
-	while (p != NULL)
-	{
-		words += str_num_words(p->string);
-		p = p->right;
-	}
-	argv = (char **)ft_calloc(words + 1, sizeof(*argv));
-	if (argv == NULL)
-		return (NULL);
 	words = 0;
 	while (tokens != NULL)
 	{
-		return_value = write_words_from_token(argv, &words, tokens);
-		if (return_value)
+		if (tokens->id == LITERAL)
+			words += str_num_words(tokens->string);
+		tokens = tokens->right;
+	}
+	if (words == 0)
+	{
+		*argv = NULL;
+		return (0);
+	}
+	*argv = (char **)ft_calloc(words + 1, sizeof(**argv));
+	if (argv == NULL)
+		return (ENOMEM);
+	return (0);
+}
+
+int	argv_populate(char **argv, const t_token *tokens)
+{
+	int	return_code;
+	int	words;
+
+	words = 0;
+	while (tokens != NULL)
+	{
+		if (tokens->id == LITERAL)
 		{
-			argv_destroy(&argv);
-			return (NULL);
+			return_code = write_words_from_token(argv, &words, tokens);
+			if (return_code)
+			{
+				argv_destroy(&argv);
+				return (return_code);
+			}
 		}
 		tokens = tokens->right;
 	}
-	return (argv);
+	return (0);
+}
+
+int	tokens_make_argv(char ***argv, const t_token *tokens)
+{
+	int	return_code;
+
+	return_code = argv_create(argv, tokens);
+	if (return_code)
+		return (return_code);
+	return_code = argv_populate(*argv, tokens);
+	if (return_code)
+		argv_destroy(argv);
+	return (return_code);
 }
 
 static char	*next_word(char **str)

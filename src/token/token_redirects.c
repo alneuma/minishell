@@ -28,7 +28,9 @@ int	tokens_preprocess_redirects(t_token *tokens)
 		if (token_is_redirect(tokens))
 		{
 			return_code = preprocess_redirect(tokens);
-			if (return_code)
+			if (return_code == -1)
+				return (0);
+			else if (return_code)
 				return (return_code);
 		}
 		tokens = tokens->right;
@@ -42,7 +44,7 @@ static int	preprocess_redirect(t_token *token)
 	char	*eof;
 
 	if (token->right == NULL || token->right->id != LITERAL)
-		return (0);
+		return (-1);
 	tmp = token->right;
 	token->right = token->right->right;
 	if (token->id == HEREDOC)

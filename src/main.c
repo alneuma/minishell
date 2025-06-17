@@ -60,16 +60,17 @@ int	shell_iteration(t_env *env)
 		return (return_code);
 	}
 	if (!valid)
-	{
-		tokens_destroy(&tokens);
 		print_error_token(culprit);
-		return (0);
-	}
 	return_code	= tokens_preprocess_redirects(tokens);
 	if (return_code)
 	{
 		tokens_destroy(&tokens);
 		return (return_code);
+	}
+	if (!valid)
+	{
+		tokens_destroy(&tokens);
+		return (0);
 	}
 	tree = tree_from_tokens(&tokens);
 	return_code = execute(tree, -1, -1, env);

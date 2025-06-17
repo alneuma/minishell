@@ -35,7 +35,8 @@ int	process_redirects(int *error, int *infile_fd, int *outfile_fd,
 			close(*outfile_fd);
 		perror(SHELL_NAME);
 	}
-	return (tokens_delete_redirects(tokens));
+	return (0);
+	// return (tokens_delete_redirects(tokens));
 }
 
 int	tokens_delete_redirects(t_token **tokens)
