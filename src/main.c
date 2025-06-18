@@ -23,6 +23,7 @@ int	env_initialize(t_env *env, char **envp);
 void	env_clear(t_env *env);
 int	preprocess_tokens(t_token *tokens, int *valid, t_env *env);
 int	get_line(char **line, int *valid, t_env *env);
+int	get_tokens(t_token **tokens, t_env *env);
 
 int	get_line(char **line, int *valid, t_env *env)
 {
@@ -71,11 +72,9 @@ int	preprocess_tokens(t_token *tokens, int *valid, t_env *env)
 	return (0);
 }
 
-int	shell_iteration(t_env *env)
+int	get_tokens(t_token **tokens, t_env *env)
 {
 	char		*line;
-	t_token		*tokens;
-	t_token		*tree;
 	int			return_code;
 	int			valid;
 
@@ -85,16 +84,25 @@ int	shell_iteration(t_env *env)
 		free(line);
 		return (return_code);
 	}
-	return_code = scanner(&tokens, line);
+	return_code = scanner(tokens, line);
 	free(line);
 	if (return_code)
 		return (return_code);
-	return_code = preprocess_tokens(tokens, &valid, env);
+	return_code = preprocess_tokens(*tokens, &valid, env);
 	if (return_code || !valid)
-	{	
-		tokens_destroy(&tokens);
-		return(return_code);
-	}
+		tokens_destroy(tokens);
+	return(return_code);
+}
+
+int	shell_iteration(t_env *env)
+{
+	t_token		*tokens;
+	t_token		*tree;
+	int			return_code;
+
+	return_code = get_tokens(&tokens, env);
+	if (return_code)
+		return (return_code);
 	tree = tree_from_tokens(&tokens);
 	return_code = execute(tree, -1, -1, env);
 	parse_tree_destroy(&tree);
