@@ -43,6 +43,7 @@ SRC += variable.c
 SRC += variable_operations.c
 vpath %.c $(SRC_DIR)/builtins
 SRC += builtins.c
+SRC += cd.c
 vpath %.c $(SRC_DIR)/assignment_strings
 SRC	+= assignment_strings.c
 vpath %.c $(SRC_DIR)/expander

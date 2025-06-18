@@ -16,6 +16,7 @@
 // #define INPUT "asdfasdf"
 
 #define P1 "$> "
+// #define P1 '\[\e[1;35m\]\u\[\e[1;96m\]@\[\e[1;35m\]\h\e[1;96m\]:\[\e[1;34m\]\w\[\e[1;33m\]\n$ '
 #define ERROR_SYNTAX 2
 
 int	shell_iteration(t_env *env);
@@ -125,6 +126,7 @@ int	main(int argc, char **argv, char **envp)
 		if (is_fatal(return_code) || env.exit)
 		{
 			env_clear(&env);
+		 	rl_clear_history();
 			return (return_code);
 		}
 	}
@@ -154,6 +156,8 @@ int	env_initialize(t_env *env, char **envp)
 		}
 		i++;
 	}
+	env->code = 0;
+	env->exit = 0;
 	return (0);
 }
 		

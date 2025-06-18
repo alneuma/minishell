@@ -9,11 +9,11 @@
 #include "assignment_strings.h"
 #include "libft.h"
 #include "defs.h"
+#include "builtins_internals.h"
 
 int	(*builtin_get_func(const char *cmd))(const char **, int, int, t_env *);
 
 // builtins
-int builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env);
 int builtin_echo(const char **argv, int fd_in, int fd_out, t_env *env);
 int builtin_env(const char **argv, int fd_in, int fd_out, t_env *env);
 int builtin_exit(const char **argv, int fd_in, int fd_out, t_env *env);
@@ -21,9 +21,6 @@ int builtin_exit(const char **argv, int fd_in, int fd_out, t_env *env);
 int builtin_export(const char **argv, int fd_in, int fd_out, t_env *env);
 int builtin_pwd(const char **argv, int fd_in, int fd_out, t_env *env);
 int builtin_unset(const char **argv, int fd_in, int fd_out, t_env *env);
-
-// utils
-int	string_array_get_len(const char **arr);
 
 int	(*builtin_get_func(const char *cmd))(const char **, int, int, t_env *)
 {
@@ -58,78 +55,6 @@ int	is_builtin(const char *cmd)
 		i++;
 	}
 	return (0);
-}
-
-int builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
-{
-	char	cwd[PATH_MAX];
-	int		return_code;
-	char	*old_pwd;
-	char	*pwd;
-	char	*check;
-	
-	(void)fd_in;
-	(void)fd_out;
-	env->code = 0;
-	if (string_array_get_len(argv) > 2)
-	{
-		ft_dprintf(2, "%s: cd: too many arguments\n", SHELL_NAME);
-		env->code = 1;
-		return (0);
-	}
-	old_pwd = variable_set_var_get_ref(env->vars, "OLDPWD");
-	pwd = variable_set_var_get_ref(env->vars, "PWD");
-	if (old_pwd != NULL)
-	{	
-		if (pwd == NULL)
-			pwd = "";
-		return_code = variable_set_var_set(env->vars, "OLDPWD", pwd, 0);
-		if (return_code)
-			return (return_code);
-	}
-	if (string_array_get_len(argv) == 1)
-	{
-		check = variable_set_var_get_ref(env->vars, "HOME");
-		if (check == NULL)
-		{
-			ft_dprintf(2, "%s: cd: HOME not set\n", SHELL_NAME);
-			env->code = 1;
-			return (0);
-		}
-		if (chdir(check) < 0)
-		{
-			env->code = errno;
-			if (is_fatal(errno))
-				return (errno);
-			ft_dprintf(2, "%s: ", SHELL_NAME);
-			perror("cd");
-			return (0);
-		}
-	}
-	else
-	{
-		if (chdir(argv[1]) < 0)
-		{
-			env->code = errno;
-			if (is_fatal(errno))
-				return (errno);
-			ft_dprintf(2, "%s: ", SHELL_NAME);
-			perror("cd");
-		}
-	}
-	if (pwd == NULL || *pwd == '\0')
-		return (0);
-	check = getcwd(cwd, PATH_MAX - 1);
-	if (check == NULL)
-	{
-		env->code = errno;
-		if (is_fatal(errno))
-			return (errno);
-		ft_dprintf(2, "%s: ", SHELL_NAME);
-		perror("cd");
-		return (0);
-	}		
-	return (variable_set_var_set(env->vars, "PWD", cwd, 0));
 }
 
 // -n missing
