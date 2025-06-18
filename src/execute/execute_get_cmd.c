@@ -88,7 +88,7 @@ int	apply_path(char **cmd, const char *str, t_env *env)
 		*cmd = ft_strjoin(pathv[i], str);
 		if (*cmd == NULL)
 			return (ENOMEM);
-		if (access(*cmd, X_OK) >= 0)
+		if (access(*cmd, X_OK) == 0)
 		{	
 			argv_destroy(&pathv);
 			return (0);
@@ -97,6 +97,7 @@ int	apply_path(char **cmd, const char *str, t_env *env)
 		i++;
 	}
 	argv_destroy(&pathv);
+	*cmd = NULL;
 	return (errno);
 }
 
