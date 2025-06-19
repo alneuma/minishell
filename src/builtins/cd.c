@@ -11,7 +11,6 @@
 
 int	update_env(const char *old_cwd, t_env *env);
 int	get_objective_dir(char **objective, const char **argv, t_env *env);
-int	ft_get_cwd(char **cwd, t_env *env);
 int	ft_chdir(const char *objective, t_env *env);
 
 int	get_objective_dir(char **objective, const char **argv, t_env *env)
@@ -42,28 +41,6 @@ int	get_objective_dir(char **objective, const char **argv, t_env *env)
 		return (ENOMEM);
 	return (0);
 }		
-
-int	ft_get_cwd(char **cwd, t_env *env)
-{
-	char	*check;
-	char	cwd_arr[PATH_MAX];
-
-	*cwd = NULL;
-	check = getcwd(cwd_arr, PATH_MAX - 1);
-	if (check == NULL)
-	{
-		env->code = errno;
-		if (is_fatal(errno))
-			return (errno);
-		ft_dprintf(2, "%s: ", SHELL_NAME);
-		perror("cd");
-		return (errno);
-	}
-	*cwd = ft_strdup(cwd_arr);
-	if (*cwd == NULL)
-		return (ENOMEM);
-	return (0);
-}
 
 int	ft_chdir(const char *objective, t_env *env)
 {
