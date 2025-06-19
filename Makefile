@@ -44,6 +44,13 @@ SRC += variable_operations.c
 vpath %.c $(SRC_DIR)/builtins
 SRC += builtins.c
 SRC += cd.c
+SRC	+= echo.c
+SRC	+= env.c
+SRC	+= exit.c
+SRC	+= export.c
+SRC	+= pwd.c
+SRC	+= unset.c
+SRC	+= builtins_utils.c
 vpath %.c $(SRC_DIR)/assignment_strings
 SRC	+= assignment_strings.c
 vpath %.c $(SRC_DIR)/expander
