@@ -54,13 +54,11 @@ int	variable_set_print_by_type_sorted(const int fd, const t_variable_set *env,
 	return (0);
 }
 
-// can not deal with non assignment variables yet
 int builtin_export(const char **argv, int fd_in, int fd_out, t_env *env)
 {
 	int		return_value;
 
 	(void)fd_in;
-	(void)fd_out;
 	if (string_array_get_len(argv) == 1)
 		return (variable_set_print_by_type_sorted(fd_out, env->vars, ENV));
 	argv++;

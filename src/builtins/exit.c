@@ -11,7 +11,7 @@ int builtin_exit(const char **argv, int fd_in, int fd_out, t_env *env)
 
 	(void)fd_in;
 	code = 0;
-	if (fd_in == -1)
+	if (fd_in == 0)
 		write(fd_out, "exit\n", 5); 
 	if (string_array_get_len(argv) > 2)
 	{

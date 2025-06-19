@@ -17,7 +17,6 @@ typedef enum e_vartype
 {
 	SHELL,
 	ENV,
-	EXPORT,
 	BOTH
 }	t_vartype;
 
