@@ -37,6 +37,8 @@ char			**variable_set_array_get(const t_variable_set *env,
 // display
 int				variable_set_print_by_type(const int fd,
 					const t_variable_set *env, const t_vartype vartype);
+int				variable_set_print_format_env(const int fd,
+					const t_variable_set *vars);
 
 // modify
 int				variable_set_assignment_string_add(t_variable_set *env,
