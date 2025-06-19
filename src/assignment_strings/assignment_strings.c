@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <errno.h>
 #include "assignment_strings.h"
 #include "libft.h"
 
@@ -11,7 +12,7 @@ int	is_valid_identifier(const char *str, int len)
 {
 	int	i;
 	
-	if (len == 0 || !is_identifier_char(*str) || is_digit(*str))
+	if (len == 0 || !is_identifier_char(*str) || ft_isdigit(*str))
 		return (0);
 	i = 1;
 	while (i < len)
@@ -58,9 +59,8 @@ int	assignment_string_val_get(char **val, const char *str)
 	return (0);
 }
 
-char	*assignment_string_key_get(const char *str)
+int	assignment_string_key_get(char **key, const char *str)
 {
-	char	*key;
 	char	*equal;
 	int		len;
 
@@ -68,12 +68,12 @@ char	*assignment_string_key_get(const char *str)
 	len = equal - str;
 	if (equal != str && ft_strchr(str, '+') == equal - 1)
 		len--;
-	key = (char *)malloc(len + 1);
-	if (key == NULL)
-		return (NULL);
-	ft_memcpy(key, str, len);
-	key[len] = '\0';
-	return (key);
+	*key = (char *)malloc(len + 1);
+	if (*key == NULL)
+		return (ENOMEM);
+	ft_memcpy(*key, str, len);
+	(*key)[len] = '\0';
+	return (0);
 }
 
 char	*first_non_assignment(const char **arr)

@@ -5,6 +5,9 @@
 #include "builtins_internals.h"
 #include "assignment_strings.h"
 #include "utils.h"
+#include "defs.h"
+
+int	process_variable_export(const char *var, t_env *env);
 
 int	cmp_vars(const void *var1_void, const void *var2_void)
 {
@@ -56,7 +59,7 @@ int	variable_set_print_by_type_sorted(const int fd, const t_variable_set *env,
 
 int builtin_export(const char **argv, int fd_in, int fd_out, t_env *env)
 {
-	int		return_value;
+	int	return_code;
 
 	(void)fd_in;
 	if (string_array_get_len(argv) == 1)
@@ -64,15 +67,23 @@ int builtin_export(const char **argv, int fd_in, int fd_out, t_env *env)
 	argv++;
 	while (*argv != NULL)
 	{
-		if (is_assignment(*argv))
-		{
-			return_value = variable_set_assignment_string_add(env->vars, *argv, 1);
-			if (return_value)
-				return (return_value);
-		}
-		else
-			variable_set_var_type_set(env->vars, *argv, ENV);
+		return_code = process_variable_export(*argv, env);
+		if (return_code)
+			return (return_code);
 		argv++;
 	}
+	return (0);
+}
+
+int	process_variable_export(const char *var, t_env *env)
+{
+	if (is_assignment(var))
+		return (variable_set_assignment_string_add(env->vars, var, 1));
+	else if (is_valid_identifier(var, ft_strlen(var)))
+		return (variable_set_var_type_set(env->vars, var, ENV));
+	else
+		ft_dprintf(2, "%s: export: `%s': not a valid identifier\n", SHELL_NAME,
+			 var);
+	env->code = 1;
 	return (0);
 }

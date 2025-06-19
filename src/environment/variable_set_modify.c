@@ -17,17 +17,20 @@ int	variable_set_var_type_set(t_variable_set *env, const char *key,
 {
 	t_variable	*p;
 
-	p = env->first;
-	while (p != NULL)
+	if (env->first != NULL && !ft_strcmp(env->first->key, key))
 	{
-		if (!ft_strcmp(p->key, key))
-		{
-			variable_type_set(p, vartype);
-			return (0);
-		}
-		p = p->next;
+		variable_type_set(env->first, vartype);
+		return (0);
 	}
-	return (0);
+	p = env->first;
+	while (p->next != NULL && ft_strcmp(p->key, key))
+		p = p->next;
+	if (p->next != NULL)
+	{
+		variable_type_set(p, vartype);
+		return (0);
+	}
+	return (variable_create(&p->next, key, NULL, 1));
 }
 
 int	variable_set_assignment_string_add(t_variable_set *env, const char *str,
@@ -38,22 +41,19 @@ int	variable_set_assignment_string_add(t_variable_set *env, const char *str,
 	char	*tmp;
 	int		return_code;
 
-	key = assignment_string_key_get(str);
-	if (key == NULL)
-		return (ENOMEM);
-	tmp = assignment_string_val_get(str);
-	if (tmp == NULL)
+	return_code = assignment_string_key_get(&key, str);
+	if (return_code)
+		return (return_code);
+	return_code = assignment_string_val_get_ref(&tmp, str);
+	if (return_code)
 	{
 		free(key);
-		return (ENOMEM);
+		return (return_code);
 	}
-	val = str_remove_quotes(tmp);
-	free(tmp);
-	if (val == NULL)
-	{
-		free(key);
-		return (ENOMEM);
-	}
+	if (tmp != NULL)
+		val = str_remove_quotes(tmp);
+	else
+		val = NULL;
 	if (assignment_string_is_append(str))
 		return_code = variable_set_var_append(env, key, val, is_export);
 	else
@@ -79,11 +79,8 @@ static int	variable_set_var_append(t_variable_set *env, const char *key,
 	}
 	if (env->size == INT_MAX)
 		return (EOVERFLOW);
-	p->next = variable_create(key, val, is_export);
-	if (p->next == NULL)
-		return (ENOMEM);
 	env->size++;
-	return (0);
+	return (variable_create(&p->next, key, val, is_export));
 }
 
 int	variable_set_var_set(t_variable_set *env, const char *key,
@@ -93,11 +90,8 @@ int	variable_set_var_set(t_variable_set *env, const char *key,
 
 	if (env->size == 0)
 	{
-		env->first = variable_create(key, val, is_export);
-		if (env->first == NULL)
-			return (ENOMEM);
 		env->size++;
-		return (0);
+		return (variable_create(&env->first, key, val, is_export));
 	}
 	if (env->size > 0 && !ft_strcmp(env->first->key, key))
 		return (variable_var_replace(env->first, val, is_export));
@@ -110,11 +104,8 @@ int	variable_set_var_set(t_variable_set *env, const char *key,
 	}
 	if (env->size == INT_MAX)
 		return (EOVERFLOW);
-	p->next = variable_create(key, val, is_export);
-	if (p->next == NULL)
-		return (ENOMEM);
 	env->size++;
-	return (0);
+	return (variable_create(&p->next, key, val, is_export));
 }
 
 void	variable_set_var_remove(t_variable_set *env, const char *key)
@@ -133,16 +124,12 @@ void	variable_set_var_remove(t_variable_set *env, const char *key)
 		return ;
 	}
 	p = env->first;
-	while (p->next != NULL)
-	{
-		if (!ft_strcmp(key, p->next->key))
-		{
-			tmp = p->next;
-			p->next = p->next->next;
-			variable_destroy(&tmp);
-			env->size--;
-			return ;
-		}
+	while (p->next != NULL && ft_strcmp(key, p->next->key))
 		p = p->next;
-	}
+	if (p->next == NULL)
+		return ;
+	tmp = p->next;
+	p->next = p->next->next;
+	variable_destroy(&tmp);
+	env->size--;
 }

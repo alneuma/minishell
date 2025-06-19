@@ -7,6 +7,11 @@ int	variable_var_replace(t_variable *entry, const char *val,
 		const int is_export)
 {
 	free(entry->value);
+	if (val == NULL)
+	{
+		entry->value = NULL;
+		return (0);
+	}
 	entry->value = ft_strdup(val);
 	if (entry->value == NULL)
 		return (ENOMEM);
@@ -19,6 +24,8 @@ int	variable_var_append(t_variable *entry, const char *val, const int is_export)
 {
 	char	*tmp;
 
+	if (val == NULL || *val == '\0')
+		return (0);
 	tmp = ft_strjoin(entry->value, val);
 	if (val == tmp)
 		return (ENOMEM);
