@@ -27,6 +27,7 @@ vpath %.c $(SRC_DIR)/data_structures/stack_char
 SRC	+= stack_char.c
 vpath %.c $(SRC_DIR)/utils
 SRC	+= utils_string.c
+SRC	+= utils_dir.c
 vpath %.c $(SRC_DIR)/execute
 SRC	+= execute.c
 SRC	+= execute_argv.c
@@ -50,11 +51,11 @@ SRC	+= exit.c
 SRC	+= export.c
 SRC	+= pwd.c
 SRC	+= unset.c
-SRC	+= builtins_utils.c
 vpath %.c $(SRC_DIR)/assignment_strings
 SRC	+= assignment_strings.c
 vpath %.c $(SRC_DIR)/expander
 SRC	+= expander.c
+SRC	+= wildcards.c
 SRC	+= remove_quotes.c
 vpath %.c $(SRC_DIR)/parser
 SRC	+= parser.c

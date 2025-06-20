@@ -26,141 +26,157 @@ int	preprocess_tokens(t_token *tokens, int *valid, t_env *env);
 int	get_line(char **line, int *valid, t_env *env);
 int	get_tokens(t_token **tokens, t_env *env);
 
-int	get_line(char **line, int *valid, t_env *env)
+int	glob_get_matches(char **matches, const char *pattern, t_env *env);
+#include <stdio.h>
+
+int	main(int argc, char **argv)
 {
-	int			return_code;
-	t_token_id	culprit;
-
- 	*line = readline(P1);
- 	if (*line == NULL || **line == '\0')
-	{
-		free(*line);
-		*line = NULL;
-		return (0);
-	}
-	return_code = string_validate(valid, &culprit, *line);
-	if (return_code)
-	{
-		free(*line);
-		return (return_code);
-	}
-	if (!*valid)
-	{
-		free(*line);
-		print_error_token(culprit);
-		env->code = ERROR_SYNTAX;
-		return (0);
-	}
-	add_history(*line);
-	return (0);
-}
-
-int	preprocess_tokens(t_token *tokens, int *valid, t_env *env)
-{
-	int			return_code;
-	t_token_id	culprit;
-
-	return_code = tokens_validate(valid, &culprit, tokens);
-	if (return_code)
-		return (return_code);
-	if (!*valid)
-		print_error_token(culprit);
-	return_code	= tokens_preprocess_redirects(tokens);
-	if (return_code)
-		return (return_code);
-	if (!*valid)
-		env->code = ERROR_SYNTAX;
-	return (0);
-}
-
-int	get_tokens(t_token **tokens, t_env *env)
-{
-	char		*line;
-	int			return_code;
-	int			valid;
-
-	return_code = get_line(&line, &valid, env);
-	if (return_code || !valid || line == NULL)
-	{	
-		free(line);
-		return (return_code);
-	}
-	return_code = scanner(tokens, line);
-	free(line);
-	if (return_code)
-		return (return_code);
-	return_code = preprocess_tokens(*tokens, &valid, env);
-	if (return_code || !valid)
-		tokens_destroy(tokens);
-	return(return_code);
-}
-
-int	shell_iteration(t_env *env)
-{
-	t_token		*tokens;
-	t_token		*tree;
-	int			return_code;
-
-	tokens = NULL;
-	return_code = get_tokens(&tokens, env);
-	if (return_code || tokens == NULL)
-		return (return_code);
-	tree = tree_from_tokens(&tokens);
-	return_code = execute(tree, -1, -1, env);
-	parse_tree_destroy(&tree);
-	return (return_code);
-}
-
-int	main(int argc, char **argv, char **envp)
-{
-	int		return_code;
+	char	*matches;
 	t_env	env;
 
-	(void)argc;
-	(void)argv;
-	return_code = env_initialize(&env, envp);
-	if (return_code)
-		return (return_code);
-	while (1)
-	{
-		return_code = shell_iteration(&env);
-		if (is_fatal(return_code) || env.exit)
-		{
-			env_clear(&env);
-		 	rl_clear_history();
-			return (return_code);
-		}
-	}
-}
-
-void	env_clear(t_env *env)
-{
-	variable_set_destroy(&env->vars);
-}
-
-int	env_initialize(t_env *env, char **envp)
-{
-	int	i;
-	int	return_code;
-
-	env->vars = variable_set_create();
-	if (env->vars == NULL)
-		return (ENOMEM);
-	i = 0;
-	while (envp[i] != NULL)
-	{
-		return_code = variable_set_assignment_string_add(env->vars, envp[i], ENV);
-		if (return_code)
-		{
-			variable_set_destroy(&env->vars);
-			return (return_code);
-		}
-		i++;
-	}
-	env->code = 0;
-	env->exit = 0;
+	argc = glob_get_matches(&matches, argv[1], &env);
+	if (argc)
+		return (argc);
+	puts(matches);
+	free(matches);
 	return (0);
 }
+
+// int	get_line(char **line, int *valid, t_env *env)
+// {
+// 	int			return_code;
+// 	t_token_id	culprit;
+//
+//  	*line = readline(P1);
+//  	if (*line == NULL || **line == '\0')
+// 	{
+// 		free(*line);
+// 		*line = NULL;
+// 		return (0);
+// 	}
+// 	return_code = string_validate(valid, &culprit, *line);
+// 	if (return_code)
+// 	{
+// 		free(*line);
+// 		return (return_code);
+// 	}
+// 	if (!*valid)
+// 	{
+// 		free(*line);
+// 		print_error_token(culprit);
+// 		env->code = ERROR_SYNTAX;
+// 		return (0);
+// 	}
+// 	add_history(*line);
+// 	return (0);
+// }
+//
+// int	preprocess_tokens(t_token *tokens, int *valid, t_env *env)
+// {
+// 	int			return_code;
+// 	t_token_id	culprit;
+//
+// 	return_code = tokens_validate(valid, &culprit, tokens);
+// 	if (return_code)
+// 		return (return_code);
+// 	if (!*valid)
+// 		print_error_token(culprit);
+// 	return_code	= tokens_preprocess_redirects(tokens);
+// 	if (return_code)
+// 		return (return_code);
+// 	if (!*valid)
+// 		env->code = ERROR_SYNTAX;
+// 	return (0);
+// }
+//
+// int	get_tokens(t_token **tokens, t_env *env)
+// {
+// 	char		*line;
+// 	int			return_code;
+// 	int			valid;
+//
+// 	return_code = get_line(&line, &valid, env);
+// 	if (return_code || !valid || line == NULL)
+// 	{	
+// 		free(line);
+// 		return (return_code);
+// 	}
+// 	return_code = scanner(tokens, line);
+// 	free(line);
+// 	if (return_code)
+// 		return (return_code);
+// 	return_code = preprocess_tokens(*tokens, &valid, env);
+// 	if (return_code || !valid)
+// 		tokens_destroy(tokens);
+// 	return(return_code);
+// }
+//
+// int	shell_iteration(t_env *env)
+// {
+// 	t_token		*tokens;
+// 	t_token		*tree;
+// 	int			return_code;
+//
+// 	tokens = NULL;
+// 	return_code = get_tokens(&tokens, env);
+// 	if (return_code || tokens == NULL)
+// 		return (return_code);
+// 	tree = tree_from_tokens(&tokens);
+// 	return_code = execute(tree, -1, -1, env);
+// 	parse_tree_destroy(&tree);
+// 	return (return_code);
+// }
+//
+// int	main(int argc, char **argv, char **envp)
+// {
+// 	int		return_code;
+// 	t_env	env;
+//
+// 	(void)argc;
+// 	(void)argv;
+// 	return_code = env_initialize(&env, envp);
+// 	if (return_code)
+// 		return (return_code);
+// 	while (1)
+// 	{
+// 		return_code = shell_iteration(&env);
+// 		if (is_fatal(return_code) || env.exit)
+// 		{
+// 			env_clear(&env);
+// 		 	rl_clear_history();
+// 			return (return_code);
+// 		}
+// 	}
+// }
+//
+// void	env_clear(t_env *env)
+// {
+// 	variable_set_destroy(&env->vars);
+// }
+//
+// int	env_initialize(t_env *env, char **envp)
+// {
+// 	int	i;
+// 	int	return_code;
+//
+// 	env->vars = variable_set_create();
+// 	if (env->vars == NULL)
+// 		return (ENOMEM);
+// 	i = 0;
+// 	while (envp[i] != NULL)
+// 	{
+// 		return_code = variable_set_assignment_string_add(env->vars, envp[i], ENV);
+// 		if (return_code)
+// 		{
+// 			variable_set_destroy(&env->vars);
+// 			return (return_code);
+// 		}
+// 		i++;
+// 	}
+// 	env->code = 0;
+// 	env->exit = 0;
+// 	return (0);
+// }
 
 // int main(int argc, char **argv, char **envp)
 // {
