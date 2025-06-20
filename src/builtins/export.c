@@ -15,8 +15,8 @@ int	cmp_vars(const void *var1_void, const void *var2_void)
 	const char	*var2;
 	int			i;
 
-	var1 = (const char *)var1_void;
-	var2 = (const char *)var2_void;
+	var1 = *(const char **)var1_void;
+	var2 = *(const char **)var2_void;
 	i = 0;
 	while (var1[i] != '\0' && var1[i] == var2[i])
 		i++;
