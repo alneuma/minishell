@@ -8,16 +8,6 @@
 #include "variables.h"
 #include "libft.h"
 
-int	string_array_get_len(const char **arr)
-{
-	int	i;
-
-	i = 0;
-	while (arr[i] != NULL)
-		i++;
-	return (i);
-}
-
 int	ft_get_cwd(char **cwd, t_env *env)
 {
 	char	*check;

@@ -2,6 +2,26 @@
 #include <errno.h>
 #include "variables_internals.h"
 #include "libft.h"
+#include "defs.h"
+
+char	*variable_assignment_string_get_export(const t_variable *entry)
+{
+	char	*str;
+	int		len;
+
+	len = ft_strlen(entry->key) + ft_strlen(EXPORT_PREFIX);
+	if (entry->value != NULL)
+		len += ft_strlen(entry->value) + 3;
+	str = (char *)malloc(len + 1);
+	if (str == NULL)
+		return (NULL);
+	if (entry->value == NULL)
+		ft_sprintf(str, "%s %s", EXPORT_PREFIX, entry->key);
+	else
+		ft_sprintf(str, "%s %s=\"%s\"", EXPORT_PREFIX, entry->key,
+			 entry->value);
+	return (str);
+}
 
 char	*variable_assignment_string_get(const t_variable *entry)
 {

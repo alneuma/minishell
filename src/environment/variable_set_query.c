@@ -40,7 +40,15 @@ size_t	variable_set_size_get_by_type(const t_variable_set *env,
 }
 
 char	**variable_set_array_get(const t_variable_set *env,
-			const t_vartype vartype)
+					const t_vartype vartype)
+{
+	return (variable_set_array_get_format(env, vartype,
+			variable_assignment_string_get));
+}
+
+char	**variable_set_array_get_format(const t_variable_set *env,
+			const t_vartype vartype,
+			char *(*get_assignment_string)(const t_variable *entry))
 {
 	char		**envp;
 	int			i;
@@ -56,7 +64,7 @@ char	**variable_set_array_get(const t_variable_set *env,
 	{
 		if (vartype == BOTH || variable_type_get(p) == vartype)
 		{
-			envp[i] = variable_assignment_string_get(p);
+			envp[i] = get_assignment_string(p);
 			if (envp[i] == NULL)
 			{
 				string_array_destroy(&envp);

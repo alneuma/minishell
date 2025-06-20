@@ -27,4 +27,14 @@ void	argv_destroy(char ***argv)
 		free((*argv)[i++]);
 	free(*argv);
 	*argv = NULL;
-}		
+}
+
+int	string_array_get_len(const char **arr)
+{
+	int	i;
+
+	i = 0;
+	while (arr[i] != NULL)
+		i++;
+	return (i);
+}

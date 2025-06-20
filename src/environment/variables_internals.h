@@ -33,5 +33,9 @@ int			variable_create(t_variable **var, const char *key, const char *val,
 				const t_vartype vartype);
 void		variable_destroy(t_variable **entry);
 char		*variable_assignment_string_get(const t_variable *entry);
+char		*variable_assignment_string_get_export(const t_variable *entry);
+char		**variable_set_array_get_format(const t_variable_set *env,
+				const t_vartype vartype,
+				char *(*get_assignment_string)(const t_variable *entry));
 
 #endif //VARIABLES_INTERNALS_H

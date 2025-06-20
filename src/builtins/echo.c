@@ -11,7 +11,8 @@ int builtin_echo(const char **argv, int fd_in, int fd_out, t_env *env)
 	(void)env;
 	i = 1;
 	opt_n = 0;
-	if (ft_strlen(argv[1]) == 2 && argv[1][0] == '-' && argv[1][1] == 'n')
+	if (argv[1] != NULL && ft_strlen(argv[1]) == 2 && argv[1][0] == '-'
+		&& argv[1][1] == 'n')
 		opt_n = 1;
 	i += opt_n;
 	while (argv[i] != NULL)
