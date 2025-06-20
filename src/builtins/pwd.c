@@ -1,4 +1,5 @@
 #include "libft.h"
+#include "utils.h"
 #include "variables.h"
 #include "builtins_internals.h"
 

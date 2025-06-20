@@ -6,6 +6,7 @@
 #include "variables.h"
 #include "libft.h"
 #include "error.h"
+#include "utils.h"
 #include "defs.h"
 #include "builtins_internals.h"
 

@@ -12,8 +12,4 @@ int builtin_export(const char **argv, int fd_in, int fd_out, t_env *env);
 int builtin_pwd(const char **argv, int fd_in, int fd_out, t_env *env);
 int builtin_unset(const char **argv, int fd_in, int fd_out, t_env *env);
 
-//utils
-int	string_array_get_len(const char **arr);
-int	ft_get_cwd(char **cwd, t_env *env);
-
 #endif //BUILTINS_INTERNALS_H
