@@ -43,18 +43,27 @@ int	execute_child(pid_t *pid, t_token *tree, int fds[2], t_env *env)
 	*pid = fork();
 	if (*pid < 0)
 	{
+		return_code = errno;
 		close_fd_safe(fds[2]);
 		close_fd_safe(fds[1]);
 		close_fd_safe(fds[0]);
-		return (errno);
+		return (return_code);
 	}
 	else if (*pid == 0)
 	{
-		close_fd_safe(fds[2]);
-		execute(tree, fds[0], fds[1], env);
-		close_fd_safe(fds[1]);
-		close_fd_safe(fds[0]);
-		exit(errno);
+		return_code = close_fd_safe(fds[2]);
+		if (return_code)
+			exit(return_code);
+		return_code = execute(tree, fds[0], fds[1], env);
+		if (return_code)
+			exit(return_code);
+		return_code = close_fd_safe(fds[1]);
+		if (return_code)
+			exit(return_code);
+		return_code = close_fd_safe(fds[0]);
+		if (return_code)
+			exit(return_code);
+		exit(env->code);
 	}
 	else if (*pid > 0)
 	{

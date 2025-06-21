@@ -12,7 +12,7 @@
 
 int	update_env(const char *old_cwd, t_env *env);
 int	get_objective_dir(char **objective, const char **argv, t_env *env);
-int	ft_chdir(const char *objective, t_env *env);
+int	ft_chdir(const char *objective);
 
 int	get_objective_dir(char **objective, const char **argv, t_env *env)
 {
@@ -21,18 +21,16 @@ int	get_objective_dir(char **objective, const char **argv, t_env *env)
 	*objective = NULL;
 	if (string_array_get_len(argv) > 2)
 	{
-		ft_dprintf(2, "%s: cd: too many arguments\n");
-		env->code = 1;
-		return (1);
+		print_error_str(" cd:", STR_TOO_MANY_ARGUMENTS);
+		return (EINVAL);
 	}
 	if (string_array_get_len(argv) == 1)
 	{
 		tmp = variable_set_var_get_ref(env->vars, "HOME");
 		if (tmp == NULL)
 		{
-			ft_dprintf(2, "%s: cd: HOME not set\n");
-			env->code = 1;
-			return (1);
+			print_error_str(" cd:", STR_HOME_NOT_SET);
+			return (EINVAL);
 		}
 	}
 	if (string_array_get_len(argv) == 2)
@@ -43,16 +41,16 @@ int	get_objective_dir(char **objective, const char **argv, t_env *env)
 	return (0);
 }		
 
-int	ft_chdir(const char *objective, t_env *env)
+int	ft_chdir(const char *objective)
 {
+	int	return_code;
+
 	if (chdir(objective) < 0)
 	{
-		env->code = errno;
-		if (is_fatal(errno))
-			return (errno);
-		ft_dprintf(2, "%s: ", SHELL_NAME);
-		perror("cd");
-		return (errno);
+		print_error("cd", errno);
+		return_code = errno;
+		errno = 0;
+		return (return_code);
 	}
 	return (0);
 }
@@ -72,7 +70,7 @@ int	update_env(const char *old_cwd, t_env *env)
 	}
 	if (variable_set_var_get_ref(env->vars, "PWD") != NULL)
 	{
-		return_code = ft_get_cwd(&cwd, env);
+		return_code = ft_get_cwd(&cwd, " cd:");
 		if (return_code)
 			return (return_code);
 		return_code = variable_set_var_set(env->vars, "PWD", cwd, 0);
@@ -92,13 +90,13 @@ int builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
 	return_code = get_objective_dir(&objective, argv, env);
 	if (return_code)
 		return (return_code);
-	return_code = ft_get_cwd(&old_cwd, env);
+	return_code = ft_get_cwd(&old_cwd, " cd:");
 	if (return_code)
 	{
 		free(objective);
 		return (return_code);
 	}
-	return_code = ft_chdir(objective, env);
+	return_code = ft_chdir(objective);
 	free(objective);
 	if (return_code)
 	{

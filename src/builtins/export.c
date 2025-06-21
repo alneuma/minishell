@@ -6,6 +6,7 @@
 #include "assignment_strings.h"
 #include "utils.h"
 #include "defs.h"
+#include "error.h"
 
 int	process_variable_export(const char *var, t_env *env);
 
@@ -34,8 +35,6 @@ int	process_variable_export(const char *var, t_env *env)
 	else if (is_valid_identifier(var, ft_strlen(var)))
 		return (variable_set_var_type_set(env->vars, var, ENV));
 	else
-		ft_dprintf(2, "%s: export: `%s': not a valid identifier\n", SHELL_NAME,
-			 var);
-	env->code = 1;
-	return (0);
+		print_error_str(" export:", STR_INVALID_IDENTIFIER);
+	return (EINVAL);
 }

@@ -10,7 +10,8 @@ int builtin_pwd(const char **argv, int fd_in, int fd_out, t_env *env)
 		
 	(void)argv;
 	(void)fd_in;
-	return_code = ft_get_cwd(&cwd, env);
+	(void)env;
+	return_code = ft_get_cwd(&cwd, " pwd:");
 	if (return_code)
 		return (return_code);
 	ft_dprintf(fd_out, "%s\n", cwd);

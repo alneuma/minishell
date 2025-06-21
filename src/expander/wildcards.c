@@ -39,38 +39,30 @@ int	glob_match(const char *pat, const char *str)
 	}
 }
 
-int	glob_get_matches(char **matches, const char *pattern, t_env *env)
+int	glob_get_matches(char **matches, const char *pattern)
 {
 	char	*cwd;
 	DIR		*cwd_stream;
 	int		return_code;
 
-	return_code = ft_get_cwd(&cwd, env);
+	return_code = ft_get_cwd(&cwd, " glob:");
 	if (return_code)
 		return (return_code);
 	cwd_stream = opendir(cwd);
 	free(cwd);
 	if (cwd_stream == NULL)
 	{
-		env->code = errno;
-		if (is_fatal(errno))
-			return (errno);
-		ft_dprintf(2, "%s: ", SHELL_NAME);
-		perror("glob");
-		return (errno);
+		return_code = errno;
+		errno = 0;
+		if (!is_fatal(return_code))
+			print_error("glob", return_code);
+		return (return_code);
 	}
 	return_code = get_matches(matches, cwd_stream, pattern);
 	free(cwd_stream);
-	if (return_code)
-	{
-		env->code = return_code;
-		if (is_fatal(return_code))
-			return (return_code);
-		ft_dprintf(2, "%s: ", SHELL_NAME);
-		perror("glob");
-		return (return_code);
-	}
-	return (0);
+	if (return_code && !is_fatal(return_code))
+		print_error("glob", return_code);
+	return (return_code);
 }
 
 int	get_matches(char **str, DIR *cwd, const char *pattern)

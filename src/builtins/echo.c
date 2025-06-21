@@ -23,6 +23,5 @@ int builtin_echo(const char **argv, int fd_in, int fd_out, t_env *env)
 	}
 	if (!opt_n)
 		ft_dprintf(fd_out, "\n");
-	env->code = 0;
 	return (0);
 }
