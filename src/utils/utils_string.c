@@ -10,7 +10,7 @@ int	close_fd_safe(int fd)
 	return_code = 0;
 	while (fd >= 0 && close(fd) < 0 && errno == EINTR)
 		;
-	if (errno != EBADF && errno != EINTR)
+	if (errno && errno != EBADF && errno != EINTR)
 	{
 		print_error("close", errno);  
 		return_code = errno;
