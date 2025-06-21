@@ -1,6 +1,8 @@
 #include <stddef.h>
 #include "token.h"
 
+int	is_valid_first(t_token *token);
+
 int	token_id_is_redirect(t_token_id id)
 {
 	return (id == HEREDOC || id == INFILE || id == OUTFILE
@@ -37,6 +39,12 @@ int	tokens_valid_neighbours(t_token *left, t_token *right)
 int	tokens_validate(int *valid, t_token_id *culprit, t_token *tokens)
 {
 	*valid = 1;
+	if (tokens != NULL && !is_valid_first(tokens))
+	{
+		*valid = 0;
+		*culprit = tokens->id;
+		return (0);
+	}
 	while (tokens != NULL)
 	{
 		if (!tokens_valid_neighbours(tokens, tokens->right))
@@ -50,4 +58,9 @@ int	tokens_validate(int *valid, t_token_id *culprit, t_token *tokens)
 		tokens = tokens->right;
 	}
 	return (0);
+}
+
+int	is_valid_first(t_token *token)
+{
+	return (!token_id_is_connector(token->id));
 }
