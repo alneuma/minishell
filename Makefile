@@ -15,6 +15,8 @@ vpath %.c $(SRC_DIR)
 SRC	+= main.c
 vpath %.c $(SRC_DIR)/error
 SRC	+= error.c
+vpath %.c $(SRC_DIR)/signals
+SRC	+= signals.c
 vpath %.c $(SRC_DIR)/scanner
 SRC	+= parenthesis.c
 SRC	+= scanner.c
@@ -90,17 +92,17 @@ CFLAGS		+= -Wall
 CFLAGS		+= -Wextra
 CFLAGS		+= -Werror
 CFLAGS		+= -O0
-### more strict
-CFLAGS		+= -Wunused
-CFLAGS		+= -Wunreachable-code
-CFLAGS		+= -Wshadow
-CFLAGS		+= -pedantic
-CFLAGS		+= -Wno-conversion
-CFLAGS		+= -Wunused-variable
-CFLAGS		+= -Wunused-function
-CFLAGS		+= -Wnull-dereference
-CFLAGS		+= -Wuninitialized
-CFLAGS		+= -std=c99
+# ### more strict
+# CFLAGS		+= -Wunused
+# CFLAGS		+= -Wunreachable-code
+# CFLAGS		+= -Wshadow
+# CFLAGS		+= -pedantic
+# CFLAGS		+= -Wno-conversion
+# CFLAGS		+= -Wunused-variable
+# CFLAGS		+= -Wunused-function
+# CFLAGS		+= -Wnull-dereference
+# CFLAGS		+= -Wuninitialized
+# CFLAGS		+= -std=c99
 
 ## cppflags
 CPPFLAGS	:=

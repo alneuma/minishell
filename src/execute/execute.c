@@ -86,14 +86,16 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 	if (pid < 0)
 		return (errno);
 	else if (pid == 0)
-		exit(call_execve(argv, fd_in, fd_out, env));
+		call_execve(argv, fd_in, fd_out, env);
 	else if (pid > 0)
+	{
 		waitpid(pid, &return_code, 0);
-	return_code = close_fd_safe(fd_in);
-	return_code |= close_fd_safe(fd_out);
-	if (return_code)
-		return (return_code);
-	env->code = WEXITSTATUS(return_code);
+		env->code = WEXITSTATUS(return_code);
+		return_code = close_fd_safe(fd_in);
+		return_code |= close_fd_safe(fd_out);
+		if (return_code)
+			return (return_code);
+	}
 	return (0);
 }
 
@@ -128,7 +130,7 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 	return_code |= close_fd_safe(fd_out);
 	argv_destroy(&envp);
 	free(cmd);
-	exit(return_code);
+	return (return_code);
 }
 
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
