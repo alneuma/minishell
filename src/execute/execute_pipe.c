@@ -44,6 +44,7 @@ int	execute_child(pid_t *pid, t_token *tree, int fds[2], t_env *env)
 	if (*pid < 0)
 	{
 		return_code = errno;
+		errno = 0;
 		close_fd_safe(fds[2]);
 		close_fd_safe(fds[1]);
 		close_fd_safe(fds[0]);

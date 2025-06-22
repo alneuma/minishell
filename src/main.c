@@ -81,10 +81,7 @@ int	get_tokens(t_token **tokens, t_env *env)
 
 	return_code = get_line(&line, &valid, env);
 	if (return_code || !valid || line == NULL)
-	{	
-		free(line);
 		return (return_code);
-	}
 	return_code = scanner(tokens, line);
 	free(line);
 	if (return_code)

@@ -89,8 +89,10 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 		exit(call_execve(argv, fd_in, fd_out, env));
 	else if (pid > 0)
 		waitpid(pid, &return_code, 0);
-	close_fd_safe(fd_in);
-	close_fd_safe(fd_out);
+	return_code = close_fd_safe(fd_in);
+	return_code |= close_fd_safe(fd_out);
+	if (return_code)
+		return (return_code);
 	env->code = WEXITSTATUS(return_code);
 	return (0);
 }
@@ -99,25 +101,34 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 {
 	char	**envp;
 	char	*cmd;
+	int		return_code;
 
 	envp = variable_set_array_get(env->vars, ENV);
 	if (envp == NULL)
 		return (ENOMEM);
-	if (fd_in != -1)
-		dup2(fd_in, 0);
-	if (fd_out != -1)
-		dup2(fd_out, 1);
+	if (fd_in != -1 && dup2(fd_in, 0) < 0)
+	{
+		return_code = errno;
+		errno = 0;
+		return (return_code);
+	}
+	if (fd_out != -1 && dup2(fd_out, 0) < 0)
+	{
+		return_code = errno;
+		errno = 0;
+		return (return_code);
+	}
 	cmd = NULL;
 	if (!get_cmd(&cmd, argv, env))
 		execve(cmd, argv, envp);
-	if (fd_in != -1)
-		close(fd_in);
-	if (fd_out != -1)
-		close(fd_out);
+	perror(argv[0]);
+	return_code = errno;
+	errno = 0;
+	return_code = close_fd_safe(fd_in);
+	return_code |= close_fd_safe(fd_out);
 	argv_destroy(&envp);
 	free(cmd);
-	perror("execve");
-	exit(errno);
+	exit(return_code);
 }
 
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
@@ -166,19 +177,20 @@ int	prepare_params(char ***argv, t_token *tree, int fds[2], t_env *env)
 
 int	assign_redirect_fds(int *fd_in, int *fd_out, int *infile_fd, int *outfile_fd)
 {
+	int	return_code;
+
+	return_code = 0;
 	if (*infile_fd != -1)
 	{
-		if (*fd_in != -1)
-			close(*fd_in);
+		return_code |= close_fd_safe(*fd_in);
 		*fd_in = *infile_fd;
 	}
 	if (*outfile_fd != -1)
 	{
-		if (*fd_out != -1)
-			close(*fd_out);
+		return_code |= close_fd_safe(*fd_out);
 		*fd_out = *outfile_fd;
 	}
-	return (0);
+	return (return_code);
 }
 
 int	argv_remove_quotes(char **argv)
