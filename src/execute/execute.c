@@ -13,6 +13,7 @@
 #include "defs.h"
 #include "libft.h"
 #include "execute_internals.h"
+#include "signals.h"
 
 int	execute_or(t_token *tree, int fd_in, int fd_out, t_env *env);
 int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env);
@@ -109,7 +110,10 @@ int	process_wstatus(int wstatus, t_env *env)
 		ft_printf("Quit (core dumped)\n");
 	}
 	else if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) == SIGINT)
+	{
 		env->code = 130;
+		ft_printf("\n");
+	}
 	return (0);
 }
 
@@ -137,12 +141,10 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 	cmd = NULL;
 	if (!get_cmd(&cmd, argv, env))
 	{
-		struct sigaction	act;
-
-		act.sa_handler = SIG_DFL;
-		sigaction(SIGQUIT, &act, NULL);
+		signal_setup_extern();
 		execve(cmd, argv, envp);
 	}
+	signal_setup_default();
 	perror(argv[0]);
 	return_code = errno;
 	errno = 0;

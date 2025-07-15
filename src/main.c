@@ -4,6 +4,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <stdlib.h>
+#include <signal.h>
 #include "scanner.h"
 #include "libft.h"
 #include "prompt.h"
@@ -33,8 +34,14 @@ int	get_line(char **line, int *valid, t_env *env)
 	int			return_code;
 	t_token_id	culprit;
 
-	// rl_catch_signals = 0;
+	signal_setup_readline();
  	*line = readline(P1);
+	signal_setup_default();
+	if (signum_get() == SIGINT)
+	{
+		env->code = 130;
+		signum_set(0);
+	}
 	if (*line == NULL)
 		env->exit = 1;
  	if (*line == NULL || **line == '\0')
@@ -120,7 +127,7 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	signal_setup_main();
+	signal_setup_default();
 	return_code = env_initialize(&env, envp);
 	if (return_code)
 		return (return_code);
