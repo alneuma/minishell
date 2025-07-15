@@ -128,7 +128,7 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 		errno = 0;
 		return (return_code);
 	}
-	if (fd_out != -1 && dup2(fd_out, 0) < 0)
+	if (fd_out != -1 && dup2(fd_out, 1) < 0)
 	{
 		return_code = errno;
 		errno = 0;
