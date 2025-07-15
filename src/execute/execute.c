@@ -25,6 +25,7 @@ int	prepare_params(char ***argv, t_token *tree, int fds[2], t_env *env);
 int	assign_redirect_fds(int *fd_in, int *fd_out, int *infile_fd, int *outfile_fd);
 int	execve_apply_path(char **argv, char **pathv, char **envp);
 char	**get_pathv(t_env *env);
+int	print_term_info(int wstatus);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_env *env)
 {
@@ -44,7 +45,7 @@ int	execute_or(t_token *tree, int fd_in, int fd_out, t_env *env)
 	int	return_code;
 
 	return_code = execute(tree->left, fd_in, fd_out, env);
-	if (!return_code)
+if (!return_code)
 		return (return_code);
 	return (execute(tree->right, fd_in, fd_out, env));
 }
@@ -64,7 +65,7 @@ int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env)
 	int	return_code;
 
 	if (fd_in == -1)
-		fd_in = 0;
+fd_in = 0;
 	if (fd_out == -1)
 		fd_out = 1;
 	return_code = builtin_get_func(argv[0])((const char **)argv, fd_in, fd_out,
@@ -91,11 +92,19 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 	{
 		waitpid(pid, &return_code, 0);
 		env->code = WEXITSTATUS(return_code);
+		print_term_info(return_code);
 		return_code = close_fd_safe(fd_in);
 		return_code |= close_fd_safe(fd_out);
 		if (return_code)
 			return (return_code);
 	}
+	return (0);
+}
+
+int	print_term_info(int wstatus)
+{
+	if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) == SIGQUIT)
+		ft_printf("Quit (core dumped)\n");
 	return (0);
 }
 
@@ -122,7 +131,13 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 	}
 	cmd = NULL;
 	if (!get_cmd(&cmd, argv, env))
+	{
+		struct sigaction	act;
+
+		act.sa_handler = SIG_DFL;
+		sigaction(SIGQUIT, &act, NULL);
 		execve(cmd, argv, envp);
+	}
 	perror(argv[0]);
 	return_code = errno;
 	errno = 0;

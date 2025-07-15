@@ -33,7 +33,10 @@ int	get_line(char **line, int *valid, t_env *env)
 	int			return_code;
 	t_token_id	culprit;
 
+	// rl_catch_signals = 0;
  	*line = readline(P1);
+	if (*line == NULL)
+		env->exit = 1;
  	if (*line == NULL || **line == '\0')
 	{
 		free(*line);
@@ -82,8 +85,6 @@ int	get_tokens(t_token **tokens, t_env *env)
 	int			valid;
 
 	return_code = get_line(&line, &valid, env);
-	if (line == NULL)
-		env->exit = 1;
 	if (return_code || !valid || line == NULL)
 		return (return_code);
 	return_code = scanner(tokens, line);

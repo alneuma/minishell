@@ -1,5 +1,6 @@
 #include <signal.h>
 #include <stdio.h>
+#include <readline/readline.h>
 // #include "libft.h"
 
 volatile sig_atomic_t	g_signum = 0;
@@ -8,16 +9,19 @@ void	handler_sigint(int signum, siginfo_t *info, void *ucontext)
 {
 	(void)info;
 	(void)ucontext;
-	printf("%d\n", signum);
+	(void)signum;
+	// rl_on_new_line();
+	// printf("%d\n", signum);
 }
 
-void	handler_sigquit(int signum, siginfo_t *info, void *ucontext)
-{
-	(void)info;
-	(void)ucontext;
-	printf("%d\n", signum);
-}
-
+// void	handler_sigquit(int signum, siginfo_t *info, void *ucontext)
+// {
+// 	(void)info;
+// 	(void)ucontext;
+// 	(void)signum;
+// 	// printf("11111%d\n", signum);
+// }
+//
 
 
 
@@ -45,7 +49,8 @@ int	signal_setup_main(void)
 
 	act.sa_sigaction = handler_sigint;
 	sigaction(SIGINT, &act, NULL);
-	act.sa_sigaction = handler_sigquit;
+	// act.sa_sigaction = handler_sigquit;
+	act.sa_handler = SIG_IGN;
 	sigaction(SIGQUIT, &act, NULL);
 	return (0);
 }
