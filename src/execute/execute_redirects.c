@@ -94,14 +94,14 @@ int	redirect_open(int *error, int *infile_fd, int *outfile_fd, t_token *tmp)
 {
 	char	*str_no_quotes;
 
+	if (tmp->id == HEREDOC)
+		return (heredoc_open(error, infile_fd, tmp));
 	str_no_quotes = str_remove_quotes(tmp->string);
 	if (str_no_quotes == NULL)
 		return (ENOMEM);
 	free(tmp->string);
 	tmp->string = str_no_quotes;
-	if (tmp->id == HEREDOC)
-		return (heredoc_open(error, infile_fd, tmp));
-	else if (tmp->id == INFILE)
+	if (tmp->id == INFILE)
 		return (infile_open(error, infile_fd, tmp));
 	else if (tmp->id == OUTFILE || tmp->id == OUTFILE_APPEND)
 		return (outfile_open(error, outfile_fd, tmp));
@@ -113,9 +113,7 @@ int	heredoc_open(int *error, int *infile_fd, const t_token *token)
 	int	fds[2];
 	int	return_code;
 
-	return_code = 0;
-	if (*infile_fd != -1)
-		return_code = close_fd_safe(*infile_fd);
+	return_code = close_fd_safe(*infile_fd);
 	if (return_code)
 		return (return_code);
 	if (pipe(fds) < 0)
@@ -130,7 +128,7 @@ int	heredoc_open(int *error, int *infile_fd, const t_token *token)
 		*error = errno;
 		errno = 0;
 	}
-	return_code = close_fd_safe(*infile_fd);
+	return_code = close_fd_safe(fds[1]);
 	return (return_code);
 }
 
@@ -138,9 +136,7 @@ int	infile_open(int *error, int *infile_fd, const t_token *rd)
 {
 	int	return_code;
 
-	return_code = 0;
-	if (*infile_fd != -1)
-		return_code = close_fd_safe(*infile_fd);
+	return_code = close_fd_safe(*infile_fd);
 	if (return_code)
 		return (return_code);
 	*infile_fd = open(rd->string, O_RDONLY);
@@ -156,9 +152,7 @@ int	outfile_open(int *error, int *outfile_fd, const t_token *rd)
 {
 	int	return_code;
 
-	return_code = 0;
-	if (*outfile_fd != -1)
-		return_code = close_fd_safe(*outfile_fd);
+	return_code = close_fd_safe(*outfile_fd);
 	if (return_code)
 		return (return_code);
 	if (rd->id == OUTFILE)
