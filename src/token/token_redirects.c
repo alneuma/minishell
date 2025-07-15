@@ -78,7 +78,11 @@ static char	*heredoc_get_doc(const char *prompt, const char *eof)
 	{
 		line = readline(prompt);
 		if (line == NULL)
-			return (NULL);
+		{
+			ft_printf("%s: warning: here-document delimited by end-of-file "
+				"(wanted `%s')\n", SHELL_NAME, eof);
+			return (doc);
+		}
 		if (!ft_strcmp(eof, line))
 		{
 			free(line);
