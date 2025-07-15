@@ -25,7 +25,7 @@ int	prepare_params(char ***argv, t_token *tree, int fds[2], t_env *env);
 int	assign_redirect_fds(int *fd_in, int *fd_out, int *infile_fd, int *outfile_fd);
 int	execve_apply_path(char **argv, char **pathv, char **envp);
 char	**get_pathv(t_env *env);
-int	print_term_info(int wstatus);
+int	process_wstatus(int wstatus, t_env *env);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_env *env)
 {
@@ -92,7 +92,7 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 	{
 		waitpid(pid, &return_code, 0);
 		env->code = WEXITSTATUS(return_code);
-		print_term_info(return_code);
+		process_wstatus(return_code, env);
 		return_code = close_fd_safe(fd_in);
 		return_code |= close_fd_safe(fd_out);
 		if (return_code)
@@ -101,10 +101,15 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 	return (0);
 }
 
-int	print_term_info(int wstatus)
+int	process_wstatus(int wstatus, t_env *env)
 {
 	if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) == SIGQUIT)
+	{
+		env->code = 131;
 		ft_printf("Quit (core dumped)\n");
+	}
+	else if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) == SIGINT)
+		env->code = 130;
 	return (0);
 }
 
