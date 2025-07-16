@@ -70,12 +70,15 @@ int	preprocess_tokens(t_token *tokens, int *valid, t_env *env)
 	if (return_code)
 		return (return_code);
 	if (!*valid)
-		print_error_token(culprit);
-	return_code	= tokens_preprocess_redirects(tokens);
-	if (return_code)
-		return (return_code);
-	if (!*valid)
+	{
 		env->code = ERROR_SYNTAX;
+		print_error_token(culprit);
+	}
+	return_code	= tokens_preprocess_redirects(tokens, env);
+	if (return_code && return_code != -1)
+		return (return_code);
+	if (return_code == -1)
+		*valid = 0;
 	return (0);
 }
 

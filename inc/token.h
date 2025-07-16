@@ -2,9 +2,11 @@
 # define TOKEN_H
 
 # include "data_structures.h"
+# include "variables.h"
 
 typedef struct s_file	t_file;
 typedef struct s_token	t_token;
+typedef struct e_env	t_env;
 
 # define KEEP_STRING 1
 # define FREE_STRING 0
@@ -46,7 +48,7 @@ void		token_destroy(t_token **token, int keep_literal);
 int			token_type_print(t_token_id id);
 void		tokens_print(t_token *tokens);
 void		tokens_destroy(t_token **tokens);
-int			tokens_preprocess_redirects(t_token *tokens);
+int			tokens_preprocess_redirects(t_token *tokens, t_env *env);
 
 // token id
 int			token_id_get_prec(t_token_id id);

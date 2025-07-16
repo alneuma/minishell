@@ -7,10 +7,14 @@
 #include "libft.h"
 #include "expander.h"
 #include "defs.h"
+#include "variables.h"
+#include "utils.h"
 
 static int	heredoc_append_line(char **doc, char **line);
-static int	preprocess_redirect(t_token *token);
-static char	*heredoc_get_doc(const char *prompt, const char *eof);
+static int	preprocess_redirect(t_token *token, t_env *env);
+static int	heredoc_get_doc(char **doc, const char *prompt, const char *dlm,
+				t_env *env);
+int			preprocess_heredoc(char **doc, const char *dlm_quoted, t_env *env);
 
 int	token_is_redirect(t_token *token)
 {
@@ -18,7 +22,7 @@ int	token_is_redirect(t_token *token)
 		|| token->id == OUTFILE || token->id == OUTFILE_APPEND);
 }
 
-int	tokens_preprocess_redirects(t_token *tokens)
+int	tokens_preprocess_redirects(t_token *tokens, t_env *env)
 {
 	int	return_code;
 
@@ -27,10 +31,8 @@ int	tokens_preprocess_redirects(t_token *tokens)
 	{
 		if (token_is_redirect(tokens))
 		{
-			return_code = preprocess_redirect(tokens);
-			if (return_code == -1)
-				return (0);
-			else if (return_code)
+			return_code = preprocess_redirect(tokens, env);
+			if (return_code)
 				return (return_code);
 		}
 		tokens = tokens->right;
@@ -38,64 +40,77 @@ int	tokens_preprocess_redirects(t_token *tokens)
 	return (return_code);
 }
 
-static int	preprocess_redirect(t_token *token)
+static int	preprocess_redirect(t_token *token, t_env *env)
 {
 	t_token	*tmp;
-	char	*eof;
+	int		return_code;
 
+	return_code = 0;
 	if (token->right == NULL || token->right->id != LITERAL)
 		return (-1);
 	tmp = token->right;
 	token->right = token->right->right;
 	if (token->id == HEREDOC)
 	{
-		eof = str_remove_quotes(tmp->string);
-		if (eof == NULL)
-			return (ENOMEM);
-		token->string = heredoc_get_doc(P2, eof);
-		free(eof);
+		return_code = preprocess_heredoc(&token->string, tmp->string, env);
 		token_destroy(&tmp, FREE_STRING);
-		if (token->string == NULL)
-			return (ENOMEM);
 	}
 	else
 	{
 		token->string = tmp->string;
 		token_destroy(&tmp, KEEP_STRING);
 	}
-	return (0);
+	return (return_code);
 }
 
-static char	*heredoc_get_doc(const char *prompt, const char *eof)
+int	preprocess_heredoc(char **doc, const char *dlm_quoted, t_env *env)
+{
+	char	*eof;
+	int		return_code;
+
+	eof = str_remove_quotes(dlm_quoted);
+	if (eof == NULL)
+		return (ENOMEM);
+	return_code = heredoc_get_doc(doc, P2, eof, env);
+	free(eof);
+	return (return_code);
+}
+
+int	heredoc_get_doc(char **doc, const char *prompt, const char *dlm, t_env *env)
 {
 	char	*line;
-	char	*doc;
 
-	doc = ft_strdup("");
-	if (doc == NULL)
-		return (NULL);
+	*doc = ft_strdup("");
+	if (*doc == NULL)
+		return (ENOMEM);
 	while (1)
 	{
-		line = readline(prompt);
+		if (rl_wrapper(&line, prompt, env) == -1)
+		{
+			free(line);
+			free(*doc);
+			*doc = NULL;
+			return (-1);
+		}
 		if (line == NULL)
 		{
 			ft_printf("%s: warning: here-document delimited by end-of-file "
-				"(wanted `%s')\n", SHELL_NAME, eof);
-			return (doc);
+				"(wanted `%s')\n", SHELL_NAME, dlm);
+			return (0);
 		}
-		if (!ft_strcmp(eof, line))
+		if (!ft_strcmp(dlm, line))
 		{
 			free(line);
-			break ;
+			return (0);
 		}
-		if (heredoc_append_line(&doc, &line))
+		if (heredoc_append_line(doc, &line))
 		{
-			free(doc);
 			free(line);
-			return (NULL);
+			free(*doc);
+			*doc = NULL;
+			return (ENOMEM);
 		}
 	}
-	return (doc);
 }
 
 // assumes *line != NULL

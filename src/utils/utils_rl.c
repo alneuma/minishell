@@ -12,6 +12,7 @@ int	rl_wrapper(char **line, const char *prompt, t_env *env)
 	{
 		env->code = 130;
 		signum_set(0);
+		return (-1);
 	}
 	return (0);
 }
