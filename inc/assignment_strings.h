@@ -8,5 +8,6 @@ int		assignment_string_key_get(char **key, const char *str);
 int		assignment_string_val_get(char **val, const char *str);
 int		assignment_string_val_get_ref(char **val, const char *str);
 int		is_valid_identifier(const char *str, int len);
+int		is_identifier_char(const char c);
 
 #endif //ASSIGNMENT_STRINGS_H

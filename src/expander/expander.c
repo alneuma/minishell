@@ -4,6 +4,7 @@
 #include "libft.h"
 #include "utils.h"
 #include "expander.h"
+#include "assignment_strings.h"
 
 void	expand_write_single_quoted(char **expansion, char **str);
 int		expand_write_val(char **expansion, char **str, const t_env *env);
@@ -106,6 +107,8 @@ int	expand_write_val(char **expansion, char **str, const t_env *env)
 	*str += ft_strlen(key) + 1;
 	val = variable_set_var_get_ref(env->vars, key);
 	free(key);
+	if (val == NULL)
+		return (0);
 	while (*val != '\0')
 		*(*expansion)++ = *val++;
 	return (0);
@@ -184,8 +187,7 @@ char	*expand_get_key(const char *key_start)
 		return (NULL);
 	key_start++;
 	i = 0;
-	while (key_start[i] != '\0' && !is_blank(key_start[i])
-			&& key_start[i] != '"' && key_start[i] != '\'')
+	while (key_start[i] != '\0' && is_identifier_char(key_start[i]))
 		i++;
 	key = (char *)malloc(i + 1);
 	if (key == NULL)

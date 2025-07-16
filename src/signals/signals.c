@@ -60,11 +60,3 @@ int	signal_setup_readline(void)
 	sigaction(SIGQUIT, &act, NULL);
 	return (0);
 }
-
-// int	main(void)
-// {
-// 	signal_setup_main();
-// 	while (1)
-// 		;
-// 	return (0);
-// }
