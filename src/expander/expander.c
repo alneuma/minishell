@@ -105,6 +105,12 @@ int	expand_write_val(char **expansion, char **str, const t_env *env)
 	if (key == NULL)
 		return (ENOMEM);
 	*str += ft_strlen(key) + 1;
+	if (*key == '\0')
+	{
+		*(*expansion)++ = '$';
+		free(key);
+		return (0);
+	}
 	val = variable_set_var_get_ref(env->vars, key);
 	free(key);
 	if (val == NULL)
@@ -139,8 +145,7 @@ int	expand_string_length(int *length, const t_env *env, const char *str)
 			return_value = expand_get_length(&tmp, &str[i], env);
 			*length += tmp;
 			i++;
-			while (str[i] != '\0' && !is_blank(str[i]) && str[i] != '"'
-				&& str[i] != '\'')
+			while (is_identifier_char(str[i]))
 				i++;
 		}
 		else
@@ -157,8 +162,6 @@ int	expand_get_length(int *len, const char *str, const t_env *env)
 {
 	char	*key;
 
-	if (*str != '$')
-		return (0);
 	key = expand_get_key(str);
 	if (key == NULL)
 		return (ENOMEM);
@@ -171,6 +174,8 @@ int	expand_get_value_length(const t_env *env, const char *key)
 {
 	char	*value;
 
+	if (*key == '\0')
+		return (1);
 	value = variable_set_var_get_ref(env->vars, key);
 	if (value == NULL)
 		return (0);
@@ -183,11 +188,9 @@ char	*expand_get_key(const char *key_start)
 	int		i;
 	char	*key;
 
-	if (*key_start != '$')
-		return (NULL);
 	key_start++;
 	i = 0;
-	while (key_start[i] != '\0' && is_identifier_char(key_start[i]))
+	while (is_identifier_char(key_start[i]))
 		i++;
 	key = (char *)malloc(i + 1);
 	if (key == NULL)
