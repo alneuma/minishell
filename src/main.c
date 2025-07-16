@@ -14,6 +14,7 @@
 #include "parser.h"
 #include "error.h"
 #include "signals.h"
+#include "utils.h"
 
 // #define INPUT "/usr/bin/cat Makefile | head -n 4"
 // #define INPUT "asdfasdf"
@@ -34,14 +35,7 @@ int	get_line(char **line, int *valid, t_env *env)
 	int			return_code;
 	t_token_id	culprit;
 
-	signal_setup_readline();
- 	*line = readline(P1);
-	signal_setup_default();
-	if (signum_get() == SIGINT)
-	{
-		env->code = 130;
-		signum_set(0);
-	}
+	rl_wrapper(line, P1, env);
 	if (*line == NULL)
 		env->exit = 1;
  	if (*line == NULL || **line == '\0')

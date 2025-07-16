@@ -9,5 +9,6 @@ void	argv_destroy(char ***argv);
 int		close_fd_safe(int fd);
 int		string_array_get_len(const char **arr);
 int		ft_get_cwd(char **cwd, const char *caller);
+int		rl_wrapper(char **line, const char *prompt, t_env *env);
 
 #endif //UTILS_H

@@ -30,6 +30,7 @@ SRC	+= stack_char.c
 vpath %.c $(SRC_DIR)/utils
 SRC	+= utils_string.c
 SRC	+= utils_dir.c
+SRC	+= utils_rl.c
 vpath %.c $(SRC_DIR)/execute
 SRC	+= execute.c
 SRC	+= execute_argv.c
