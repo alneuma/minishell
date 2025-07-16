@@ -35,7 +35,12 @@ int	get_line(char **line, int *valid, t_env *env)
 	int			return_code;
 	t_token_id	culprit;
 
-	rl_wrapper(line, P1, env);
+	if (rl_wrapper(line, P1, env) == -1)
+	{
+		free(*line);
+		*line = NULL;
+		return (0);
+	}
 	if (*line == NULL)
 		env->exit = 1;
  	if (*line == NULL || **line == '\0')

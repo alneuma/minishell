@@ -14,8 +14,6 @@ void	handler_sigint(int signum)
 
 int	readline_hook(void)
 {
-	if (rl_done == 1)
-		rl_replace_line("", 1);
 	return (0);
 }
 
@@ -33,7 +31,7 @@ int	signal_setup_default(void)
 {
 	struct sigaction	act;
 
-	rl_event_hook = readline_hook;
+	rl_event_hook = NULL;
 	act.sa_handler = SIG_IGN;
 	sigaction(SIGINT, &act, NULL);
 	sigaction(SIGQUIT, &act, NULL);
@@ -44,7 +42,7 @@ int	signal_setup_extern(void)
 {
 	struct sigaction	act;
 
-	rl_event_hook = readline_hook;
+	rl_event_hook = NULL;
 	act.sa_handler = SIG_DFL;
 	sigaction(SIGINT, &act, NULL);
 	sigaction(SIGQUIT, &act, NULL);
