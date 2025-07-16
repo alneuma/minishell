@@ -92,7 +92,9 @@ int	apply_path(char **cmd, const char *str, t_env *env)
 	}
 	argv_destroy(&pathv);
 	*cmd = NULL;
-	return (errno);
+	return_code = errno;
+	errno = 0;
+	return (return_code);
 }
 
 int	get_pathv(char ***pathv, t_env *env)

@@ -14,6 +14,7 @@
 #include "libft.h"
 #include "execute_internals.h"
 #include "signals.h"
+#include "error.h"
 
 int	execute_or(t_token *tree, int fd_in, int fd_out, t_env *env);
 int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env);
@@ -88,12 +89,13 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 	if (pid < 0)
 		return (errno);
 	else if (pid == 0)
-		call_execve(argv, fd_in, fd_out, env);
+		exit(call_execve(argv, fd_in, fd_out, env));
 	else if (pid > 0)
 	{
 		waitpid(pid, &return_code, 0);
 		env->code = WEXITSTATUS(return_code);
 		process_wstatus(return_code, env);
+		return_code = 0;
 		return_code = close_fd_safe(fd_in);
 		return_code |= close_fd_safe(fd_out);
 		if (return_code)
@@ -139,19 +141,18 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 		return (return_code);
 	}
 	cmd = NULL;
-	if (!get_cmd(&cmd, argv, env))
+	return_code = get_cmd(&cmd, argv, env);
+	if (return_code == 0)
 	{
 		signal_setup_extern();
 		execve(cmd, argv, envp);
 	}
 	signal_setup_default();
-	perror(argv[0]);
-	return_code = errno;
-	errno = 0;
-	return_code = close_fd_safe(fd_in);
-	return_code |= close_fd_safe(fd_out);
+	print_error(argv[0], return_code);
 	argv_destroy(&envp);
 	free(cmd);
+	close_fd_safe(fd_in);
+	close_fd_safe(fd_out);
 	return (return_code);
 }
 
