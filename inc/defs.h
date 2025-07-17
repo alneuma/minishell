@@ -8,5 +8,6 @@
 
 // codes
 # define ERR_AMBIGUOUS_REDIRECT 1
+# define ERR_CD 1
 
 #endif //DEFS_H

@@ -22,7 +22,8 @@ int	get_objective_dir(char **objective, const char **argv, t_env *env)
 	if (string_array_get_len(argv) > 2)
 	{
 		print_error_str(" cd:", STR_TOO_MANY_ARGUMENTS);
-		return (EINVAL);
+		env->code = ERR_CD;
+		return (-1);
 	}
 	if (string_array_get_len(argv) == 1)
 	{
@@ -30,7 +31,8 @@ int	get_objective_dir(char **objective, const char **argv, t_env *env)
 		if (tmp == NULL)
 		{
 			print_error_str(" cd:", STR_HOME_NOT_SET);
-			return (EINVAL);
+			env->code = ERR_CD;
+			return (-1);
 		}
 	}
 	if (string_array_get_len(argv) == 2)
