@@ -148,12 +148,13 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 		execve(cmd, argv, envp);
 	}
 	signal_setup_default();
-	print_error(argv[0], return_code);
 	argv_destroy(&envp);
 	free(cmd);
 	close_fd_safe(fd_in);
 	close_fd_safe(fd_out);
-	return (return_code);
+	if (return_code == -1)
+		return (126);
+	return (127);
 }
 
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)

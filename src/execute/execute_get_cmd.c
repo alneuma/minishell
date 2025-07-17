@@ -72,9 +72,19 @@ int	get_cmd(char **cmd, char **argv, t_env *env)
 
 int	apply_path_absolute(char **cmd, const char *str)
 {
+	int	return_code;
+	
 	*cmd = ft_strdup(str);
 	if (*cmd == NULL)
 		return (ENOMEM);
+	if (access(*cmd, X_OK) < 0)
+	{
+		return_code = errno;
+		errno = 0;
+		if (!is_fatal(return_code))
+			print_error(str, return_code);
+		return (return_code);
+	}
 	return (0);
 }
 
@@ -98,14 +108,20 @@ int	apply_path(char **cmd, const char *str, t_env *env)
 			argv_destroy(&pathv);
 			return (0);
 		}
+		if (is_fatal(errno))
+		{
+			return_code = errno;
+			errno = 0;
+			return (return_code);
+		}
 		free(*cmd);
 		i++;
 	}
 	argv_destroy(&pathv);
 	*cmd = NULL;
-	return_code = errno;
 	errno = 0;
-	return (return_code);
+	ft_dprintf(STDERR_FILENO, "%s: command not found\n", str);
+	return (-1);
 }
 
 int	get_pathv(char ***pathv, t_env *env)
