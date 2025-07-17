@@ -47,10 +47,7 @@ int	argv_populate(char **argv, const t_token *tokens)
 		{
 			return_code = write_words_from_token(argv, &words, tokens);
 			if (return_code)
-			{
-				argv_destroy(&argv);
 				return (return_code);
-			}
 		}
 		tokens = tokens->right;
 	}
@@ -126,6 +123,10 @@ static void	skip_through_word(char **str)
 {
 	char	quote;
 
+	while (**str != '\0' && is_blank(**str))
+		*str += 1;
+	if (**str == '\0')
+		return ;
 	quote = 0;
 	while (**str != '\0' && !is_blank(**str))
 	{
