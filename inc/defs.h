@@ -6,4 +6,7 @@
 # define P2 "> "
 # define EXPORT_PREFIX "export "
 
+// codes
+# define ERR_AMBIGUOUS_REDIRECT 1
+
 #endif //DEFS_H

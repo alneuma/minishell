@@ -20,22 +20,21 @@ int	outfile_open(int *error, int *outfile_fd, const t_token *rd);
 int	heredoc_open(int *error, int *infile_fd, const t_token *token);
 int	tokens_delete_redirects(t_token **tokens);
 
-int	process_redirects(int *error, int *infile_fd, int *outfile_fd,
-		t_token **tokens)
+int	process_redirects(int *infile_fd, int *outfile_fd, t_token **tokens, t_env *env)
 {
 	int	return_code;
+	int	error;
 
-	*error = 0;
-	return_code = redirect_fds_get(error, infile_fd, outfile_fd, *tokens);
-	if (return_code)
+	return_code = redirect_fds_get(infile_fd, outfile_fd, *tokens, env);
+	if (return_code > 0)
 		return (return_code);
-	if (*error != 0)
+	if (return_code)
 	{
-		return_code = close_fd_safe(*infile_fd);
-		return_code |= close_fd_safe(*outfile_fd);
-		if (return_code)
-			return (return_code);
-		print_error_str("", strerror(*error));
+		error = close_fd_safe(*infile_fd);
+		error |= close_fd_safe(*outfile_fd);
+		if (error)
+			return (error);
+		return (-1);
 	}
 	return (0);
 }
@@ -67,23 +66,40 @@ int	tokens_delete_redirects(t_token **tokens)
 	return (0);
 }
 
-int	redirect_fds_get(int *error, int *infile_fd, int *outfile_fd,
-		t_token *tokens)
+int	redirect_fds_get(int *infile_fd, int *outfile_fd, t_token *tokens, t_env *env)
 {
-	int	return_code;
+	char	*tmp;
+	int		return_code;
+	int		error;
 
 	*infile_fd = -1;
 	*outfile_fd = -1;
-	*error = 0;
+	error = 0;
 	while (tokens != NULL)
 	{
+		return_code = expand_str(&tmp, env, tokens->string);
+		if (return_code)
+			return (return_code);
+		if (token_id_is_redirect(tokens->id) && str_num_words(tmp) != 1)
+		{
+			ft_dprintf(STDERR_FILENO, "%s: %s: ambigous redirect\n",
+			  SHELL_NAME, tokens->string);
+			env->code = ERR_AMBIGUOUS_REDIRECT;
+			return (-1);
+		}
+		free(tokens->string);
+		tokens->string = tmp;
 		if (token_id_is_redirect(tokens->id))
 		{
-			return_code = redirect_open(error, infile_fd, outfile_fd, tokens);
+			return_code = redirect_open(&error, infile_fd, outfile_fd, tokens);
 			if (return_code)
 				return (return_code);
-			if (*error)
-				return (0);
+			if (error)
+			{
+				env->code = error;
+				print_error_str("", strerror(error));
+				return (-1);
+			}
 		}
 		tokens = tokens->right;
 	}

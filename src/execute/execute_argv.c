@@ -8,7 +8,6 @@
 
 static char	*next_word(char **str);
 static int	write_words_from_token(char **argv, int *idx, const t_token *token);
-static int	str_num_words(char *str);
 static void	skip_through_word(char **str);
 int	argv_populate(char **argv, const t_token *tokens);
 int	argv_create(char ***argv, const t_token *tokens);
@@ -100,7 +99,7 @@ static int	write_words_from_token(char **argv, int *idx, const t_token *token)
 	return (0);
 }
 
-static int	str_num_words(char *str)
+int	str_num_words(char *str)
 {
 	int		words;
 
