@@ -13,6 +13,7 @@ int	append_slashes(char **pathv);
 int	apply_path_relative(char **cmd, const char *str);
 int	apply_path(char **cmd, const char *str, t_env *env);
 int	get_pathv(char ***pathv, t_env *env);
+int	apply_path_absolute(char **cmd, const char *str);
 
 int	append_slashes(char **pathv)
 {
@@ -63,8 +64,18 @@ int	get_cmd(char **cmd, char **argv, t_env *env)
 {
 	if (ft_strlen(argv[0]) >= 2 && argv[0][0] == '.' && argv[0][1] == '/')
 		return (apply_path_relative(cmd, argv[0]));
+	else if (ft_strlen(argv[0]) >= 1 && argv[0][0] == '/')
+		return (apply_path_absolute(cmd, argv[0]));
 	else
 		return (apply_path(cmd, argv[0], env));
+}
+
+int	apply_path_absolute(char **cmd, const char *str)
+{
+	*cmd = ft_strdup(str);
+	if (*cmd == NULL)
+		return (ENOMEM);
+	return (0);
 }
 
 int	apply_path(char **cmd, const char *str, t_env *env)
