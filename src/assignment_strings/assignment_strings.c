@@ -87,6 +87,27 @@ char	*first_non_assignment(const char **arr)
 	return (NULL);
 }
 
+int	is_valid_assignment(int *valid, const char *str)
+{
+	char	*key;
+	int		return_code;
+
+	*valid = 0;
+	if (!is_assignment(str))
+		return (0);
+	return_code = assignment_string_key_get(&key, str);
+	if (return_code)
+		return (return_code);
+	if (!is_valid_identifier(key, ft_strlen(key)))
+	{
+		free(key);
+		return (0);
+	}
+	free(key);
+	*valid = 1;
+	return (0);
+}
+	
 int	is_assignment(const char *str)
 {
 	char	*equal;

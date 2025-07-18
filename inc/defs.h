@@ -9,5 +9,6 @@
 // codes
 # define ERR_AMBIGUOUS_REDIRECT 1
 # define ERR_CD 1
+# define ERR_INVALID_IDENTIFIER 1
 
 #endif //DEFS_H
