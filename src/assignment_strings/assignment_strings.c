@@ -91,6 +91,8 @@ int	is_assignment(const char *str)
 {
 	char	*equal;
 
+	if (str == NULL)
+		return (0);
 	equal = ft_strchr(str, '=');
 	if (equal == NULL)
 		return (0);

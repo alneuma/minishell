@@ -15,6 +15,7 @@
 #include "execute_internals.h"
 #include "signals.h"
 #include "error.h"
+#include "assignment_strings.h"
 
 int	execute_or(t_token *tree, int fd_in, int fd_out, t_env *env);
 int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env);
@@ -28,6 +29,8 @@ int	assign_redirect_fds(int *fd_in, int *fd_out, int *infile_fd, int *outfile_fd
 int	execve_apply_path(char **argv, char **pathv, char **envp);
 char	**get_pathv(t_env *env);
 int	process_wstatus(int wstatus, t_env *env);
+int	assign_argv(const char **argv, t_env *env);
+int	argv_first_non_assignment_idx(int *idx, const char **argv);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_env *env)
 {
@@ -157,21 +160,49 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 	return (127);
 }
 
+int	argv_first_non_assignment_idx(int *idx, const char **argv)
+{
+	*idx = 0;
+	while (is_assignment(argv[*idx]))
+		*idx += 1;
+	return (0);
+}
+
+int	assign_argv(const char **argv, t_env *env)
+{
+	int	i;
+	int	return_code;
+
+	i = 0;
+	while (argv[i] != NULL)
+	{
+		return_code = variable_set_assignment_string_add(env->vars, argv[i], 0);
+		if (return_code)
+			return (return_code);
+		i++;
+	}
+	return (0);
+}
+
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 {
 	char	**argv;
 	int		fds[2];
 	int		return_code;
+	int		idx;
 
 	fds[0] = fd_in;
 	fds[1] = fd_out;
 	return_code = prepare_params(&argv, tree, fds, env);
 	if (return_code || argv == NULL)
 		return (return_code);
-	if (is_builtin(argv[0]))
-		return_code = execute_builtin(argv, fds[0], fds[1], env);
+	argv_first_non_assignment_idx(&idx, (const char **)argv);
+	if (argv[idx] == NULL)
+		return_code = assign_argv((const char **)argv, env);
+	else if (is_builtin(argv[idx]))
+		return_code = execute_builtin(argv + idx, fds[0], fds[1], env);
 	else
-		return_code = execute_extern(argv, fds[0], fds[1], env);
+		return_code = execute_extern(argv + idx, fds[0], fds[1], env);
 	argv_destroy(&argv);
 	return (return_code);
 }

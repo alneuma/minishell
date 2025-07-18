@@ -1,0 +1,10 @@
+*.txt
+*.a
+*.o
+*.out
+*.md
+*.d
+*.sh
+tags
+minishell
+suppressions.supp
