@@ -39,17 +39,12 @@ int	glob_match(const char *pat, const char *str)
 	}
 }
 
-int	glob_get_matches(char **matches, const char *pattern)
+int	glob_get_matches(char **matches, const char *pattern, t_env *env)
 {
-	char	*cwd;
 	DIR		*cwd_stream;
 	int		return_code;
 
-	return_code = ft_get_cwd(&cwd, " glob:");
-	if (return_code)
-		return (return_code);
-	cwd_stream = opendir(cwd);
-	free(cwd);
+	cwd_stream = opendir(env->cwd);
 	if (cwd_stream == NULL)
 	{
 		return_code = errno;

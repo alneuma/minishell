@@ -10,7 +10,7 @@
 #include "utils.h"
 
 int	append_slashes(char **pathv);
-int	apply_path_relative(char **cmd, const char *str);
+int	apply_path_relative(char **cmd, const char *str, t_env *env);
 int	apply_path(char **cmd, const char *str, t_env *env);
 int	get_pathv(char ***pathv, t_env *env);
 int	apply_path_absolute(char **cmd, const char *str);
@@ -36,16 +36,14 @@ int	append_slashes(char **pathv)
 	return (0);
 }
 
-int	apply_path_relative(char **cmd, const char *str)
+int	apply_path_relative(char **cmd, const char *str, t_env *env)
 {
 	char	*cwd;
 	int		return_code;
 	
-	return_code = ft_get_cwd(&cwd, "");
-	if (return_code)
-		return (return_code);
-	cwd[ft_strlen(cwd) + 1] = '\0';
-	cwd[ft_strlen(cwd)] = '/';
+	cwd = ft_strjoin(env->cwd, "/");
+	if (cwd == NULL)
+		return (ENOMEM);
 	*cmd = ft_strjoin(cwd, str);
 	if (*cmd == NULL)
 		return (ENOMEM);
@@ -63,7 +61,7 @@ int	apply_path_relative(char **cmd, const char *str)
 int	get_cmd(char **cmd, char **argv, t_env *env)
 {
 	if (ft_strlen(argv[0]) >= 2 && argv[0][0] == '.' && argv[0][1] == '/')
-		return (apply_path_relative(cmd, argv[0]));
+		return (apply_path_relative(cmd, argv[0], env));
 	else if (ft_strlen(argv[0]) >= 1 && argv[0][0] == '/')
 		return (apply_path_absolute(cmd, argv[0]));
 	else

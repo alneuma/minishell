@@ -9,7 +9,7 @@ typedef struct e_env	t_env;
 struct e_env
 {
 	t_variable_set	*vars;
-	int				shell_error;
+	char			*cwd;
 	int				code;
 	int				exit;
 };

@@ -154,6 +154,7 @@ int	main(int argc, char **argv, char **envp)
 
 void	env_clear(t_env *env)
 {
+	free(env->cwd);
 	variable_set_destroy(&env->vars);
 }
 
@@ -162,15 +163,22 @@ int	env_initialize(t_env *env, char **envp)
 	int	i;
 	int	return_code;
 
+	return_code = ft_get_cwd(&env->cwd);
+	if (return_code)
+		return (return_code);
 	env->vars = variable_set_create();
 	if (env->vars == NULL)
+	{
+		free(env->cwd);
 		return (ENOMEM);
+	}
 	i = 0;
 	while (envp[i] != NULL)
 	{
 		return_code = variable_set_assignment_string_add(env->vars, envp[i], ENV);
 		if (return_code)
 		{
+			free(env->cwd);
 			variable_set_destroy(&env->vars);
 			return (return_code);
 		}
