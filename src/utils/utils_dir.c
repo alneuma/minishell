@@ -9,7 +9,7 @@
 #include "variables.h"
 #include "libft.h"
 
-int	ft_get_cwd(char **cwd)
+int	ft_get_cwd(char **cwd, const char *caller)
 {
 	char	*check;
 	char	cwd_arr[PATH_MAX];
@@ -19,7 +19,7 @@ int	ft_get_cwd(char **cwd)
 	check = getcwd(cwd_arr, PATH_MAX - 1);
 	if (check == NULL)
 	{
-		ft_dprintf(STDERR_FILENO, "%s: %s\n", SHELL_NAME, strerror(errno));
+		print_error_str(caller, strerror(errno));
 		return_code = errno;
 		errno = 0;
 		return (return_code);
