@@ -7,9 +7,11 @@
 #include "libft.h"
 #include "error.h"
 #include "defs.h"
+#include "expander.h"
 
-int	glob_match(const char *pat, const char *str);
-int	get_matches(char **str, DIR *cwd, const char *pattern);
+char	*get_mask(const char *pat);
+int		glob_match(int *match, const char *pat_with_quotes, const char *str);
+int		get_matches(char **str, DIR *cwd, const char *pattern);
 
 int	glob_get_matches(char **matches, const char *pattern, t_env *env)
 {
@@ -32,22 +34,63 @@ int	glob_get_matches(char **matches, const char *pattern, t_env *env)
 	return (return_code);
 }
 
-int	glob_match(const char *pat, const char *str)
+char	*get_mask(const char *pat)
 {
-	int	checkpoint;
-	int	i;
+	char	*mask;
+	int		i;
+	char	quote;
 
+	mask = (char *)malloc(ft_strlen(pat));
+	if (mask == NULL)
+		return (NULL);
+	quote = 0;
+	i = 0;
+	while (*pat)
+	{
+		if (!quote && is_quote(*pat))
+			quote = *pat;
+		else if (quote && *pat == quote)
+			quote = 0;
+		else if (quote)
+			mask[i++] = 0;
+		else if (!quote)
+			mask[i++] = 1;
+		pat++;
+	}
+	return (mask);
+}
+
+int	glob_match(int *match, const char *pat_with_quotes, const char *str)
+{
+	char	*mask;
+	char	*pat;
+	int		checkpoint;
+	int		i;
+
+	mask = get_mask(pat_with_quotes);
+	if (mask == NULL)
+		return (ENOMEM);
+	pat = str_remove_quotes(pat_with_quotes);
+	if (pat == NULL)
+	{
+		free(mask);
+		return (ENOMEM);
+	}
 	checkpoint = -1;
 	i = -1;
+	*match = 0;
 	while (1)
 	{
-		while (pat[i + 1] == '*')
+		while (pat[i + 1] == '*' && mask[i + 1])
 		{
 			i++;
 			checkpoint = i;
 		}
 		if (*str == '\0')
-			return (pat[i + 1] == '\0');
+		{
+			*match = (pat[i + 1] == '\0');
+			break ;
+		}
 		if (pat[i + 1] == *str)
 			i++;
 		else if (checkpoint != -1 && pat[checkpoint + 1] == *str)
@@ -55,46 +98,64 @@ int	glob_match(const char *pat, const char *str)
 		else if (checkpoint != -1)
 			i = checkpoint;
 		else
-			return (0);
+			break ;
 		str++;
 	}
+	free(pat);
+	free(mask);
+	return (0);
 }
 
 int	get_matches(char **str, DIR *cwd, const char *pattern)
 {
 	struct dirent	*node;
 	char			*tmp;
+	int				match;
 
 	errno = 0;
 	*str = NULL;
 	node = readdir(cwd);
 	while (node != NULL)
 	{
-		if (glob_match(pattern, node->d_name))
+		if (node->d_name[0] == '.')
 		{
-			if (*str == NULL)
-				*str = ft_strdup(node->d_name);
-			else
-			{
+			node = readdir(cwd);
+			continue ;
+		}
+		glob_match(&match, pattern, node->d_name);
+		if (match)
+		{
+			if (*str != NULL)
 				tmp = ft_strjoin(*str, " ");
-				if (tmp == NULL)
-				{
-					errno = ENOMEM;
-					break ;
-				}
-				free(*str);
-				*str = ft_strjoin(tmp, node->d_name);
-				free(tmp);
-				if (*str == NULL)
-				{
-					errno = ENOMEM;
-					break ;
-				}
+			else
+				tmp = ft_strdup("");
+			if (tmp == NULL)
+			{
+				errno = ENOMEM;
+				break ;
+			}
+			free(*str);
+			*str = ft_strjoin(tmp, node->d_name);
+			free(tmp);
+			if (*str == NULL)
+			{
+				errno = ENOMEM;
+				break ;
 			}
 		}
 		node = readdir(cwd);
 	}		
 	if (errno != 0)
-		free(str);
+	{
+		free(*str);
+		*str = NULL;
+		return (errno);
+	}
+	if (*str == NULL)
+	{
+		*str = ft_strdup(pattern);
+		if (*str == NULL)
+			errno = ENOMEM;
+	}
 	return (errno);
 }

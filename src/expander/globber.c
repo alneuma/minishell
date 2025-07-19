@@ -73,7 +73,7 @@ int	write_glob_words(char **words, const t_env *env, char *str)
 			if (return_code)
 				return (return_code);
 		}
-		str = word_end + 1;
+		str = word_end;
 		idx_words++;
 	}
 	return (0);
@@ -91,8 +91,7 @@ int	join_argv_len(const char **argv)
 		len += ft_strlen(argv[i]) + 1;
 		i++;
 	}
-	if (i != 0)
-		len--;
+	len -= !!i;
 	return (len);
 }
 
@@ -111,7 +110,7 @@ void	join_argv_write(char *new_str, const char **argv)
 		new_str += len + 1;
 		word++;
 	}
-	*(new_str - 1) = '\0';
+	*(new_str - 1 - (word > 1)) = '\0';
 }
 
 int	join_argv(char **joined, const char **words)
