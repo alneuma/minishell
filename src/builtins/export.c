@@ -14,19 +14,23 @@ int	process_variable_export(const char *var, t_env *env);
 int builtin_export(const char **argv, int fd_in, int fd_out, t_env *env)
 {
 	int	return_code;
+	int	error;
 
 	(void)fd_in;
 	if (string_array_get_len(argv) == 1)
 		return (variable_set_print_format_export(fd_out, env->vars));
 	argv++;
+	error = 0;
 	while (*argv != NULL)
 	{
 		return_code = process_variable_export(*argv, env);
-		if (return_code)
+		if (return_code > 0)
 			return (return_code);
+		if (return_code < 0)
+			error = 1;
 		argv++;
 	}
-	if (env->code)
+	if (error)
 		return (-1);
 	return (0);
 }
@@ -46,5 +50,5 @@ int	process_variable_export(const char *var, t_env *env)
 	ft_dprintf(STDERR_FILENO, "%s: `%s': %s\n", SHELL_NAME,
 			 var, STR_INVALID_IDENTIFIER);
 	env->code = ERR_INVALID_IDENTIFIER;
-	return (0);
+	return (-1);
 }

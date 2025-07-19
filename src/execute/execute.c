@@ -50,7 +50,7 @@ int	execute_or(t_token *tree, int fd_in, int fd_out, t_env *env)
 	int	return_code;
 
 	return_code = execute(tree->left, fd_in, fd_out, env);
-if (!return_code)
+	if (return_code == 0 || is_fatal(return_code))
 		return (return_code);
 	return (execute(tree->right, fd_in, fd_out, env));
 }
@@ -104,6 +104,8 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 		if (return_code)
 			return (return_code);
 	}
+	if (env->code)
+		return (-1);
 	return (0);
 }
 
@@ -155,8 +157,6 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 	free(cmd);
 	close_fd_safe(fd_in);
 	close_fd_safe(fd_out);
-	if (return_code == -1)
-		return (126);
 	return (127);
 }
 
