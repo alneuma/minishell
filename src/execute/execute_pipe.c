@@ -33,6 +33,13 @@ int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 	waitpid(pid_1, &return_code, 0);
 	waitpid(pid_2, &return_code, 0);
 	env->code = WEXITSTATUS(return_code);
+	return_code = 0;
+	return_code = close_fd_safe(fd_in);
+	return_code |= close_fd_safe(fd_out);
+	if (return_code)
+		return (return_code);
+	if (env->code)
+		return (-1);
 	return (0);
 }
 
@@ -56,13 +63,14 @@ int	execute_child(pid_t *pid, t_token *tree, int fds[2], t_env *env)
 		if (return_code)
 			exit(return_code);
 		return_code = execute(tree, fds[0], fds[1], env);
-		if (return_code)
+		if (return_code > 0)
 			exit(return_code);
+		return_code = 0;
 		return_code = close_fd_safe(fds[1]);
 		if (return_code)
 			exit(return_code);
 		return_code = close_fd_safe(fds[0]);
-		if (return_code)
+		if (return_code > 0)
 			exit(return_code);
 		exit(env->code);
 	}
