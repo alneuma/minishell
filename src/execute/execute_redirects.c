@@ -69,6 +69,7 @@ int	tokens_delete_redirects(t_token **tokens)
 int	redirect_fds_get(int *infile_fd, int *outfile_fd, t_token *tokens, t_env *env)
 {
 	char	*tmp;
+	char	*original;
 	int		return_code;
 	int		error;
 
@@ -88,7 +89,7 @@ int	redirect_fds_get(int *infile_fd, int *outfile_fd, t_token *tokens, t_env *en
 			env->code = ERR_AMBIGUOUS_REDIRECT;
 			return (-1);
 		}
-		free(tokens->string);
+		original = tokens->string;
 		tokens->string = tmp;
 		if (token_id_is_redirect(tokens->id))
 		{
@@ -98,10 +99,15 @@ int	redirect_fds_get(int *infile_fd, int *outfile_fd, t_token *tokens, t_env *en
 			if (error)
 			{
 				env->code = error;
-				print_error_str("", strerror(error));
+				if (tokens->id == HEREDOC)
+					print_error("here-document", error);
+				else
+					print_error(original, error);
+				free(original);
 				return (-1);
 			}
 		}
+		free(original);
 		tokens = tokens->right;
 	}
 	return (0);

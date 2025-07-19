@@ -157,6 +157,8 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 	free(cmd);
 	close_fd_safe(fd_in);
 	close_fd_safe(fd_out);
+	if (return_code == EACCES)
+		return (126);
 	return (127);
 }
 
