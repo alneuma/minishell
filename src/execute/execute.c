@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <sys/wait.h>
@@ -151,6 +152,8 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 	{
 		signal_setup_extern();
 		execve(cmd, argv, envp);
+		print_error_str("", strerror(errno));
+		errno = 0;
 	}
 	signal_setup_default();
 	argv_destroy(&envp);

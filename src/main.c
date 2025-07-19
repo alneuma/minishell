@@ -15,13 +15,7 @@
 #include "error.h"
 #include "signals.h"
 #include "utils.h"
-
-// #define INPUT "/usr/bin/cat Makefile | head -n 4"
-// #define INPUT "asdfasdf"
-
-#define P1 "$> "
-// #define P1 '\[\e[1;35m\]\u\[\e[1;96m\]@\[\e[1;35m\]\h\e[1;96m\]:\[\e[1;34m\]\w\[\e[1;33m\]\n$ '
-#define ERROR_SYNTAX 2
+#include "defs.h"
 
 int	shell_iteration(t_env *env);
 int	env_initialize(t_env *env, char **envp);
@@ -59,8 +53,8 @@ int	get_line(char **line, int *valid, t_env *env)
 	{
 		free(*line);
 		print_error_token(culprit);
-		env->code = ERROR_SYNTAX;
-		return (0);
+		env->code = ERR_SYNTAX;
+		return (-1);
 	}
 	add_history(*line);
 	return (0);
@@ -76,7 +70,7 @@ int	preprocess_tokens(t_token *tokens, int *valid, t_env *env)
 		return (return_code);
 	if (!*valid)
 	{
-		env->code = ERROR_SYNTAX;
+		env->code = ERR_SYNTAX;
 		print_error_token(culprit);
 	}
 	return_code	= tokens_preprocess_redirects(tokens, env);
@@ -84,6 +78,8 @@ int	preprocess_tokens(t_token *tokens, int *valid, t_env *env)
 		return (return_code);
 	if (return_code == -1)
 		*valid = 0;
+	if (*valid == 0)
+		return (-1);
 	return (0);
 }
 

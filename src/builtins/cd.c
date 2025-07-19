@@ -100,7 +100,10 @@ int builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
 	if (return_code)
 	{
 		free(old_cwd);
-		return (return_code);
+		if (is_fatal(return_code))
+			return (return_code);
+		env->code = ERR_CD;
+		return (-1);
 	}
 	return_code = update_env(old_cwd, env);
 	free(old_cwd);

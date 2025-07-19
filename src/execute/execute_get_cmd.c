@@ -60,7 +60,12 @@ int	apply_path_relative(char **cmd, const char *str, t_env *env)
 
 int	get_cmd(char **cmd, char **argv, t_env *env)
 {
-	if (ft_strlen(argv[0]) >= 2 && argv[0][0] == '.' && argv[0][1] == '/')
+	if (**argv == '\0')
+	{
+		ft_dprintf(STDERR_FILENO, "%s: command not found\n", "''");
+		return (-1);
+	}
+	else if (ft_strlen(argv[0]) >= 2 && argv[0][0] == '.' && argv[0][1] == '/')
 		return (apply_path_relative(cmd, argv[0], env));
 	else if (ft_strlen(argv[0]) >= 1 && argv[0][0] == '/')
 		return (apply_path_absolute(cmd, argv[0]));
