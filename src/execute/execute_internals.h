@@ -11,6 +11,5 @@ int	redirect_fds_get(int *infile_fd, int *outfile_fd, t_token *tokens, t_env *en
 int	process_redirects(int *infile_fd, int *outfile_fd, t_token **tokens, t_env *env);
 int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env);
 int	get_cmd(char **cmd, char **argv, t_env *env);
-int	str_num_words(char *str);
 
 #endif //EXECUTE_INTERNALS_H

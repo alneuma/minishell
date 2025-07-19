@@ -10,5 +10,7 @@ int		close_fd_safe(int fd);
 int		string_array_get_len(const char **arr);
 int		ft_get_cwd(char **cwd, const char *caller);
 int		rl_wrapper(char **line, const char *prompt, t_env *env);
+int		str_num_words(char *str);
+void	skip_through_word(char **str);
 
 #endif //UTILS_H

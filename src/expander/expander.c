@@ -4,6 +4,7 @@
 #include "libft.h"
 #include "utils.h"
 #include "expander.h"
+#include "expander_internals.h"
 #include "assignment_strings.h"
 
 void	expand_write_single_quoted(char **expansion, char **str);
@@ -15,7 +16,7 @@ int		expand_string_length(int *length, const t_env *env,
 			const char *str);
 int		expand_get_value_length(const t_env *env, const char *key);
 
-int	expand_tokens(t_token *tokens, const t_env *env)
+int	expand_tokens(t_token *tokens, const t_env *env, const int glob)
 {
 	char	*tmp;
 	int		return_code;
@@ -27,11 +28,19 @@ int	expand_tokens(t_token *tokens, const t_env *env)
 			return (return_code);
 		free(tokens->string);
 		tokens->string = tmp;
+		if (glob)
+		{
+			return_code = glob_str(&tmp, env, tokens->string);
+			if (return_code != 0)
+				return (return_code);
+			free(tokens->string);
+			tokens->string = tmp;
+		}
 		tokens = tokens->right;
 	}
 	return (0);
 }
-		
+
 int	expand_str(char **new_str, const t_env *env, const char *str)
 {
 	int		length;

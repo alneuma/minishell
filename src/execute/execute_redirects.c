@@ -69,6 +69,7 @@ int	tokens_delete_redirects(t_token **tokens)
 int	redirect_fds_get(int *infile_fd, int *outfile_fd, t_token *tokens, t_env *env)
 {
 	char	*tmp;
+	char	*tmp2;
 	char	*original;
 	int		return_code;
 	int		error;
@@ -81,6 +82,14 @@ int	redirect_fds_get(int *infile_fd, int *outfile_fd, t_token *tokens, t_env *en
 		return_code = expand_str(&tmp, env, tokens->string);
 		if (return_code)
 			return (return_code);
+		if (tokens->id != HEREDOC)
+		{
+			return_code = glob_str(&tmp2, env, tmp);
+			free(tmp);
+			if (return_code)
+				return (return_code);
+			tmp = tmp2;
+		}
 		if (token_id_is_redirect(tokens->id) && tokens->id != HEREDOC
 			&& str_num_words(tmp) != 1)
 		{

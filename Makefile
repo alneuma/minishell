@@ -59,6 +59,7 @@ SRC	+= assignment_strings.c
 vpath %.c $(SRC_DIR)/expander
 SRC	+= expander.c
 SRC	+= wildcards.c
+SRC	+= globber.c
 SRC	+= remove_quotes.c
 vpath %.c $(SRC_DIR)/parser
 SRC	+= parser.c

@@ -11,6 +11,27 @@
 int	glob_match(const char *pat, const char *str);
 int	get_matches(char **str, DIR *cwd, const char *pattern);
 
+int	glob_get_matches(char **matches, const char *pattern, t_env *env)
+{
+	DIR		*cwd_stream;
+	int		return_code;
+
+	cwd_stream = opendir(env->cwd);
+	if (cwd_stream == NULL)
+	{
+		return_code = errno;
+		errno = 0;
+		if (!is_fatal(return_code))
+			print_error("glob", return_code);
+		return (return_code);
+	}
+	return_code = get_matches(matches, cwd_stream, pattern);
+	free(cwd_stream);
+	if (return_code && !is_fatal(return_code))
+		print_error("glob", return_code);
+	return (return_code);
+}
+
 int	glob_match(const char *pat, const char *str)
 {
 	int	checkpoint;
@@ -37,27 +58,6 @@ int	glob_match(const char *pat, const char *str)
 			return (0);
 		str++;
 	}
-}
-
-int	glob_get_matches(char **matches, const char *pattern, t_env *env)
-{
-	DIR		*cwd_stream;
-	int		return_code;
-
-	cwd_stream = opendir(env->cwd);
-	if (cwd_stream == NULL)
-	{
-		return_code = errno;
-		errno = 0;
-		if (!is_fatal(return_code))
-			print_error("glob", return_code);
-		return (return_code);
-	}
-	return_code = get_matches(matches, cwd_stream, pattern);
-	free(cwd_stream);
-	if (return_code && !is_fatal(return_code))
-		print_error("glob", return_code);
-	return (return_code);
 }
 
 int	get_matches(char **str, DIR *cwd, const char *pattern)
