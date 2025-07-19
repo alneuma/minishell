@@ -80,7 +80,8 @@ int	redirect_fds_get(int *infile_fd, int *outfile_fd, t_token *tokens, t_env *en
 		return_code = expand_str(&tmp, env, tokens->string);
 		if (return_code)
 			return (return_code);
-		if (token_id_is_redirect(tokens->id) && str_num_words(tmp) != 1)
+		if (token_id_is_redirect(tokens->id) && tokens->id != HEREDOC
+			&& str_num_words(tmp) != 1)
 		{
 			ft_dprintf(STDERR_FILENO, "%s: %s: ambigous redirect\n",
 			  SHELL_NAME, tokens->string);
