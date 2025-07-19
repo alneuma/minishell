@@ -132,7 +132,7 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		return_code = shell_iteration(&env);
-		if (return_code == 0)
+		if (return_code == 0 && env.exit == 0)
 			env.code = 0;
 		if (is_fatal(return_code) || env.exit)
 		{
