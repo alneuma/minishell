@@ -17,17 +17,19 @@ int	variable_set_var_type_set(t_variable_set *env, const char *key,
 {
 	t_variable	*p;
 
-	if (env->first != NULL && !ft_strcmp(env->first->key, key))
+	if (env->first == NULL)
+		return (variable_create(&env->first, key, NULL, 1));
+	if (!ft_strcmp(env->first->key, key))
 	{
 		variable_type_set(env->first, vartype);
 		return (0);
 	}
 	p = env->first;
-	while (p->next != NULL && ft_strcmp(p->key, key))
+	while (p->next != NULL && ft_strcmp(p->next->key, key))
 		p = p->next;
 	if (p->next != NULL)
 	{
-		variable_type_set(p, vartype);
+		variable_type_set(p->next, vartype);
 		return (0);
 	}
 	return (variable_create(&p->next, key, NULL, 1));
