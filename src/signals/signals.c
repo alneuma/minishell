@@ -44,13 +44,13 @@ int	signal_setup_default(void)
 	struct sigaction	act;
 
 	rl_event_hook = NULL;
-	// act.sa_handler = handler_sigint_dfl;
-	// sigaction(SIGINT, &act, NULL);
-	// act.sa_handler = handler_sigquit_dfl;
-	// sigaction(SIGQUIT, &act, NULL);
-	act.sa_handler = SIG_IGN;
+	act.sa_handler = handler_sigint_dfl;
 	sigaction(SIGINT, &act, NULL);
+	act.sa_handler = handler_sigquit_dfl;
 	sigaction(SIGQUIT, &act, NULL);
+	// act.sa_handler = SIG_IGN;
+	// sigaction(SIGINT, &act, NULL);
+	// sigaction(SIGQUIT, &act, NULL);
 	return (0);
 }
 

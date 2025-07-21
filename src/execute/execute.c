@@ -97,7 +97,6 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 	else if (pid > 0)
 	{
 		waitpid(pid, &return_code, 0);
-		env->code = WEXITSTATUS(return_code);
 		process_wstatus(return_code, env);
 		return_code = 0;
 		return_code = close_fd_safe(fd_in);
@@ -112,10 +111,14 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 
 int	process_wstatus(int wstatus, t_env *env)
 {
-	if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) == SIGQUIT)
+	(void)wstatus;
+
+	env->code = WEXITSTATUS(wstatus);
+	if (signum_get() == SIGQUIT)
 		env->code = 131;
-	else if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) == SIGINT)
+	else if (signum_get() == SIGINT)
 		env->code = 130;
+	signum_set(0);
 	return (0);
 }
 
