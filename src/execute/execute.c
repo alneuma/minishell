@@ -153,6 +153,7 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 	return_code = get_cmd(&cmd, argv, env);
 	if (return_code == 0)
 	{
+		env_clear(env);
 		signal_setup_extern();
 		execve(cmd, argv, envp);
 		print_error_str("", strerror(errno));
@@ -163,7 +164,8 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 	free(cmd);
 	close_fd_safe(fd_in);
 	close_fd_safe(fd_out);
-	env_clear(env);
+	if (return_code)
+		env_clear(env);
 	if (return_code == EACCES)
 		return (126);
 	return (127);
