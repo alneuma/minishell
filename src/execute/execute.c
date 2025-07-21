@@ -114,11 +114,17 @@ int	process_wstatus(int wstatus, t_env *env)
 	(void)wstatus;
 
 	env->code = WEXITSTATUS(wstatus);
-	if (signum_get() == SIGQUIT)
+	if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) == SIGQUIT)
+	{
+		signum_set(SIGQUIT);
 		env->code = 131;
-	else if (signum_get() == SIGINT)
+	}
+	if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) == SIGINT)
+	{
+		// ft_printf("\nHELLO! %d", env->pipe_lvl);
+		signum_set(SIGINT);
 		env->code = 130;
-	signum_set(0);
+	}
 	return (0);
 }
 
@@ -157,6 +163,7 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 	free(cmd);
 	close_fd_safe(fd_in);
 	close_fd_safe(fd_out);
+	env_clear(env);
 	if (return_code == EACCES)
 		return (126);
 	return (127);

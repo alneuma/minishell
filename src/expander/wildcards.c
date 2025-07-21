@@ -28,7 +28,7 @@ int	glob_get_matches(char **matches, const char *pattern, t_env *env)
 		return (return_code);
 	}
 	return_code = get_matches(matches, cwd_stream, pattern);
-	free(cwd_stream);
+	closedir(cwd_stream);
 	if (return_code && !is_fatal(return_code))
 		print_error("glob", return_code);
 	return (return_code);

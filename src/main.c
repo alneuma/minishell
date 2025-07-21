@@ -19,7 +19,6 @@
 
 int	shell_iteration(t_env *env);
 int	env_initialize(t_env *env, char **envp);
-void	env_clear(t_env *env);
 int	preprocess_tokens(t_token *tokens, int *valid, t_env *env);
 int	get_line(char **line, int *valid, t_env *env);
 int	get_tokens(t_token **tokens, t_env *env);
@@ -115,8 +114,10 @@ int	shell_iteration(t_env *env)
 	if (return_code || tokens == NULL)
 		return (return_code);
 	tree = tree_from_tokens(&tokens);
+	env->root = tree;
 	return_code = execute(tree, -1, -1, env);
 	parse_tree_destroy(&tree);
+	env->root = NULL;
 	return (return_code);
 }
 
@@ -153,6 +154,7 @@ int	main(int argc, char **argv, char **envp)
 void	env_clear(t_env *env)
 {
 	free(env->cwd);
+	parse_tree_destroy(&env->root);
 	variable_set_destroy(&env->vars);
 }
 
@@ -182,7 +184,9 @@ int	env_initialize(t_env *env, char **envp)
 		}
 		i++;
 	}
+	env->root = NULL;
 	env->code = 0;
 	env->exit = 0;
+	env->pipe_lvl = 0;
 	return (0);
 }

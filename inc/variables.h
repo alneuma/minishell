@@ -3,6 +3,7 @@
 
 # include "token.h"
 
+typedef struct s_token	t_token;
 typedef struct s_variable_set	t_variable_set;
 typedef struct e_env	t_env;
 
@@ -10,8 +11,10 @@ struct e_env
 {
 	t_variable_set	*vars;
 	char			*cwd;
+	t_token			*root;
 	int				code;
 	int				exit;
+	int				pipe_lvl;
 };
 
 typedef enum e_vartype
@@ -20,6 +23,9 @@ typedef enum e_vartype
 	ENV,
 	BOTH
 }	t_vartype;
+
+// environment
+void	env_clear(t_env *env);
 
 // variable set
 

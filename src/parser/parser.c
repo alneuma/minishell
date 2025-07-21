@@ -74,9 +74,11 @@ static void	parse_tree_insert(t_token **tree, t_token *new_node)
 		new_node->left = *tree;
 		*tree = new_node;
 	}
-	else if (prec_node >= prec_tree)
+	else if (prec_node > prec_tree
+		|| ((prec_node == prec_tree)
+		&& (token_id_is_redirect(new_node->id) || new_node->id == LITERAL)))
 		parse_tree_insert(&(*tree)->right, new_node);
-	else if (prec_node < prec_tree)
+	else
 	{
 		new_node->left = *tree;
 		*tree = new_node;
