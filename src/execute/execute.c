@@ -113,15 +113,9 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 int	process_wstatus(int wstatus, t_env *env)
 {
 	if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) == SIGQUIT)
-	{
 		env->code = 131;
-		ft_printf("Quit (core dumped)\n");
-	}
 	else if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) == SIGINT)
-	{
 		env->code = 130;
-		ft_printf("\n");
-	}
 	return (0);
 }
 

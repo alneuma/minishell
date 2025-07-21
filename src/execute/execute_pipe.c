@@ -82,4 +82,3 @@ int	execute_child(pid_t *pid, t_token *tree, int fds[2], t_env *env)
 	}
 	return (0);
 }
-

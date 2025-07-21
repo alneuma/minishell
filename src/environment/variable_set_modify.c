@@ -11,7 +11,7 @@ static int	variable_set_var_append(t_variable_set *env, const char *key,
 				const char *val, int is_export);
 
 // sets the type of a variable
-// always returns 0
+// creates if not existent
 int	variable_set_var_type_set(t_variable_set *env, const char *key,
 		const t_vartype vartype)
 {
@@ -40,28 +40,28 @@ int	variable_set_assignment_string_add(t_variable_set *env, const char *str,
 {
 	char	*key;
 	char	*val;
-	char	*tmp;
+	// char	*tmp;
 	int		return_code;
 
 	return_code = assignment_string_key_get(&key, str);
 	if (return_code)
 		return (return_code);
-	return_code = assignment_string_val_get_ref(&tmp, str);
+	return_code = assignment_string_val_get_ref(&val, str);
 	if (return_code)
 	{
 		free(key);
 		return (return_code);
 	}
-	if (tmp != NULL)
-		val = str_remove_quotes(tmp);
-	else
-		val = NULL;
+	// if (tmp != NULL)
+	// 	val = str_remove_quotes(tmp);
+	// else
+	// 	val = NULL;
 	if (assignment_string_is_append(str))
 		return_code = variable_set_var_append(env, key, val, is_export);
 	else
 		return_code = variable_set_var_set(env, key, val, is_export);
 	free(key);
-	free(val);
+	// free(val);
 	return (return_code);
 }
 

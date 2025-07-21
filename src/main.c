@@ -29,11 +29,13 @@ int	get_line(char **line, int *valid, t_env *env)
 	int			return_code;
 	t_token_id	culprit;
 
+	// if (signum_get() == SIGINT)
+	// 	write(STDIN_FILENO, "\n", 1);
 	if (rl_wrapper(line, P1, env) == -1)
 	{
 		free(*line);
 		*line = NULL;
-		return (0);
+		return (-1);
 	}
 	if (*line == NULL)
 		env->exit = 1;
@@ -43,6 +45,7 @@ int	get_line(char **line, int *valid, t_env *env)
 		*line = NULL;
 		return (0);
 	}
+	add_history(*line);
 	return_code = string_validate(valid, &culprit, *line);
 	if (return_code)
 	{
@@ -56,7 +59,6 @@ int	get_line(char **line, int *valid, t_env *env)
 		env->code = ERR_SYNTAX;
 		return (-1);
 	}
-	add_history(*line);
 	return (0);
 }
 

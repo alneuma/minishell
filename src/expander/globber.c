@@ -91,7 +91,7 @@ int	join_argv_len(const char **argv)
 		len += ft_strlen(argv[i]) + 1;
 		i++;
 	}
-	len -= !!i;
+	len -= (i > 0);
 	return (len);
 }
 
@@ -110,7 +110,7 @@ void	join_argv_write(char *new_str, const char **argv)
 		new_str += len + 1;
 		word++;
 	}
-	*(new_str - 1 - (word > 1)) = '\0';
+	*(new_str - (word > 0)) = '\0';
 }
 
 int	join_argv(char **joined, const char **words)

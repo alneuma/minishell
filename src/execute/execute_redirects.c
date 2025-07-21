@@ -129,6 +129,7 @@ int	redirect_open(int *error, int *infile_fd, int *outfile_fd, t_token *tmp)
 {
 	char	*str_no_quotes;
 
+	*error = 0;
 	if (tmp->id == HEREDOC)
 		return (heredoc_open(error, infile_fd, tmp));
 	str_no_quotes = str_remove_quotes(tmp->string);
@@ -176,11 +177,13 @@ int	infile_open(int *error, int *infile_fd, const t_token *rd)
 		return (return_code);
 	*infile_fd = open(rd->string, O_RDONLY);
 	if (*infile_fd < 0)
+	{
 		*error = errno;
-	errno = 0;
+		errno = 0;
+	}
 	if (is_fatal(*error))
 		return (*error);
-	if (error)
+	if (*error)
 		return (-1);
 	return (0);
 }
@@ -199,11 +202,13 @@ int	outfile_open(int *error, int *outfile_fd, const t_token *rd)
 		*outfile_fd = open(rd->string, O_WRONLY | O_CREAT | O_APPEND,
 				S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	if (*outfile_fd < 0)
+	{
 		*error = errno;
-	errno = 0;
+		errno = 0;
+	}
 	if (is_fatal(*error))
 		return (*error);
-	if (error)
+	if (*error)
 		return (-1);
 	return (0);
 }

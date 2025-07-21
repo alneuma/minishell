@@ -5,11 +5,23 @@ static volatile sig_atomic_t	g_signum = 0;
 
 int	readline_hook(void);
 
-void	handler_sigint(int signum)
+void	handler_sigint_rl(int signum)
 {
 	(void)signum;
 	rl_done = 1;
 	g_signum = SIGINT;
+}
+
+void	handler_sigint_dfl(int signum)
+{
+	(void)signum;
+	g_signum = SIGINT;
+}
+
+void	handler_sigquit_dfl(int signum)
+{
+	(void)signum;
+	g_signum = SIGQUIT;
 }
 
 int	readline_hook(void)
@@ -32,6 +44,10 @@ int	signal_setup_default(void)
 	struct sigaction	act;
 
 	rl_event_hook = NULL;
+	// act.sa_handler = handler_sigint_dfl;
+	// sigaction(SIGINT, &act, NULL);
+	// act.sa_handler = handler_sigquit_dfl;
+	// sigaction(SIGQUIT, &act, NULL);
 	act.sa_handler = SIG_IGN;
 	sigaction(SIGINT, &act, NULL);
 	sigaction(SIGQUIT, &act, NULL);
@@ -54,7 +70,7 @@ int	signal_setup_readline(void)
 	struct sigaction	act;
 
 	rl_event_hook = readline_hook;
-	act.sa_handler = handler_sigint;
+	act.sa_handler = handler_sigint_rl;
 	sigaction(SIGINT, &act, NULL);
 	act.sa_handler = SIG_IGN;
 	sigaction(SIGQUIT, &act, NULL);
