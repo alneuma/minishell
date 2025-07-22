@@ -26,7 +26,8 @@ int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env);
 int	call_execve(char **argv, int fd_in, int fd_out, t_env *env);
 int	argv_remove_quotes(char **argv);
 int	prepare_params(char ***argv, t_token *tree, int fds[2], t_env *env);
-int	assign_redirect_fds(int *fd_in, int *fd_out, int *infile_fd, int *outfile_fd);
+int	assign_redirect_fds(int *fd_in, int *fd_out, int *infile_fd,
+		int *outfile_fd);
 int	execve_apply_path(char **argv, char **pathv, char **envp);
 char	**get_pathv(t_env *env);
 int	process_wstatus(int wstatus, t_env *env);
@@ -71,7 +72,7 @@ int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env)
 	int	return_code;
 
 	if (fd_in == -1)
-fd_in = 0;
+		fd_in = 0;
 	if (fd_out == -1)
 		fd_out = 1;
 	return_code = builtin_get_func(argv[0])((const char **)argv, fd_in, fd_out,
@@ -111,8 +112,6 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 
 int	process_wstatus(int wstatus, t_env *env)
 {
-	(void)wstatus;
-
 	env->code = WEXITSTATUS(wstatus);
 	if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) == SIGQUIT)
 	{
@@ -121,7 +120,6 @@ int	process_wstatus(int wstatus, t_env *env)
 	}
 	if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) == SIGINT)
 	{
-		// ft_printf("\nHELLO! %d", env->pipe_lvl);
 		signum_set(SIGINT);
 		env->code = 130;
 	}
@@ -224,9 +222,6 @@ int	prepare_params(char ***argv, t_token *tree, int fds[2], t_env *env)
 	int		infile_fd;
 	int		outfile_fd;
 
-	// return_code = expand_tokens(tree, env);
-	// if (return_code)
-	// 	return (return_code);
 	return_code = process_redirects(&infile_fd, &outfile_fd, &tree, env);
 	if (return_code)
 		return (return_code);
@@ -242,7 +237,8 @@ int	prepare_params(char ***argv, t_token *tree, int fds[2], t_env *env)
 	return (return_code);
 }
 
-int	assign_redirect_fds(int *fd_in, int *fd_out, int *infile_fd, int *outfile_fd)
+int	assign_redirect_fds(int *fd_in, int *fd_out, int *infile_fd,
+		int *outfile_fd)
 {
 	int	return_code;
 

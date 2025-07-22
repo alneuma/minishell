@@ -42,7 +42,7 @@ int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 			signum_set(SIGQUIT);
 		if (WEXITSTATUS(return_code) == 130)
 			signum_set(SIGINT);
-	}	
+	}
 	waitpid(pid_2, &return_code, 0);
 	if (env->pipe_lvl == 0)
 		env->code = WEXITSTATUS(return_code);
@@ -55,7 +55,6 @@ int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 	return_code |= close_fd_safe(fd_out);
 	if (return_code)
 		return (return_code);
-	// ft_printf("\nplvl\t\t= %d\nenv->code\t= %d\nsignum\t\t= %d", env->pipe_lvl, env->code, signum_get());
 	if (env->code)
 		return (-1);
 	return (0);
@@ -94,8 +93,6 @@ int	execute_child(pid_t *pid, t_token *tree, int fds[2], t_env *env)
 		return_code = close_fd_safe(fds[0]);
 		if (return_code > 0)
 			exit(return_code);
-		// ft_printf("\nchild: %s", tree->string);
-		// ft_printf("\nplvl\t\t= %d\nenv->code\t= %d\nsignum\t\t= %d", env->pipe_lvl, env->code, signum_get());
 		exit(env_code);
 	}
 	else if (*pid > 0)

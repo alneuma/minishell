@@ -8,10 +8,23 @@
 
 static char	*next_word(char **str);
 static int	write_words_from_token(char **argv, int *idx, const t_token *token);
-int	argv_populate(char **argv, const t_token *tokens);
-int	argv_create(char ***argv, const t_token *tokens);
+static int	argv_populate(char **argv, const t_token *tokens);
+static int	argv_create(char ***argv, const t_token *tokens);
 
-int	argv_create(char ***argv, const t_token *tokens)
+int	tokens_make_argv(char ***argv, const t_token *tokens)
+{
+	int	return_code;
+
+	return_code = argv_create(argv, tokens);
+	if (return_code)
+		return (return_code);
+	return_code = argv_populate(*argv, tokens);
+	if (return_code)
+		argv_destroy(argv);
+	return (return_code);
+}
+
+static int	argv_create(char ***argv, const t_token *tokens)
 {
 	int	words;
 
@@ -33,7 +46,7 @@ int	argv_create(char ***argv, const t_token *tokens)
 	return (0);
 }
 
-int	argv_populate(char **argv, const t_token *tokens)
+static int	argv_populate(char **argv, const t_token *tokens)
 {
 	int	return_code;
 	int	words;
@@ -50,19 +63,6 @@ int	argv_populate(char **argv, const t_token *tokens)
 		tokens = tokens->right;
 	}
 	return (0);
-}
-
-int	tokens_make_argv(char ***argv, const t_token *tokens)
-{
-	int	return_code;
-
-	return_code = argv_create(argv, tokens);
-	if (return_code)
-		return (return_code);
-	return_code = argv_populate(*argv, tokens);
-	if (return_code)
-		argv_destroy(argv);
-	return (return_code);
 }
 
 static char	*next_word(char **str)
