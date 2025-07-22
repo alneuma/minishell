@@ -30,6 +30,7 @@ int	get_line(char **line, int *valid, t_env *env)
 
 	// if (signum_get() == SIGINT)
 	// 	write(STDIN_FILENO, "\n", 1);
+	*valid = 0;
 	if (rl_wrapper(line, P1, env) == -1)
 	{
 		free(*line);

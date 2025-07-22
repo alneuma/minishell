@@ -30,6 +30,10 @@ int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 	return_code = execute_child(&pid_1, tree->left, fds_1, env);
 	if (return_code)
 		return (return_code);
+	return_code = close_fd_safe(fds_2[2]);
+	return_code |= close_fd_safe(fds_1[2]);
+	if (return_code)
+		return (return_code);
 	return_code = execute_child(&pid_2, tree->right, fds_2, env);
 	if (return_code)
 		return (return_code);
@@ -50,11 +54,6 @@ int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 		signum_set(SIGQUIT);
 	if (env->code == 130)
 		signum_set(SIGINT);
-	return_code = 0;
-	return_code = close_fd_safe(fd_in);
-	return_code |= close_fd_safe(fd_out);
-	if (return_code)
-		return (return_code);
 	if (env->code)
 		return (-1);
 	return (0);
