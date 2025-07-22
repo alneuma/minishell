@@ -33,6 +33,8 @@ char	**get_pathv(t_env *env);
 int	process_wstatus(int wstatus, t_env *env);
 int	assign_argv(const char **argv, t_env *env);
 int	argv_first_non_assignment_idx(int *idx, const char **argv);
+int	fds_setup(int fd_in, int fd_out);
+void	execve_wrapper(const char *cmd, char **argv, char **envp, t_env *env);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_env *env)
 {
@@ -126,15 +128,10 @@ int	process_wstatus(int wstatus, t_env *env)
 	return (0);
 }
 
-int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
+int	fds_setup(int fd_in, int fd_out)
 {
-	char	**envp;
-	char	*cmd;
-	int		return_code;
+	int	return_code;
 
-	envp = variable_set_array_get(env->vars, ENV);
-	if (envp == NULL)
-		return (ENOMEM);
 	if (fd_in != -1 && dup2(fd_in, 0) < 0)
 	{
 		return_code = errno;
@@ -147,16 +144,34 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 		errno = 0;
 		return (return_code);
 	}
+	return (0);
+}
+
+void	execve_wrapper(const char *cmd, char **argv, char **envp, t_env *env)
+{
+	env_clear(env);
+	signal_setup_extern();
+	execve(cmd, argv, envp);
+	print_error_str("", strerror(errno));
+	errno = 0;
+}
+
+int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
+{
+	char	**envp;
+	char	*cmd;
+	int		return_code;
+
+	envp = variable_set_array_get(env->vars, ENV);
+	if (envp == NULL)
+		return (ENOMEM);
+	return_code = fds_setup(fd_in, fd_out);
+	if (return_code)
+		return (return_code);
 	cmd = NULL;
 	return_code = get_cmd(&cmd, argv, env);
 	if (return_code == 0)
-	{
-		env_clear(env);
-		signal_setup_extern();
-		execve(cmd, argv, envp);
-		print_error_str("", strerror(errno));
-		errno = 0;
-	}
+		execve_wrapper(cmd, argv, envp, env);
 	signal_setup_default();
 	argv_destroy(&envp);
 	free(cmd);
