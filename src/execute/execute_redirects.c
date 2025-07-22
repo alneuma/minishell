@@ -19,8 +19,12 @@ int	infile_open(int *error, int *infile_fd, const t_token *rd);
 int	outfile_open(int *error, int *outfile_fd, const t_token *rd);
 int	heredoc_open(int *error, int *infile_fd, const t_token *token);
 int	tokens_delete_redirects(t_token **tokens);
+int	expand(char **expansion, t_token *token, t_env *env);
+int	handle_redirect(int fds[2], const char *original, t_token *token,
+		t_env *env);
 
-int	process_redirects(int *infile_fd, int *outfile_fd, t_token **tokens, t_env *env)
+int	process_redirects(int *infile_fd, int *outfile_fd, t_token **tokens,
+		t_env *env)
 {
 	int	return_code;
 	int	error;
@@ -66,61 +70,81 @@ int	tokens_delete_redirects(t_token **tokens)
 	return (0);
 }
 
-int	redirect_fds_get(int *infile_fd, int *outfile_fd, t_token *tokens, t_env *env)
+int	expand(char **expansion, t_token *token, t_env *env)
 {
 	char	*tmp;
-	char	*tmp2;
+	int		return_code;
+
+	return_code = expand_str(&tmp, env, token->string);
+	if (return_code)
+		return (return_code);
+	if (token->id != HEREDOC)
+	{
+		return_code = glob_str(expansion, env, tmp);
+		free(tmp);
+		if (return_code)
+			return (return_code);
+	}
+	else
+		*expansion = tmp;
+	return (0);
+}
+
+int	redirect_fds_get(int *infile_fd, int *outfile_fd, t_token *tokens,
+		t_env *env)
+{
+	char	*tmp;
 	char	*original;
 	int		return_code;
 	int		error;
+	int		fds[2];
 
-	*infile_fd = -1;
-	*outfile_fd = -1;
 	error = 0;
+	fds[0] = -1;
+	fds[1] = -1;
 	while (tokens != NULL)
 	{
-		return_code = expand_str(&tmp, env, tokens->string);
+		return_code = expand(&tmp, tokens, env);
 		if (return_code)
 			return (return_code);
-		if (tokens->id != HEREDOC)
-		{
-			return_code = glob_str(&tmp2, env, tmp);
-			free(tmp);
-			if (return_code)
-				return (return_code);
-			tmp = tmp2;
-		}
 		if (token_id_is_redirect(tokens->id) && tokens->id != HEREDOC
 			&& str_num_words(tmp) != 1)
 		{
 			ft_dprintf(STDERR_FILENO, "%s: %s: ambigous redirect\n",
-			  SHELL_NAME, tokens->string);
+				SHELL_NAME, tokens->string);
 			env->code = ERR_AMBIGUOUS_REDIRECT;
 			return (-1);
 		}
 		original = tokens->string;
 		tokens->string = tmp;
 		if (token_id_is_redirect(tokens->id))
-		{
-			return_code = redirect_open(&error, infile_fd, outfile_fd, tokens);
-			if (return_code > 0)
-			{
-				free(original);
-				return (return_code);
-			}
-			if (return_code < 0)
-			{
-				env->code = 1;
-				if (tokens->id == HEREDOC)
-					print_error("here-document", error);
-				else
-					print_error(original, error);
-				free(original);
-				return (-1);
-			}
-		}
+			return_code = handle_redirect(fds, original, tokens, env);	
 		free(original);
 		tokens = tokens->right;
+	}
+	*outfile_fd = fds[0];
+	*infile_fd = fds[1];
+	return (0);
+}
+
+int	handle_redirect(int fds[2], const char *original, t_token *token,
+		t_env *env)
+{
+	int	return_code;
+	int	error;
+
+	error = 0;
+	return_code = redirect_open(&error, &fds[1], &fds[0], token);
+	if (return_code > 0)
+		return (return_code);
+	if (return_code < 0)
+	{
+		env->code = 1;
+		if (token->id == HEREDOC)
+			print_error("here-document", error);
+		else
+			print_error(original, error);
+		return (-1);
 	}
 	return (0);
 }
