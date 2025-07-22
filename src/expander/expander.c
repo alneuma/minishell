@@ -15,12 +15,19 @@ int		expand_string_write(char *expansion, const t_env *env, char *str);
 int		expand_string_length(int *length, const t_env *env,
 			const char *str);
 int		expand_get_value_length(const t_env *env, const char *key);
+int		expand_write_code(char **expansion, char **str, const t_env *env);
+int		expand_write_normal(char **expansion, char **str, const t_env *env);
+int		expand_add_length_normal(int *len, const char *str, int *idx,
+			const t_env *env);
+int		expand_add_length(int *len, const char *str, int *idx,
+			const t_env *env);
+int		expand_add_length_code(int *len, int *idx, const t_env *env);
 
 int	expand_tokens(t_token *tokens, const t_env *env, const int glob)
 {
 	char	*tmp;
 	int		return_code;
-	
+
 	while (tokens != NULL)
 	{
 		return_code = expand_str(&tmp, env, tokens->string);
@@ -61,32 +68,54 @@ int	expand_str(char **new_str, const t_env *env, const char *str)
 	return (return_code);
 }
 
-int	expand_string_write(char *expansion, const t_env *env, char *str)
+int	expand_write_code(char **expansion, char **str, const t_env *env)
 {
 	char	*tmp_str;
+
+	tmp_str = ft_itoa(env->code);
+	if (tmp_str == NULL)
+		return (ENOMEM);
+	ft_memcpy(*expansion, tmp_str, ft_strlen(tmp_str));
+	*expansion += ft_strlen(tmp_str);
+	*str += 2;
+	free(tmp_str);
+	return (0);
+}
+
+int	expand_write_normal(char **expansion, char **str, const t_env *env)
+{
+	int	return_code;
+
+	if (**str == '$' && *((*str) + 1) == '?')
+	{
+		return_code = expand_write_code(expansion, str, env);
+		if (return_code)
+			return (return_code);
+	}
+	else if (**str == '$')
+	{
+		return_code = expand_write_val(expansion, str, env);
+		if (return_code)
+			return (return_code);
+	}
+	return (0);
+}
+
+int	expand_string_write(char *expansion, const t_env *env, char *str)
+{
 	int		return_code;
 	int		quoted_double;
 
 	quoted_double = 0;
 	while (*str != '\0')
-	{	
+	{
 		if (*str == '"')
 			quoted_double = 1 - quoted_double;
 		if (*str == '\'' && !quoted_double)
 			expand_write_single_quoted(&expansion, &str);
-		else if (*str == '$' && *(str + 1) == '?')
-		{
-			tmp_str = ft_itoa(env->code);
-			if (tmp_str == NULL)
-				return (ENOMEM);
-			ft_memcpy(expansion, tmp_str, ft_strlen(tmp_str));
-			expansion += ft_strlen(tmp_str);
-			str += 2;
-			free(tmp_str);
-		}
 		else if (*str == '$')
 		{
-			return_code = expand_write_val(&expansion, &str, env);
+			return_code = expand_write_normal(&expansion, &str, env);
 			if (return_code)
 				return (return_code);
 		}
@@ -129,36 +158,55 @@ int	expand_write_val(char **expansion, char **str, const t_env *env)
 	return (0);
 }
 
-int	expand_string_length(int *length, const t_env *env, const char *str)
+int	expand_add_length_code(int *len, int *idx, const t_env *env)
 {
 	char	*tmp_str;
+
+	tmp_str = ft_itoa(env->code);
+	if (tmp_str == NULL)
+		return (ENOMEM);
+	*len += ft_strlen(tmp_str);
+	free(tmp_str);
+	*idx += 2;
+	return (0);
+}
+
+int	expand_add_length(int *len, const char *str, int *idx, const t_env *env)
+{
+	int	return_code;
+
+	if (str[*idx] == '$' && str[*idx + 1] == '?')
+	{
+		return_code = expand_add_length_code(len, idx, env);
+		if (return_code)
+			return (return_code);
+	}
+	else if (str[*idx] == '$')
+	{
+		return_code = expand_add_length_normal(len, str, idx, env);
+		if (return_code)
+			return (return_code);
+	}
+	return (0);
+}
+
+int	expand_string_length(int *length, const t_env *env, const char *str)
+{
 	int		i;
-	int		tmp;
-	int		return_value;
+	int		return_code;
 
 	i = 0;
 	*length = 0;
 	while (str[i] != '\0')
 	{
-		if (str[i] == '$' && str[i + 1] == '?')
+		if (str[i] == '$')
 		{
-			tmp_str = ft_itoa(env->code);
-			if (tmp_str == NULL)
-				return (ENOMEM);
-			*length += ft_strlen(tmp_str);
-			free(tmp_str);
-			i += 2;
-		}
-		else if (str[i] == '$')
-		{
-			return_value = expand_get_length(&tmp, &str[i], env);
-			*length += tmp;
-			i++;
-			while (is_identifier_char(str[i]))
-				i++;
+			return_code = expand_add_length(length, str, &i, env);
+			if (return_code)
+				return (return_code);
 		}
 		else
-		{	
+		{
 			*length += 1;
 			i++;
 		}
@@ -166,16 +214,19 @@ int	expand_string_length(int *length, const t_env *env, const char *str)
 	return (0);
 }
 
-
-int	expand_get_length(int *len, const char *str, const t_env *env)
+int	expand_add_length_normal(int *len, const char *str, int *idx,
+		const t_env *env)
 {
 	char	*key;
 
 	key = expand_get_key(str);
 	if (key == NULL)
 		return (ENOMEM);
-	*len = expand_get_value_length(env, key);
+	*len += expand_get_value_length(env, key);
 	free(key);
+	*idx += 1;
+	while (is_identifier_char(str[*idx]))
+		*idx += 1;
 	return (0);
 }
 
