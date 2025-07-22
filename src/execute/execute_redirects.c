@@ -22,24 +22,32 @@ int	tokens_delete_redirects(t_token **tokens);
 int	expand(char **expansion, t_token *token, t_env *env);
 int	handle_redirect(int fds[2], const char *original, t_token *token,
 		t_env *env);
+int	redirect_fds_get(int fds[2], t_token *tokens, t_env *env);
+int	validate_redirect(char *str, t_token *token, t_env *env);
+int	handle_token(int fds[2], t_token *token, t_env *env);
 
 int	process_redirects(int *infile_fd, int *outfile_fd, t_token **tokens,
 		t_env *env)
 {
+	int	fds[2];
 	int	return_code;
 	int	error;
 
-	return_code = redirect_fds_get(infile_fd, outfile_fd, *tokens, env);
+	fds[0] = -1;
+	fds[1] = -1;
+	return_code = redirect_fds_get(fds, *tokens, env);
 	if (return_code > 0)
 		return (return_code);
 	if (return_code)
 	{
-		error = close_fd_safe(*infile_fd);
-		error |= close_fd_safe(*outfile_fd);
+		error = close_fd_safe(fds[0]);
+		error |= close_fd_safe(fds[1]);
 		if (error)
 			return (error);
 		return (-1);
 	}
+	*outfile_fd = fds[0];
+	*infile_fd = fds[1];
 	return (0);
 }
 
@@ -90,40 +98,58 @@ int	expand(char **expansion, t_token *token, t_env *env)
 	return (0);
 }
 
-int	redirect_fds_get(int *infile_fd, int *outfile_fd, t_token *tokens,
-		t_env *env)
+int	validate_redirect(char *str, t_token *token, t_env *env)
+{
+	if (token_id_is_redirect(token->id) && token->id != HEREDOC
+		&& str_num_words(str) != 1)
+	{
+		ft_dprintf(STDERR_FILENO, "%s: %s: ambigous redirect\n",
+			SHELL_NAME, token->string);
+		env->code = ERR_AMBIGUOUS_REDIRECT;
+		return (-1);
+	}
+	return (0);
+}
+
+int	handle_token(int fds[2], t_token *token, t_env *env)
 {
 	char	*tmp;
 	char	*original;
 	int		return_code;
-	int		error;
-	int		fds[2];
 
-	error = 0;
-	fds[0] = -1;
-	fds[1] = -1;
-	while (tokens != NULL)
+	return_code = expand(&tmp, token, env);
+	if (return_code)
+		return (return_code);
+	return_code = validate_redirect(tmp, token, env);
+	if (return_code)
 	{
-		return_code = expand(&tmp, tokens, env);
+		free(tmp);
+		return (return_code);
+	}
+	original = token->string;
+	token->string = tmp;
+	if (token_id_is_redirect(token->id))
+	{
+		return_code = handle_redirect(fds, original, token, env);
+		free(original);
 		if (return_code)
 			return (return_code);
-		if (token_id_is_redirect(tokens->id) && tokens->id != HEREDOC
-			&& str_num_words(tmp) != 1)
-		{
-			ft_dprintf(STDERR_FILENO, "%s: %s: ambigous redirect\n",
-				SHELL_NAME, tokens->string);
-			env->code = ERR_AMBIGUOUS_REDIRECT;
-			return (-1);
-		}
-		original = tokens->string;
-		tokens->string = tmp;
-		if (token_id_is_redirect(tokens->id))
-			return_code = handle_redirect(fds, original, tokens, env);	
-		free(original);
+	}
+	free(original);
+	return (0);
+}
+
+int	redirect_fds_get(int fds[2], t_token *tokens, t_env *env)
+{
+	int		return_code;
+
+	while (tokens != NULL)
+	{
+		return_code = handle_token(fds, tokens, env);
+		if (return_code)
+			return (return_code);
 		tokens = tokens->right;
 	}
-	*outfile_fd = fds[0];
-	*infile_fd = fds[1];
 	return (0);
 }
 
