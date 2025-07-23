@@ -66,7 +66,7 @@ static int	preprocess_redirect(t_token *token, t_env *env)
 	else
 	{
 		token->string = tmp->string;
-		token_destroy(&tmp, FREE_STRING);
+		token_destroy(&tmp, KEEP_STRING);
 	}
 	return (return_code);
 }
