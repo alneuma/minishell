@@ -13,6 +13,9 @@ char	*get_mask(const char *pat);
 int		glob_match(int *match, const char *pat_with_quotes, const char *str);
 int		get_matches(char **str, DIR *cwd, const char *pattern);
 int		check_pattern(const char *str, const char *mask, const char *pat);
+int		process_node(char **str, const char *pattern,
+			const struct dirent *node);
+int		append_match(char **s1, const char *s2);
 
 int	glob_get_matches(char **matches, const char *pattern, t_env *env)
 {
@@ -109,56 +112,64 @@ int	glob_match(int *match, const char *pat_with_quotes, const char *str)
 	return (0);
 }
 
+int	process_node(char **str, const char *pattern, const struct dirent *node)
+{
+	int	return_code;
+
+	if (node->d_name[0] == '.')
+		return (0);
+	glob_match(&return_code, pattern, node->d_name);
+	if (return_code)
+	{
+		return_code = append_match(str, node->d_name);
+		if (return_code)
+			return (return_code);
+	}
+	return (0);
+}
+
+int	append_match(char **s1, const char *s2)
+{
+	char	*tmp;
+
+	if (*s1 != NULL)
+		tmp = ft_strjoin(*s1, " ");
+	else
+		tmp = ft_strdup("");
+	free(*s1);
+	if (tmp == NULL)
+		return (ENOMEM);
+	*s1 = ft_strjoin(tmp, s2);
+	free(tmp);
+	if (*s1 == NULL)
+		return (ENOMEM);
+	return (0);
+}
+
 int	get_matches(char **str, DIR *cwd, const char *pattern)
 {
 	struct dirent	*node;
-	char			*tmp;
-	int				match;
+	int				return_code;
 
-	errno = 0;
 	*str = NULL;
 	node = readdir(cwd);
+	return_code = 0;
 	while (node != NULL)
 	{
-		if (node->d_name[0] == '.')
+		return_code = process_node(str, pattern, node);
+		if (return_code)
 		{
-			node = readdir(cwd);
-			continue ;
-		}
-		glob_match(&match, pattern, node->d_name);
-		if (match)
-		{
-			if (*str != NULL)
-				tmp = ft_strjoin(*str, " ");
-			else
-				tmp = ft_strdup("");
-			if (tmp == NULL)
-			{
-				errno = ENOMEM;
-				break ;
-			}
 			free(*str);
-			*str = ft_strjoin(tmp, node->d_name);
-			free(tmp);
-			if (*str == NULL)
-			{
-				errno = ENOMEM;
-				break ;
-			}
+			*str = NULL;
+			return (return_code);
 		}
 		node = readdir(cwd);
-	}
-	if (errno != 0)
-	{
-		free(*str);
-		*str = NULL;
-		return (errno);
 	}
 	if (*str == NULL)
 	{
 		*str = ft_strdup(pattern);
 		if (*str == NULL)
-			errno = ENOMEM;
+			return (ENOMEM);
 	}
-	return (errno);
+	return (return_code);
 }
