@@ -50,12 +50,6 @@ int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 	waitpid(pid_1, &return_code, 0);
 	close_fd_safe(fds_1[0]);
 	close_fd_safe(fds_1[1]);
-	close_fd_safe(fds_1[2]);
-	close_fd_safe(fds_1[3]);
-	close_fd_safe(fds_2[0]);
-	close_fd_safe(fds_2[1]);
-	close_fd_safe(fds_2[2]);
-	close_fd_safe(fds_2[3]);
 	if (env->pipe_lvl != 0)
 		env->code = WEXITSTATUS(return_code);
 	if (env->pipe_lvl == 0)
@@ -66,6 +60,8 @@ int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 			signum_set(SIGINT);
 	}
 	waitpid(pid_2, &return_code, 0);
+	close_fd_safe(fds_2[0]);
+	close_fd_safe(fds_2[1]);
 	if (env->pipe_lvl == 0)
 		env->code = WEXITSTATUS(return_code);
 	if (env->code == 131)

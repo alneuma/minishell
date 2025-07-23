@@ -181,7 +181,6 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 	envp = variable_set_array_get(env->vars, ENV);
 	if (envp == NULL)
 		return (ENOMEM);
-	ft_printf("\ncmd\t\t= %s\nenv->pipe_lvl\t= %d\nfd_in\t\t= %d\nfd_out\t\t= %d\n\n", argv[0], env->pipe_lvl, fd_in, fd_out);
 	return_code = fds_setup(fd_in, fd_out);
 	if (return_code)
 	{
