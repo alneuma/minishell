@@ -17,6 +17,8 @@ static int	heredoc_get_doc(char **doc, const char *prompt, const char *dlm,
 int			preprocess_heredoc(char **doc, const char *dlm_quoted, t_env *env);
 int			heredoc_next_line(char **line, const char *prompt, t_env *env);
 int			heredoc_is_last(const char *line, const char *dlm);
+int			tokens_valid_neighbours(t_token *left, t_token *right);
+int			is_valid_first(t_token *token);
 
 int	token_is_redirect(t_token *token)
 {
@@ -28,9 +30,13 @@ int	tokens_preprocess_redirects(t_token *tokens, t_env *env)
 {
 	int	return_code;
 
+	if (!is_valid_first(tokens))
+		return (-1);
 	return_code = 0;
 	while (tokens != NULL)
 	{
+		if (!tokens_valid_neighbours(tokens, tokens->right))
+			return (-1);
 		if (token_is_redirect(tokens))
 		{
 			return_code = preprocess_redirect(tokens, env);
@@ -48,8 +54,6 @@ static int	preprocess_redirect(t_token *token, t_env *env)
 	int		return_code;
 
 	return_code = 0;
-	if (token->right == NULL || token->right->id != LITERAL)
-		return (-1);
 	tmp = token->right;
 	token->right = token->right->right;
 	if (token->id == HEREDOC)

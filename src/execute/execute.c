@@ -18,22 +18,22 @@
 #include "error.h"
 #include "assignment_strings.h"
 
-int	execute_or(t_token *tree, int fd_in, int fd_out, t_env *env);
-int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env);
-int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env);
-int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env);
-int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env);
-int	call_execve(char **argv, int fd_in, int fd_out, t_env *env);
-int	argv_remove_quotes(char **argv);
-int	prepare_params(char ***argv, t_token *tree, int fds[2], t_env *env);
-int	assign_redirect_fds(int *fd_in, int *fd_out, int *infile_fd,
-		int *outfile_fd);
-int	execve_apply_path(char **argv, char **pathv, char **envp);
+int		execute_or(t_token *tree, int fd_in, int fd_out, t_env *env);
+int		execute_and(t_token *tree, int fd_in, int fd_out, t_env *env);
+int		execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env);
+int		execute_extern(char **argv, int fd_in, int fd_out, t_env *env);
+int		execute_builtin(char **argv, int fd_in, int fd_out, t_env *env);
+int		call_execve(char **argv, int fd_in, int fd_out, t_env *env);
+int		argv_remove_quotes(char **argv);
+int		prepare_params(char ***argv, t_token *tree, int fds[2], t_env *env);
+int		assign_redirect_fds(int *fd_in, int *fd_out, int *infile_fd,
+			int *outfile_fd);
+int		execve_apply_path(char **argv, char **pathv, char **envp);
 char	**get_pathv(t_env *env);
-int	process_wstatus(int wstatus, t_env *env);
-int	assign_argv(const char **argv, t_env *env);
-int	argv_first_non_assignment_idx(int *idx, const char **argv);
-int	fds_setup(int fd_in, int fd_out);
+int		process_wstatus(int wstatus, t_env *env);
+int		assign_argv(const char **argv, t_env *env);
+int		argv_first_non_assignment_idx(int *idx, const char **argv);
+int		fds_setup(int fd_in, int fd_out);
 void	execve_wrapper(const char *cmd, char **argv, char **envp, t_env *env);
 void	execve_cleanup(char **envp, char *cmd, int fd_in, int fd_out);
 
