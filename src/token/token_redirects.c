@@ -76,6 +76,50 @@ int	preprocess_heredoc(char **doc, const char *dlm_quoted, t_env *env)
 	return (return_code);
 }
 
+int	heredoc_next_line(char **line, const char *prompt, t_env *env)
+{
+	*line = NULL;
+	if (rl_wrapper(line, prompt, env) == -1)
+	{
+		free(*line);
+		return (-1);
+	}
+	return (0);
+}
+
+int	heredoc_is_last(const char *line, const char *dlm)
+{
+	if (line == NULL)
+	{
+		ft_printf("%s: warning: here-document delimited by end-of-file "
+			"(wanted `%s')\n", SHELL_NAME, dlm);
+		return (1);
+	}
+	if (!ft_strcmp(dlm, line))
+		return (1);
+	return (0);
+}
+
+int	heredoc_process_line(char **doc, const char *prompt, const char *dlm, t_env *env)
+		if (heredoc_next_line(&line, prompt, env) == -1)
+		{
+			free(*doc);
+			*doc = NULL;
+			return (-1);
+		}
+		if (heredoc_is_last(line, dlm))
+		{
+			free(line);
+			return (0);
+		}
+		else if (heredoc_append_line(doc, &line))
+		{
+			free(line);
+			free(*doc);
+			*doc = NULL;
+			return (ENOMEM);
+		}
+		free(line);
 int	heredoc_get_doc(char **doc, const char *prompt, const char *dlm, t_env *env)
 {
 	char	*line;
@@ -85,31 +129,25 @@ int	heredoc_get_doc(char **doc, const char *prompt, const char *dlm, t_env *env)
 		return (ENOMEM);
 	while (1)
 	{
-		if (rl_wrapper(&line, prompt, env) == -1)
+		if (heredoc_next_line(&line, prompt, env) == -1)
 		{
-			free(line);
 			free(*doc);
 			*doc = NULL;
 			return (-1);
 		}
-		if (line == NULL)
-		{
-			ft_printf("%s: warning: here-document delimited by end-of-file "
-				"(wanted `%s')\n", SHELL_NAME, dlm);
-			return (0);
-		}
-		if (!ft_strcmp(dlm, line))
+		if (heredoc_is_last(line, dlm))
 		{
 			free(line);
 			return (0);
 		}
-		if (heredoc_append_line(doc, &line))
+		else if (heredoc_append_line(doc, &line))
 		{
 			free(line);
 			free(*doc);
 			*doc = NULL;
 			return (ENOMEM);
 		}
+		free(line);
 	}
 }
 

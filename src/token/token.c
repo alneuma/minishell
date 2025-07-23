@@ -10,7 +10,8 @@ int			literal_length(char *str);
 
 void	token_print(t_token *token)
 {
-	char *fstr;
+	char	*fstr;
+
 	fstr = "%s:\t%s";
 	if (token->id == PIPE || token->id == AND || token->id == OR
 		|| token->id == INFILE)
@@ -36,21 +37,9 @@ void	token_destroy(t_token **token, int keep_literal)
 	*token = NULL;
 }
 
-// static void	free_argv(char **argv)
-// {
-// 	char	**start;
-//
-// 	if (!argv)
-// 		return ;
-// 	start = argv;
-// 	while (*argv)
-// 		free(*argv++);
-// 	free(start);
-// }
-
 int	is_token_of_type(char *str, t_token_id id)
 {
-	char *lexeme;
+	char	*lexeme;
 
 	lexeme = token_id_get_lexeme(id);
 	return (!ft_strncmp(str, lexeme, ft_strlen(lexeme)));
