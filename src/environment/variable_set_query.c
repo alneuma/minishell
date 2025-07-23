@@ -20,7 +20,7 @@ char	*variable_set_var_get_ref(const t_variable_set *env, const char *key)
 	return (NULL);
 }
 
-size_t	variable_set_size_get_by_type(const t_variable_set *env,
+size_t	varset_size_type(const t_variable_set *env,
 			const t_vartype vartype)
 {
 	size_t		size;
@@ -54,8 +54,7 @@ char	**variable_set_array_get_format(const t_variable_set *env,
 	int			i;
 	t_variable	*p;
 
-	envp = (char **)malloc(sizeof(envp)
-			* (variable_set_size_get_by_type(env, vartype) + 1));
+	envp = (char **)malloc(sizeof(envp) * (varset_size_type(env, vartype) + 1));
 	if (envp == NULL)
 		return (NULL);
 	i = 0;

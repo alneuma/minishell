@@ -94,7 +94,7 @@ int	cmp_vars(const void *var1_void, const void *var2_void)
 }
 
 int	variable_set_print_format_export(const int fd, const t_variable_set *vars)
-{	
+{
 	t_array	vars_arr;
 	char	**strs;
 	int		i;

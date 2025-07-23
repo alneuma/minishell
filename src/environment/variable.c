@@ -18,8 +18,7 @@ char	*variable_assignment_string_get_export(const t_variable *entry)
 	if (entry->value == NULL)
 		ft_sprintf(str, "%s%s", EXPORT_PREFIX, entry->key);
 	else
-		ft_sprintf(str, "%s%s=\"%s\"", EXPORT_PREFIX, entry->key,
-			 entry->value);
+		ft_sprintf(str, "%s%s=\"%s\"", EXPORT_PREFIX, entry->key, entry->value);
 	return (str);
 }
 
