@@ -11,7 +11,7 @@ int	is_identifier_char(const char c)
 int	is_valid_identifier(const char *str, int len)
 {
 	int	i;
-	
+
 	if (len == 0 || !is_identifier_char(*str) || ft_isdigit(*str))
 		return (0);
 	i = 1;
@@ -27,7 +27,7 @@ int	is_valid_identifier(const char *str, int len)
 int	assignment_string_is_append(const char *str)
 {
 	char	*equal;
-	
+
 	equal = ft_strchr(str, '=');
 	if (equal == NULL)
 		return (0);
@@ -107,7 +107,7 @@ int	is_valid_assignment(int *valid, const char *str)
 	*valid = 1;
 	return (0);
 }
-	
+
 int	is_assignment(const char *str)
 {
 	char	*equal;
@@ -121,7 +121,7 @@ int	is_assignment(const char *str)
 		return (1);
 	equal--;
 	if (equal - str > 0 && *equal == '+'
-		&& is_valid_identifier(str, equal -str))
+		&& is_valid_identifier(str, equal - str))
 		return (1);
 	return (0);
 }
