@@ -35,6 +35,7 @@ int	assign_argv(const char **argv, t_env *env);
 int	argv_first_non_assignment_idx(int *idx, const char **argv);
 int	fds_setup(int fd_in, int fd_out);
 void	execve_wrapper(const char *cmd, char **argv, char **envp, t_env *env);
+void	execve_cleanup(char **envp, char *cmd, int fd_in, int fd_out);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_env *env)
 {
@@ -156,6 +157,15 @@ void	execve_wrapper(const char *cmd, char **argv, char **envp, t_env *env)
 	errno = 0;
 }
 
+void	execve_cleanup(char **envp, char *cmd, int fd_in, int fd_out)
+{
+	signal_setup_default();
+	argv_destroy(&envp);
+	free(cmd);
+	close_fd_safe(fd_in);
+	close_fd_safe(fd_out);
+}
+
 int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 {
 	char	**envp;
@@ -167,16 +177,15 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 		return (ENOMEM);
 	return_code = fds_setup(fd_in, fd_out);
 	if (return_code)
+	{
+		argv_destroy(&envp);
 		return (return_code);
+	}
 	cmd = NULL;
 	return_code = get_cmd(&cmd, argv, env);
 	if (return_code == 0)
 		execve_wrapper(cmd, argv, envp, env);
-	signal_setup_default();
-	argv_destroy(&envp);
-	free(cmd);
-	close_fd_safe(fd_in);
-	close_fd_safe(fd_out);
+	execve_cleanup(envp, cmd, fd_in, fd_out);
 	if (return_code)
 		env_clear(env);
 	if (return_code == EACCES)
