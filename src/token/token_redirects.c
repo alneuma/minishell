@@ -15,6 +15,8 @@ static int	preprocess_redirect(t_token *token, t_env *env);
 static int	heredoc_get_doc(char **doc, const char *prompt, const char *dlm,
 				t_env *env);
 int			preprocess_heredoc(char **doc, const char *dlm_quoted, t_env *env);
+int			heredoc_next_line(char **line, const char *prompt, t_env *env);
+int			heredoc_is_last(const char *line, const char *dlm);
 
 int	token_is_redirect(t_token *token)
 {
@@ -53,12 +55,14 @@ static int	preprocess_redirect(t_token *token, t_env *env)
 	if (token->id == HEREDOC)
 	{
 		return_code = preprocess_heredoc(&token->string, tmp->string, env);
+		if (return_code)
+			token->string = NULL;
 		token_destroy(&tmp, FREE_STRING);
 	}
 	else
 	{
 		token->string = tmp->string;
-		token_destroy(&tmp, KEEP_STRING);
+		token_destroy(&tmp, FREE_STRING);
 	}
 	return (return_code);
 }
@@ -100,26 +104,6 @@ int	heredoc_is_last(const char *line, const char *dlm)
 	return (0);
 }
 
-int	heredoc_process_line(char **doc, const char *prompt, const char *dlm, t_env *env)
-		if (heredoc_next_line(&line, prompt, env) == -1)
-		{
-			free(*doc);
-			*doc = NULL;
-			return (-1);
-		}
-		if (heredoc_is_last(line, dlm))
-		{
-			free(line);
-			return (0);
-		}
-		else if (heredoc_append_line(doc, &line))
-		{
-			free(line);
-			free(*doc);
-			*doc = NULL;
-			return (ENOMEM);
-		}
-		free(line);
 int	heredoc_get_doc(char **doc, const char *prompt, const char *dlm, t_env *env)
 {
 	char	*line;
@@ -132,7 +116,6 @@ int	heredoc_get_doc(char **doc, const char *prompt, const char *dlm, t_env *env)
 		if (heredoc_next_line(&line, prompt, env) == -1)
 		{
 			free(*doc);
-			*doc = NULL;
 			return (-1);
 		}
 		if (heredoc_is_last(line, dlm))
@@ -144,7 +127,6 @@ int	heredoc_get_doc(char **doc, const char *prompt, const char *dlm, t_env *env)
 		{
 			free(line);
 			free(*doc);
-			*doc = NULL;
 			return (ENOMEM);
 		}
 		free(line);
@@ -152,7 +134,6 @@ int	heredoc_get_doc(char **doc, const char *prompt, const char *dlm, t_env *env)
 }
 
 // assumes *line != NULL
-// frees *line
 // updated *doc
 // success	-> 0
 // error	-> != 0
@@ -163,7 +144,6 @@ static int	heredoc_append_line(char **doc, char **line)
 	tmp = ft_strjoin(*doc, *line);
 	if (tmp == NULL)
 		return (ENOMEM);
-	free(*line);
 	free(*doc);
 	*doc = ft_strjoin(tmp, "\n");
 	free(tmp);

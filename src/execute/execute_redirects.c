@@ -129,14 +129,9 @@ int	handle_token(int fds[2], t_token *token, t_env *env)
 	original = token->string;
 	token->string = tmp;
 	if (token_id_is_redirect(token->id))
-	{
 		return_code = handle_redirect(fds, original, token, env);
-		free(original);
-		if (return_code)
-			return (return_code);
-	}
 	free(original);
-	return (0);
+	return (return_code);
 }
 
 int	redirect_fds_get(int fds[2], t_token *tokens, t_env *env)
