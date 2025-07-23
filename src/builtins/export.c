@@ -11,7 +11,7 @@
 
 int	process_variable_export(const char *var, t_env *env);
 
-int builtin_export(const char **argv, int fd_in, int fd_out, t_env *env)
+int	builtin_export(const char **argv, int fd_in, int fd_out, t_env *env)
 {
 	int	return_code;
 	int	error;
@@ -38,7 +38,7 @@ int builtin_export(const char **argv, int fd_in, int fd_out, t_env *env)
 int	process_variable_export(const char *var, t_env *env)
 {
 	int	valid;
-	int return_code;
+	int	return_code;
 
 	return_code = is_valid_assignment(&valid, var);
 	if (return_code)
@@ -48,7 +48,7 @@ int	process_variable_export(const char *var, t_env *env)
 	else if (is_valid_identifier(var, ft_strlen(var)))
 		return (variable_set_var_type_set(env->vars, var, ENV));
 	ft_dprintf(STDERR_FILENO, "%s: `%s': %s\n", SHELL_NAME,
-			 var, STR_INVALID_IDENTIFIER);
+		var, STR_INVALID_IDENTIFIER);
 	env->code = ERR_INVALID_IDENTIFIER;
 	return (-1);
 }

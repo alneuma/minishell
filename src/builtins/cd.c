@@ -41,7 +41,7 @@ int	get_objective_dir(char **objective, const char **argv, t_env *env)
 	if (*objective == NULL)
 		return (ENOMEM);
 	return (0);
-}		
+}
 
 int	ft_chdir(const char *objective)
 {
@@ -49,9 +49,10 @@ int	ft_chdir(const char *objective)
 
 	if (chdir(objective) < 0)
 	{
-		print_error("cd", errno);
 		return_code = errno;
 		errno = 0;
+		if (is_fatal(return_code))
+			print_error("cd", return_code);
 		return (return_code);
 	}
 	return (0);
@@ -75,28 +76,25 @@ int	update_env(const char *old_cwd, t_env *env)
 	}
 	if (variable_set_var_get_ref(env->vars, "PWD") != NULL)
 		return_code = variable_set_var_set(env->vars, "PWD", env->cwd, 0);
-	return (return_code);	
+	return (return_code);
 }
 
-int builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
+int	builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
 {
 	char	*objective;
 	char	*old_cwd;
 	int		return_code;
-	
+
 	(void)fd_in;
 	(void)fd_out;
 	return_code = get_objective_dir(&objective, argv, env);
 	if (return_code)
 		return (return_code);
 	old_cwd = ft_strdup(env->cwd);
-	if (old_cwd == NULL)
-	{
-		free(objective);
-		return (ENOMEM);
-	}
 	return_code = ft_chdir(objective);
 	free(objective);
+	if (old_cwd == NULL)
+		return (ENOMEM);
 	if (return_code)
 	{
 		free(old_cwd);
