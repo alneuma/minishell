@@ -22,14 +22,13 @@ int	env_initialize(t_env *env, char **envp);
 int	preprocess_tokens(t_token *tokens, int *valid, t_env *env);
 int	get_line(char **line, int *valid, t_env *env);
 int	get_tokens(t_token **tokens, t_env *env);
+int	shell_loop(t_env *env);
 
 int	get_line(char **line, int *valid, t_env *env)
 {
 	int			return_code;
 	t_token_id	culprit;
 
-	// if (signum_get() == SIGINT)
-	// 	write(STDIN_FILENO, "\n", 1);
 	*valid = 0;
 	if (rl_wrapper(line, P1, env) == -1)
 	{
@@ -39,7 +38,7 @@ int	get_line(char **line, int *valid, t_env *env)
 	}
 	if (*line == NULL)
 		env->exit = 1;
- 	if (*line == NULL || **line == '\0')
+	if (*line == NULL || **line == '\0')
 	{
 		free(*line);
 		*line = NULL;
@@ -75,7 +74,7 @@ int	preprocess_tokens(t_token *tokens, int *valid, t_env *env)
 		env->code = ERR_SYNTAX;
 		print_error_token(culprit);
 	}
-	return_code	= tokens_preprocess_redirects(tokens, env);
+	return_code = tokens_preprocess_redirects(tokens, env);
 	if (return_code && return_code != -1)
 		return (return_code);
 	if (return_code == -1)
@@ -101,7 +100,7 @@ int	get_tokens(t_token **tokens, t_env *env)
 	return_code = preprocess_tokens(*tokens, &valid, env);
 	if (return_code || !valid)
 		tokens_destroy(tokens);
-	return(return_code);
+	return (return_code);
 }
 
 int	shell_iteration(t_env *env)
@@ -122,6 +121,27 @@ int	shell_iteration(t_env *env)
 	return (return_code);
 }
 
+int	shell_loop(t_env *env)
+{
+	int	return_code;
+
+	while (1)
+	{
+		return_code = shell_iteration(env);
+		if (return_code == 0 && env->exit == 0)
+			env->code = 0;
+		if (is_fatal(return_code) || env->exit)
+		{
+			if (!is_fatal(return_code))
+			{
+				return_code = env->code;
+				write(STDOUT_FILENO, "exit\n", 5);
+			}
+			return (return_code);
+		}
+	}
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	int		return_code;
@@ -133,23 +153,10 @@ int	main(int argc, char **argv, char **envp)
 	return_code = env_initialize(&env, envp);
 	if (return_code)
 		return (return_code);
-	while (1)
-	{
-		return_code = shell_iteration(&env);
-		if (return_code == 0 && env.exit == 0)
-			env.code = 0;
-		if (is_fatal(return_code) || env.exit)
-		{
-			if (!is_fatal(return_code))
-			{
-				return_code = env.code;
-				write(STDOUT_FILENO, "exit\n", 5);
-			}
-			env_clear(&env);
-		 	rl_clear_history();
-			return (return_code);
-		}
-	}
+	return_code = shell_loop(&env);
+	env_clear(&env);
+	rl_clear_history();
+	return (return_code);
 }
 
 void	env_clear(t_env *env)
@@ -176,7 +183,8 @@ int	env_initialize(t_env *env, char **envp)
 	i = 0;
 	while (envp[i] != NULL)
 	{
-		return_code = variable_set_assignment_string_add(env->vars, envp[i], ENV);
+		return_code = variable_set_assignment_string_add(env->vars, envp[i],
+				ENV);
 		if (return_code)
 		{
 			free(env->cwd);
