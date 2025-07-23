@@ -73,6 +73,7 @@ int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env)
 int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env)
 {
 	int	return_code;
+	int	rc_fds;
 
 	if (fd_in == -1)
 		fd_in = 0;
@@ -80,11 +81,16 @@ int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env)
 		fd_out = 1;
 	return_code = builtin_get_func(argv[0])((const char **)argv, fd_in, fd_out,
 			env);
+	rc_fds = 0;
 	if (fd_in != 0)
-		close_fd_safe(fd_in);
-	if (fd_out != 1)
+		rc_fds = close_fd_safe(fd_in);
+	if (fd_out != 1 && rc_fds)
 		close_fd_safe(fd_out);
-	return (return_code);
+	if (fd_out != 1 && rc_fds == 0)
+		rc_fds = close_fd_safe(fd_out);
+	if (return_code)
+		return (return_code);
+	return (rc_fds);
 }
 
 int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
@@ -102,9 +108,7 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 	{
 		waitpid(pid, &return_code, 0);
 		process_wstatus(return_code, env);
-		return_code = 0;
-		return_code = close_fd_safe(fd_in);
-		return_code |= close_fd_safe(fd_out);
+		return_code = close_fd_safe2(fd_in, fd_out);
 		if (return_code)
 			return (return_code);
 	}
@@ -149,9 +153,7 @@ int	fds_setup(int fd_in, int fd_out)
 		close_fd_safe(fd_out);
 		return (return_code);
 	}
-	close_fd_safe(fd_in);
-	close_fd_safe(fd_out);
-	return (0);
+	return (close_fd_safe2(fd_in, fd_out));
 }
 
 void	execve_wrapper(const char *cmd, char **argv, char **envp, t_env *env)
@@ -275,12 +277,15 @@ int	assign_redirect_fds(int *fd_in, int *fd_out, int *infile_fd,
 	return_code = 0;
 	if (*infile_fd != -1)
 	{
-		return_code |= close_fd_safe(*fd_in);
+		return_code = close_fd_safe(*fd_in);
 		*fd_in = *infile_fd;
 	}
 	if (*outfile_fd != -1)
 	{
-		return_code |= close_fd_safe(*fd_out);
+		if (return_code)
+			close_fd_safe(*fd_out);
+		else
+			return_code = close_fd_safe(*fd_out);
 		*fd_out = *outfile_fd;
 	}
 	return (return_code);

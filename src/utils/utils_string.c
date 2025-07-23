@@ -42,6 +42,18 @@ int	str_num_words(char *str)
 	return (words);
 }
 
+int	close_fd_safe2(int fd1, int fd2)
+{
+	int return_code;
+
+	return_code = close_fd_safe(fd1);
+	if (return_code)
+		close_fd_safe(fd2);
+	else
+		return (close_fd_safe(fd2));
+	return (0);
+}
+
 int	close_fd_safe(int fd)
 {
 	int	return_code;

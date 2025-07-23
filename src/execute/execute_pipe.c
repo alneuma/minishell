@@ -47,19 +47,14 @@ int	pipe_setup_fds(t_child_info *chinfo_1, t_child_info *chinfo_2, int fd_in,
 int	wait_child(int *wstatus, t_child_info *chinfo)
 {
 	int	return_code;
-	int	rc_fds;
 
-	return_code = 0;
 	if (waitpid(chinfo->pid, wstatus, 0) < 0)
 	{
 		return_code = errno;
 		errno = 0;
-	}
-	rc_fds = close_fd_safe(chinfo->fd_in);
-	rc_fds |= close_fd_safe(chinfo->fd_out);
-	if (return_code)
 		return (return_code);
-	return (rc_fds);
+	}
+	return (0);
 }
 
 void	process_wstatus_left(int wstatus, t_env *env)
@@ -98,11 +93,9 @@ int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 	if (return_code)
 		return (return_code);
 	return_code = pipe_fork_child(&chinfo_left, tree->left, env);
-	close_fd_safe(chinfo_left.fd_out);
 	if (return_code)
 		return (return_code);
 	return_code = pipe_fork_child(&chinfo_right, tree->right, env);
-	close_fd_safe(chinfo_right.fd_in);
 	if (return_code)
 		return (return_code);
 	wait_child(&return_code, &chinfo_left);
@@ -129,11 +122,7 @@ int	pipe_fork_child(t_child_info *chinfo, t_token *tree, t_env *env)
 	else if (chinfo->pid == 0)
 		exit(execute_child(chinfo, tree, env));
 	else if (chinfo->pid > 0)
-	// {
-	// 	close_fd_safe(chinfo->fd_in);
-	// 	close_fd_safe(chinfo->fd_out);
-	// }
-		;
+		return (close_fd_safe2(chinfo->fd_in, chinfo->fd_out));
 	return (0);
 }
 
@@ -144,8 +133,7 @@ int	execute_child(t_child_info *chinfo, t_token *tree, t_env *env)
 	int	env_code;
 
 	env->pipe_lvl++;
-	rc_fds = close_fd_safe(chinfo->fd_garbage[0]);
-	rc_fds |= close_fd_safe(chinfo->fd_garbage[1]);
+	rc_fds = close_fd_safe2(chinfo->fd_garbage[0], chinfo->fd_garbage[1]);
 	if (rc_fds)
 	{
 		env_clear(env);
@@ -156,8 +144,7 @@ int	execute_child(t_child_info *chinfo, t_token *tree, t_env *env)
 	return_code = execute(tree, chinfo->fd_in, chinfo->fd_out, env);
 	env_code = env->code;
 	env_clear(env);
-	rc_fds = close_fd_safe(chinfo->fd_in);
-	rc_fds |= close_fd_safe(chinfo->fd_out);
+	rc_fds = close_fd_safe2(chinfo->fd_in, chinfo->fd_out);
 	if (return_code > 0)
 		return (return_code);
 	if (rc_fds)
