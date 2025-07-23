@@ -51,7 +51,7 @@ int	close_fd_safe(int fd)
 		;
 	if (errno && errno != EBADF && errno != EINTR)
 	{
-		print_error("close", errno);  
+		print_error("close", errno);
 		return_code = errno;
 	}
 	errno = 0;
@@ -70,7 +70,7 @@ int	is_blank(const char c)
 
 void	argv_destroy(char ***argv)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while ((*argv)[i] != NULL)

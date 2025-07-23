@@ -5,14 +5,34 @@
 #include "variables.h"
 #include "data_structures.h"
 
-int			expand_str(char **new_str, const t_variable_set *env, const char *str);
-int			expand_string_write(char *expansion, const t_variable_set, const char *str);
-int			expand_string_length(int *length, const t_variable_set *env, const char *str);
-int			expand_get_value_length(const t_variable_set *env, const char *key);
-// *str should point to first character after '$'
-char		*expand_get_key(const char *str);
-char		*expand_parameter(const t_variable_set *env, const char *str);
-static void	parse_tree_insert(t_token **tree, t_token *new_node);
+static void		parse_tree_insert(t_token **tree, t_token *new_node);
+static t_token	*create_subshell(t_token **tokens);
+
+static t_token	*create_subshell(t_token **tokens)
+{
+	t_token	*tree;
+	t_token	*tmp;
+
+	tree = NULL;
+	while (*tokens != NULL)
+	{
+		tmp = *tokens;
+		(*tokens) = (*tokens)->right;
+		if (tmp->id == PAREN_RIGHT)
+		{
+			token_destroy(&tmp, FREE_STRING);
+			tree->is_subshell = 1;
+			return (tree);
+		}
+		else
+		{
+			tmp->right = NULL;
+			tmp->left = NULL;
+			parse_tree_insert(&tree, tmp);
+		}
+	}
+	return (tree);
+}
 
 t_token	*tree_from_tokens(t_token **tokens)
 {
@@ -27,13 +47,7 @@ t_token	*tree_from_tokens(t_token **tokens)
 		if (tmp->id == PAREN_LEFT)
 		{
 			token_destroy(&tmp, FREE_STRING);
-			parse_tree_insert(&tree, tree_from_tokens(tokens));
-		}
-		else if (tmp->id == PAREN_RIGHT)
-		{
-			token_destroy(&tmp, FREE_STRING);
-			tree->is_subshell = 1;
-			return (tree);
+			parse_tree_insert(&tree, create_subshell(tokens));
 		}
 		else
 		{
@@ -74,9 +88,8 @@ static void	parse_tree_insert(t_token **tree, t_token *new_node)
 		new_node->left = *tree;
 		*tree = new_node;
 	}
-	else if (prec_node > prec_tree
-		|| ((prec_node == prec_tree)
-		&& (token_id_is_redirect(new_node->id) || new_node->id == LITERAL)))
+	else if (prec_node > prec_tree || ((prec_node == prec_tree)
+			&& (token_id_is_redirect(new_node->id) || new_node->id == LITERAL)))
 		parse_tree_insert(&(*tree)->right, new_node);
 	else
 	{
@@ -84,53 +97,3 @@ static void	parse_tree_insert(t_token **tree, t_token *new_node)
 		*tree = new_node;
 	}
 }
-
-// int	tree_literals_make_argv(t_token *tree)
-// {
-// 	int	return_code;
-//
-// 	if (tree == NULL)
-// 		return (0);
-// 	if (tree->id == LITERAL)
-// 	{
-// 		return_code = token_literal_make_argv(tree);
-// 		if (return_code)
-// 			return (return_code);
-// 	}
-// 	return_code = tree_literals_make_argv(tree->left);
-// 	if (return_code)
-// 		return (return_code);
-// 	return (tree_literals_make_argv(tree->right));
-// }
-
-// int	token_literal_make_argv(t_token *token)
-// {
-// 	int		count;
-// 	t_token	*tmp;
-// 	t_token	*p;
-//
-// 	count = 0;
-// 	p = token;
-// 	while (p)
-// 	{
-// 		count++;
-// 		p = p->literals;
-// 	}
-// 	token->argv = (char **)malloc(sizeof(*token->argv) * (count + 1));
-// 	if (token->argv == NULL)
-// 		return (ENOMEM);
-// 	count = 0;
-// 	p = token;
-// 	while (p)
-// 	{
-// 		token->argv[count] = p->literal;
-// 		p->literal = NULL;
-// 		tmp = p;
-// 		p = p->literals;
-// 		if (count != 0)
-// 			free(tmp);
-// 		count++;
-// 	}
-// 	token->argv[count] = NULL;
-// 	return (0);
-// }

@@ -12,7 +12,7 @@ int	rl_wrapper(char **line, const char *prompt, t_env *env)
 		write(STDIN_FILENO, "Quit (Core dumped)\n", 19);
 	signum_set(0);
 	signal_setup_readline();
- 	*line = readline(prompt);
+	*line = readline(prompt);
 	signal_setup_default();
 	if (signum_get() == SIGINT)
 	{
