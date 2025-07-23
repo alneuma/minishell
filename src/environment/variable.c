@@ -72,7 +72,13 @@ void	variable_destroy(t_variable **entry)
 
 int	variable_assignment_string_print(const int fd, const t_variable *entry)
 {
+	int	return_code;
+
 	if (ft_dprintf(fd, "%s=%s", entry->key, entry->value) < 0)
-		return (errno);
+	{
+		return_code = errno;
+		errno = 0;
+		return (return_code);
+	}
 	return (0);
 }

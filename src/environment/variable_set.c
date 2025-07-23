@@ -48,7 +48,12 @@ int	variable_set_print_by_type(const int fd, const t_variable_set *env,
 			return_code = variable_assignment_string_print(fd, p);
 			if (return_code != 0)
 				return (return_code);
-			ft_putchar_fd('\n', fd);
+			if (ft_dprintf(fd, "\n") < 0)
+			{
+				return_code = errno;
+				errno = 0;
+				return (return_code);
+			}
 		}
 		p = p->next;
 	}
@@ -68,7 +73,12 @@ int	variable_set_print_format_env(const int fd, const t_variable_set *vars)
 			return_code = variable_assignment_string_print(fd, p);
 			if (return_code != 0)
 				return (return_code);
-			ft_putchar_fd('\n', fd);
+			if (ft_dprintf(fd, "\n") < 0)
+			{
+				return_code = errno;
+				errno = 0;
+				return (return_code);
+			}
 		}
 		p = p->next;
 	}
@@ -110,9 +120,14 @@ int	variable_set_print_format_export(const int fd, const t_variable_set *vars)
 	i = 0;
 	while (strs[i] != NULL)
 	{
-		ft_dprintf(fd, "%s\n", strs[i]);
+		if (ft_dprintf(fd, "%s\n", strs[i]) < 0)
+			break ;
 		i++;
 	}
+	i = 0;
+	if (errno)
+		i = errno;
+	errno = 0;
 	argv_destroy(&strs);
-	return (0);
+	return (i);
 }

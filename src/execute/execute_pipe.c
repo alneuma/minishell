@@ -98,9 +98,11 @@ int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 	if (return_code)
 		return (return_code);
 	return_code = pipe_fork_child(&chinfo_left, tree->left, env);
+	close_fd_safe(chinfo_left.fd_out);
 	if (return_code)
 		return (return_code);
 	return_code = pipe_fork_child(&chinfo_right, tree->right, env);
+	close_fd_safe(chinfo_right.fd_in);
 	if (return_code)
 		return (return_code);
 	wait_child(&return_code, &chinfo_left);
@@ -126,6 +128,12 @@ int	pipe_fork_child(t_child_info *chinfo, t_token *tree, t_env *env)
 	}
 	else if (chinfo->pid == 0)
 		exit(execute_child(chinfo, tree, env));
+	else if (chinfo->pid > 0)
+	// {
+	// 	close_fd_safe(chinfo->fd_in);
+	// 	close_fd_safe(chinfo->fd_out);
+	// }
+		;
 	return (0);
 }
 

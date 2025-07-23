@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <errno.h>
 #include "libft.h"
 #include "variables.h"
 
@@ -17,12 +18,14 @@ int	builtin_echo(const char **argv, int fd_in, int fd_out, t_env *env)
 	opt_n = (i != 1);
 	while (argv[i] != NULL)
 	{
-		ft_dprintf(fd_out, "%s", argv[i++]);
-		if (argv[i] != NULL)
-			ft_dprintf(fd_out, " ");
+		if (ft_dprintf(fd_out, "%s", argv[i++]) < 0)
+			break ;
+		if (argv[i] != NULL && ft_dprintf(fd_out, " ") < 0)
+			break ;
 	}
-	if (!opt_n)
+	if (!opt_n && !errno)
 		ft_dprintf(fd_out, "\n");
+	errno = 0;
 	return (0);
 }
 
