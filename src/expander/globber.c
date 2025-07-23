@@ -10,6 +10,7 @@ int		join_argv_len(const char **argv);
 void	join_argv_write(char *new_str, const char **argv);
 int		join_argv(char **joined, const char **words);
 int		needs_glob(const char *str);
+int		glob_write_word(char **words, int *idx, char **str, const t_env *env);
 
 int	glob_str(char **new_str, const t_env *env, char *str)
 {
@@ -48,32 +49,45 @@ int	needs_glob(const char *str)
 	return (0);
 }
 
-int	write_glob_words(char **words, const t_env *env, char *str)
+int	glob_write_word(char **words, int *idx, char **str, const t_env *env)
 {
 	char	*word_end;
 	char	*tmp;
+	int		return_code;
+
+	while (**str != '\0' && is_blank(**str))
+		*str += 1;
+	word_end = *str;
+	skip_through_word(&word_end);
+	words[*idx] = (char *)malloc(word_end - *str + 1);
+	if (words[*idx] == NULL)
+		return (ENOMEM);
+	ft_memmove(words[*idx], *str, word_end - *str);
+	words[*idx][word_end - *str] = '\0';
+	if (needs_glob(words[*idx]))
+	{
+		tmp = words[*idx];
+		return_code = glob_get_matches(&words[*idx], tmp, (t_env *)env);
+		free(tmp);
+		if (return_code)
+			return (return_code);
+	}
+	*str = word_end;
+	*idx += 1;
+	return (0);
+}
+
+int	write_glob_words(char **words, const t_env *env, char *str)
+{
 	int		idx_words;
 	int		return_code;
 
 	idx_words = 0;
 	while (*str != '\0')
 	{
-		while (*str != '\0' && is_blank(*str))
-			str++;
-		word_end = str;
-		skip_through_word(&word_end);
-		words[idx_words] = (char *)malloc(word_end - str + 1);
-		ft_memmove(words[idx_words], str, word_end - str);
-		words[idx_words][word_end - str] = '\0';
-		if (needs_glob(words[idx_words]))
-		{
-			tmp = words[idx_words];
-			return_code = glob_get_matches(&words[idx_words], tmp, (t_env *)env);
-			free(tmp);
-			if (return_code)
-				return (return_code);
-		}
-		str = word_end;
+		return_code = glob_write_word(words, &idx_words, &str, env);
+		if (return_code)
+			return (return_code);
 		idx_words++;
 	}
 	return (0);

@@ -12,6 +12,7 @@
 char	*get_mask(const char *pat);
 int		glob_match(int *match, const char *pat_with_quotes, const char *str);
 int		get_matches(char **str, DIR *cwd, const char *pattern);
+int		check_pattern(const char *str, const char *mask, const char *pat);
 
 int	glob_get_matches(char **matches, const char *pattern, t_env *env)
 {
@@ -60,12 +61,38 @@ char	*get_mask(const char *pat)
 	return (mask);
 }
 
+int	check_pattern(const char *str, const char *mask, const char *pat)
+{
+	int	checkpoint;
+	int	i;
+
+	checkpoint = -1;
+	i = -1;
+	while (1)
+	{
+		while (pat[i + 1] == '*' && mask[i + 1])
+		{
+			i++;
+			checkpoint = i;
+		}
+		if (*str == '\0')
+			return (pat[i + 1] == '\0');
+		if (pat[i + 1] == *str)
+			i++;
+		else if (checkpoint != -1 && pat[checkpoint + 1] == *str)
+			i = checkpoint + 1;
+		else if (checkpoint != -1)
+			i = checkpoint;
+		else
+			return (0);
+		str++;
+	}
+}
+
 int	glob_match(int *match, const char *pat_with_quotes, const char *str)
 {
 	char	*mask;
 	char	*pat;
-	int		checkpoint;
-	int		i;
 
 	mask = get_mask(pat_with_quotes);
 	if (mask == NULL)
@@ -76,31 +103,7 @@ int	glob_match(int *match, const char *pat_with_quotes, const char *str)
 		free(mask);
 		return (ENOMEM);
 	}
-	checkpoint = -1;
-	i = -1;
-	*match = 0;
-	while (1)
-	{
-		while (pat[i + 1] == '*' && mask[i + 1])
-		{
-			i++;
-			checkpoint = i;
-		}
-		if (*str == '\0')
-		{
-			*match = (pat[i + 1] == '\0');
-			break ;
-		}
-		if (pat[i + 1] == *str)
-			i++;
-		else if (checkpoint != -1 && pat[checkpoint + 1] == *str)
-			i = checkpoint + 1;
-		else if (checkpoint != -1)
-			i = checkpoint;
-		else
-			break ;
-		str++;
-	}
+	*match = check_pattern(str, mask, pat);
 	free(pat);
 	free(mask);
 	return (0);
@@ -144,7 +147,7 @@ int	get_matches(char **str, DIR *cwd, const char *pattern)
 			}
 		}
 		node = readdir(cwd);
-	}		
+	}
 	if (errno != 0)
 	{
 		free(*str);
