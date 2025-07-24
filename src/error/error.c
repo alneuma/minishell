@@ -13,8 +13,8 @@ int	is_fatal(const int error)
 int	print_error_token(const t_token_id id)
 {
 	return (ft_dprintf(STDERR_FILENO,
-		"%s: syntax error near unexpected token `%s'\n",
-		SHELL_NAME, token_id_get_lexeme(id)));
+			"%s: syntax error near unexpected token `%s'\n",
+			SHELL_NAME, token_id_get_lexeme(id)));
 }
 
 int	print_error_str(const char *func, const char *str)

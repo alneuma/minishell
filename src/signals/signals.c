@@ -12,7 +12,6 @@ void	handler_sigint_rl(int signum)
 {
 	(void)signum;
 	rl_done = 1;
-	// write(2, "handler\n", 8);
 	g_signum = SIGINT;
 }
 

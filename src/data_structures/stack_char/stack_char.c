@@ -7,12 +7,12 @@
 void				stack_char_node_destroy(t_stack_char_node **node);
 t_stack_char_node	*stack_char_node_create(char c);
 
-int		stack_char_size(t_stack_char *stack)
+int	stack_char_size(t_stack_char *stack)
 {
 	return (stack->size);
 }
 
-int		stack_char_peek(char *c, t_stack_char *stack)
+int	stack_char_peek(char *c, t_stack_char *stack)
 {
 	if (stack->size <= 0)
 		return (-1);
@@ -20,7 +20,7 @@ int		stack_char_peek(char *c, t_stack_char *stack)
 	return (0);
 }
 
-int		stack_char_pop(char *c, t_stack_char *stack)
+int	stack_char_pop(char *c, t_stack_char *stack)
 {
 	t_stack_char_node	*tmp;
 
@@ -34,7 +34,7 @@ int		stack_char_pop(char *c, t_stack_char *stack)
 	return (0);
 }
 
-int		stack_char_push(char c, t_stack_char *stack)
+int	stack_char_push(char c, t_stack_char *stack)
 {
 	t_stack_char_node	*new_node;
 
@@ -50,7 +50,7 @@ int		stack_char_push(char c, t_stack_char *stack)
 	return (0);
 }
 
-int		stack_char_init(t_stack_char **stack)
+int	stack_char_init(t_stack_char **stack)
 {
 	*stack = (t_stack_char *)malloc(sizeof(**stack));
 	if (*stack == NULL)

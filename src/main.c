@@ -189,7 +189,7 @@ int	env_vars_create(t_variable_set **vars, const char **envp)
 	}
 	return (0);
 }
-	
+
 int	env_initialize(t_env *env, const char **envp)
 {
 	int	return_code;
