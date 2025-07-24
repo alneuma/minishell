@@ -79,8 +79,7 @@ int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env)
 		fd_in = 0;
 	if (fd_out == -1)
 		fd_out = 1;
-	return_code = builtin_get_func(argv[0])((const char **)argv, fd_in, fd_out,
-			env);
+	return_code = builtin_func((const char **)argv, fd_in, fd_out, env);
 	rc_fds = 0;
 	if (fd_in != 0)
 		rc_fds = close_fd_safe(fd_in);
