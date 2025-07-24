@@ -1,5 +1,3 @@
-#include "libft.h"
-
 #include <stdlib.h>
 #include <errno.h>
 #include <unistd.h>

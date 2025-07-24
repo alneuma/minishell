@@ -3,13 +3,21 @@
 #include <unistd.h>
 #include "signals.h"
 #include "variables.h"
+#include "libft.h"
 
 int	rl_wrapper(char **line, const char *prompt, t_env *env)
 {
+	// ft_dprintf(2, "rl_sig: %d\n", signum_get());
 	if (signum_get() == SIGINT)
-		write(STDIN_FILENO, "\n", 1);
+	{
+		write(STDOUT_FILENO, "\n", 1);
+		signum_set(0);
+	}
 	else if (signum_get() == SIGQUIT)
-		write(STDIN_FILENO, "Quit (Core dumped)\n", 19);
+	{
+		write(STDOUT_FILENO, "Quit (Core dumped)\n", 19);
+		signum_set(0);
+	}
 	signum_set(0);
 	signal_setup_readline();
 	*line = readline(prompt);

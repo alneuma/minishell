@@ -237,6 +237,7 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 	return_code = prepare_params(&argv, tree, fds, env);
 	if (return_code || argv == NULL)
 		return (return_code);
+	env->code = 0;
 	argv_first_non_assignment_idx(&idx, (const char **)argv);
 	if (argv[idx] == NULL)
 		return_code = assign_argv((const char **)argv, env);

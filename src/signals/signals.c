@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <signal.h>
 #include <readline/readline.h>
 #include "variables.h"
@@ -11,19 +12,8 @@ void	handler_sigint_rl(int signum)
 {
 	(void)signum;
 	rl_done = 1;
+	// write(2, "handler\n", 8);
 	g_signum = SIGINT;
-}
-
-void	handler_sigint_dfl(int signum)
-{
-	(void)signum;
-	g_signum = SIGINT;
-}
-
-void	handler_sigquit_dfl(int signum)
-{
-	(void)signum;
-	g_signum = SIGQUIT;
 }
 
 int	readline_hook(void)
@@ -73,6 +63,7 @@ int	signal_setup_readline(void)
 {
 	struct sigaction	act;
 
+	// rl_catch_signals = 0;
 	rl_event_hook = readline_hook;
 	act.sa_flags = 0;
 	sigemptyset(&act.sa_mask);
