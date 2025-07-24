@@ -18,11 +18,12 @@
 #include "defs.h"
 
 int	shell_iteration(t_env *env);
-int	env_initialize(t_env *env, char **envp);
+int	env_initialize(t_env *env, const char **envp);
 int	preprocess_tokens(t_token *tokens, int *valid, t_env *env);
 int	get_line(char **line, int *valid, t_env *env);
 int	get_tokens(t_token **tokens, t_env *env);
 int	shell_loop(t_env *env);
+int	env_vars_create(t_variable_set **vars, const char **envp);
 
 int	get_line(char **line, int *valid, t_env *env)
 {
@@ -150,7 +151,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	signal_setup_default();
-	return_code = env_initialize(&env, envp);
+	return_code = env_initialize(&env, (const char **)envp);
 	if (return_code)
 		return (return_code);
 	return_code = shell_loop(&env);
@@ -166,32 +167,41 @@ void	env_clear(t_env *env)
 	variable_set_destroy(&env->vars);
 }
 
-int	env_initialize(t_env *env, char **envp)
+int	env_vars_create(t_variable_set **vars, const char **envp)
 {
+	int	return_code;
 	int	i;
+
+	*vars = variable_set_create();
+	if (*vars == NULL)
+		return (ENOMEM);
+	i = 0;
+	while (envp[i] != NULL)
+	{
+		return_code = variable_set_assignment_string_add(*vars, envp[i],
+				ENV);
+		if (return_code)
+		{
+			variable_set_destroy(vars);
+			return (return_code);
+		}
+		i++;
+	}
+	return (0);
+}
+	
+int	env_initialize(t_env *env, const char **envp)
+{
 	int	return_code;
 
 	return_code = ft_get_cwd(&env->cwd, "");
 	if (return_code)
 		return (return_code);
-	env->vars = variable_set_create();
-	if (env->vars == NULL)
+	return_code = env_vars_create(&env->vars, envp);
+	if (return_code)
 	{
 		free(env->cwd);
-		return (ENOMEM);
-	}
-	i = 0;
-	while (envp[i] != NULL)
-	{
-		return_code = variable_set_assignment_string_add(env->vars, envp[i],
-				ENV);
-		if (return_code)
-		{
-			free(env->cwd);
-			variable_set_destroy(&env->vars);
-			return (return_code);
-		}
-		i++;
+		return (return_code);
 	}
 	env->root = NULL;
 	env->code = 0;
