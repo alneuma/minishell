@@ -3,11 +3,9 @@
 #include <unistd.h>
 #include "signals.h"
 #include "variables.h"
-#include "libft.h"
 
 int	rl_wrapper(char **line, const char *prompt, t_env *env)
 {
-	// ft_dprintf(2, "rl_sig: %d\n", signum_get());
 	if (signum_get() == SIGINT)
 	{
 		write(STDOUT_FILENO, "\n", 1);

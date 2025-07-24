@@ -1,5 +1,5 @@
 #include <stddef.h>
-#include "parenthesis.h"
+#include "line_internals.h"
 
 static const t_paren_pairs	g_pairs[] = {{'"', '"'}, {'\'', '\''}, {'(', ')'}};
 

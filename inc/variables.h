@@ -26,6 +26,7 @@ typedef enum e_vartype
 
 // environment
 void	env_clear(t_env *env);
+int		env_initialize(t_env *env, const char **envp);
 
 // variable set
 

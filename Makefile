@@ -13,6 +13,8 @@ NAME	:= minishell
 SRC	:=
 vpath %.c $(SRC_DIR)
 SRC	+= main.c
+vpath %.c $(SRC_DIR)/loop
+SRC	+= loop.c
 vpath %.c $(SRC_DIR)/error
 SRC	+= error.c
 vpath %.c $(SRC_DIR)/signals
@@ -25,7 +27,11 @@ SRC	+= literals.c
 vpath %.c $(SRC_DIR)/data_structures/queue
 SRC	+= queue.c
 SRC	+= queue_init.c
-vpath %.c $(SRC_DIR)/data_structures/stack_char
+vpath %.c $(SRC_DIR)/line
+SRC	+= line_get.c
+SRC	+= line_parens.c
+SRC	+= line_validate.c
+vpath %.c $(SRC_DIR)/line/stack_char
 SRC	+= stack_char.c
 vpath %.c $(SRC_DIR)/utils
 SRC	+= utils_string.c
