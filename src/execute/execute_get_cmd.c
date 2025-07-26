@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <linux/limits.h>
 #include "defs.h"
 #include "libft.h"
 #include "error.h"

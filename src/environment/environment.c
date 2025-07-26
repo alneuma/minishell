@@ -11,7 +11,7 @@ int	env_initialize(t_env *env, const char **envp)
 {
 	int	return_code;
 
-	return_code = ft_get_cwd(&env->cwd, "");
+	return_code = ft_get_cwd(&env->cwd);
 	if (return_code)
 		return (return_code);
 	return_code = env_vars_create(&env->vars, envp);

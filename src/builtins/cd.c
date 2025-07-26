@@ -1,4 +1,3 @@
-#include <linux/limits.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <unistd.h>
@@ -64,9 +63,15 @@ int	update_env(const char *old_cwd, t_env *env)
 
 	free(env->cwd);
 	env->cwd = NULL;
-	return_code = ft_get_cwd(&env->cwd, " cd:");
-	if (return_code)
+	return_code = ft_get_cwd(&env->cwd);
+	if (is_fatal(return_code))
 		return (return_code);
+	if (return_code)
+	{
+		print_error("cd", return_code);
+		env->code = ERR_CD;
+		return (-1);
+	}
 	return_code = 0;
 	if (variable_set_var_get_ref(env->vars, "OLDPWD") != NULL)
 	{
