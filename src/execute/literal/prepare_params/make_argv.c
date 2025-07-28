@@ -12,7 +12,7 @@ int	tokens_make_argv(char ***argv, const t_token *tokens)
 		return (return_code);
 	return_code = argv_populate(*argv, tokens);
 	if (return_code)
-		argv_destroy(argv);
+		strs_destroy(argv);
 	return (return_code);
 }
 

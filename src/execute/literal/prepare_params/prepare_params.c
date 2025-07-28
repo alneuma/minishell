@@ -21,7 +21,7 @@ int	prepare_params(char ***argv, t_token *tree, int fds[2], t_env *env)
 		return (return_code);
 	return_code = argv_remove_quotes(*argv);
 	if (return_code)
-		argv_destroy(argv);
+		strs_destroy(argv);
 	return (return_code);
 }
 

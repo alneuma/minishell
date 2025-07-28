@@ -73,14 +73,14 @@ static int	apply_path(char **cmd, const char *str, t_env *env)
 	{
 		return_code = test_cmd(cmd, str, pathv[i]); 
 		if (return_code == 0 || is_fatal(return_code))
-			argv_destroy(&pathv);
+			strs_destroy(&pathv);
 		if (return_code == 0)
 			return (0);
 		if (is_fatal(return_code))
 			return (return_code);
 		i++;
 	}
-	argv_destroy(&pathv);
+	strs_destroy(&pathv);
 	ft_dprintf(STDERR_FILENO, "%s: command not found\n", str);
 	return (-1);
 }

@@ -15,7 +15,7 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 	return_code = fds_setup(fd_in, fd_out);
 	if (return_code)
 	{
-		argv_destroy(&envp);
+		strs_destroy(&envp);
 		return (return_code);
 	}
 	cmd = NULL;
@@ -43,7 +43,7 @@ static void	execve_wrapper(const char *cmd, char **argv, char **envp,
 static void	execve_cleanup(char **envp, char *cmd, int fd_in, int fd_out)
 {
 	signal_setup_default();
-	argv_destroy(&envp);
+	strs_destroy(&envp);
 	free(cmd);
 	close_fd_safe(fd_in);
 	close_fd_safe(fd_out);

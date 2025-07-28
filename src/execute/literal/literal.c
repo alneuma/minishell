@@ -22,14 +22,14 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 		return_code = execute_builtin(argv + idx, fds[0], fds[1], env);
 	else
 		return_code = execute_extern(argv + idx, fds[0], fds[1], env);
-	argv_destroy(&argv);
+	strs_destroy(&argv);
 	return (return_code);
 }
 
 static int	argv_first_non_assignment_idx(int *idx, const char **argv)
 {
 	*idx = 0;
-	while (is_assignment(argv[*idx]))
+	while (is_valid_assignment(argv[*idx]))
 		*idx += 1;
 	return (0);
 }

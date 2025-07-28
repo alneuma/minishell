@@ -128,6 +128,6 @@ int	variable_set_print_format_export(const int fd, const t_variable_set *vars)
 	if (errno)
 		i = errno;
 	errno = 0;
-	argv_destroy(&strs);
+	strs_destroy(&strs);
 	return (i);
 }

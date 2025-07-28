@@ -1,9 +1,3 @@
-#include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
-#include "error.h"
-#include "utils.h"
-
 // does not need to check for '\0' in the inner loop
 // as correct syntax is assumed
 void	skip_through_word(char **str)
@@ -42,45 +36,7 @@ int	str_num_words(char *str)
 	return (words);
 }
 
-int	close_fd_safe2(int fd1, int fd2)
-{
-	int	return_code;
-
-	return_code = close_fd_safe(fd1);
-	if (return_code)
-		close_fd_safe(fd2);
-	else
-		return (close_fd_safe(fd2));
-	return (0);
-}
-
-int	close_fd_safe(int fd)
-{
-	int	return_code;
-
-	return_code = 0;
-	while (fd >= 0 && close(fd) < 0 && errno == EINTR)
-		;
-	if (errno && errno != EBADF && errno != EINTR)
-	{
-		print_error("close", errno);
-		return_code = errno;
-	}
-	errno = 0;
-	return (return_code);
-}
-
-int	is_quote(const char c)
-{
-	return (c == '\'' || c == '"');
-}
-
-int	is_blank(const char c)
-{
-	return (c == ' ' || c == '\t' || c == '\n');
-}
-
-void	argv_destroy(char ***argv)
+void	strs_destroy(char ***argv)
 {
 	int	i;
 

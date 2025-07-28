@@ -14,7 +14,7 @@ int	get_pathv(char ***pathv, t_env *env)
 		return (ENOMEM);
 	return_code = append_slashes(*pathv);
 	if (return_code)
-		argv_destroy(pathv);
+		strs_destroy(pathv);
 	return (return_code);
 }
 
