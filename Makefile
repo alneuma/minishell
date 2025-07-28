@@ -41,6 +41,14 @@ SRC	+= execute_argv.c
 SRC	+= execute_redirects.c
 SRC	+= execute_pipe.c
 SRC	+= execute_get_cmd.c
+vpath %.c $(SRC_DIR)/execute/literal
+SRC	+= literal.c
+vpath %.c $(SRC_DIR)/execute/literal/extern
+SRC	+= call_execve.c
+SRC	+= extern.c
+vpath %.c $(SRC_DIR)/execute/literal/prepare_params
+SRC	+= make_argv.c
+SRC	+= prepare_params.c
 vpath %.c $(SRC_DIR)/execute/get_cmd
 SRC	+= get_cmd.c
 SRC	+= get_cmd_utils.c
