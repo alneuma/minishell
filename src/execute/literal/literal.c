@@ -1,0 +1,73 @@
+static int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env);
+static int	assign_argv(const char **argv, t_env *env);
+static int	argv_first_non_assignment_idx(int *idx, const char **argv);
+
+int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
+{
+	char	**argv;
+	int		fds[2];
+	int		return_code;
+	int		idx;
+
+	fds[0] = fd_in;
+	fds[1] = fd_out;
+	return_code = prepare_params(&argv, tree, fds, env);
+	if (return_code || argv == NULL)
+		return (return_code);
+	env->code = 0;
+	argv_first_non_assignment_idx(&idx, (const char **)argv);
+	if (argv[idx] == NULL)
+		return_code = assign_argv((const char **)argv, env);
+	else if (is_builtin(argv[idx]))
+		return_code = execute_builtin(argv + idx, fds[0], fds[1], env);
+	else
+		return_code = execute_extern(argv + idx, fds[0], fds[1], env);
+	argv_destroy(&argv);
+	return (return_code);
+}
+
+static int	argv_first_non_assignment_idx(int *idx, const char **argv)
+{
+	*idx = 0;
+	while (is_assignment(argv[*idx]))
+		*idx += 1;
+	return (0);
+}
+
+static int	assign_argv(const char **argv, t_env *env)
+{
+	int	i;
+	int	return_code;
+
+	i = 0;
+	while (argv[i] != NULL)
+	{
+		return_code = variable_set_assignment_string_add(env->vars, argv[i], 0);
+		if (return_code)
+			return (return_code);
+		i++;
+	}
+	return (0);
+}
+
+static int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env)
+{
+	int	return_code;
+	int	rc_fds;
+
+	if (fd_in == -1)
+		fd_in = 0;
+	if (fd_out == -1)
+		fd_out = 1;
+	return_code = builtin_func((const char **)argv, fd_in, fd_out, env);
+	rc_fds = 0;
+	if (fd_in != 0)
+		rc_fds = close_fd_safe(fd_in);
+	if (fd_out != 1 && rc_fds)
+		close_fd_safe(fd_out);
+	if (fd_out != 1 && rc_fds == 0)
+		rc_fds = close_fd_safe(fd_out);
+	if (return_code)
+		return (return_code);
+	return (rc_fds);
+}
