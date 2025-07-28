@@ -82,6 +82,12 @@ SRC	+= expander.c
 SRC	+= wildcards.c
 SRC	+= globber.c
 SRC	+= remove_quotes.c
+vpath %.c $(SRC_DIR)/expander/globbing
+SRC	+= globbing.c
+vpath %.c $(SRC_DIR)/expander/globbing/get_matches
+SRC	+= get_matches.c
+SRC	+= join_strs.c
+SRC	+= match_pattern.c
 vpath %.c $(SRC_DIR)/parser
 SRC	+= parser.c
 SRC	+= tree_print.c
