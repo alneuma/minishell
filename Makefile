@@ -41,6 +41,12 @@ SRC	+= execute_argv.c
 SRC	+= execute_redirects.c
 SRC	+= execute_pipe.c
 SRC	+= execute_get_cmd.c
+vpath %.c $(SRC_DIR)/execute/get_cmd
+SRC	+= get_cmd.c
+SRC	+= get_cmd_utils.c
+vpath %.c $(SRC_DIR)/execute/redirects
+SRC	+= execute_redirects.c
+SRC	+= redirects_open.c
 vpath %.c $(SRC_DIR)/execute/pipe
 SRC	+= fork_children.c
 SRC	+= pipe.c
