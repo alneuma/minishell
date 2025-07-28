@@ -6,29 +6,6 @@
 #include "libft.h"
 #include "assignment_strings.h"
 
-int			literal_length(char *str);
-
-void	token_print(t_token *token)
-{
-	char	*fstr;
-
-	fstr = "%s:\t%s";
-	if (token->id == PIPE || token->id == AND || token->id == OR
-		|| token->id == INFILE)
-		fstr = "%s:\t\t%s";
-	ft_printf(fstr, token_id_get_name(token->id), token->string);
-}
-
-void	tokens_print(t_token *tokens)
-{
-	while (tokens)
-	{
-		token_print(tokens);
-		ft_putchar_fd('\n', 1);
-		tokens = tokens->right;
-	}
-}
-
 void	token_destroy(t_token **token, int keep_literal)
 {
 	if ((*token)->string != NULL && keep_literal == FREE_STRING)

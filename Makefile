@@ -19,14 +19,12 @@ vpath %.c $(SRC_DIR)/error
 SRC	+= error.c
 vpath %.c $(SRC_DIR)/signals
 SRC	+= signals.c
+SRC	+= signals_setup.c
 vpath %.c $(SRC_DIR)/scanner
 SRC	+= parenthesis.c
 SRC	+= scanner.c
 SRC	+= validate.c
 SRC	+= literals.c
-vpath %.c $(SRC_DIR)/data_structures/queue
-SRC	+= queue.c
-SRC	+= queue_init.c
 vpath %.c $(SRC_DIR)/line
 SRC	+= line_get.c
 SRC	+= line_parens.c
@@ -43,6 +41,9 @@ SRC	+= execute_argv.c
 SRC	+= execute_redirects.c
 SRC	+= execute_pipe.c
 SRC	+= execute_get_cmd.c
+vpath %.c $(SRC_DIR)/execute/pipe
+SRC	+= fork_children.c
+SRC	+= pipe.c
 vpath %.c $(SRC_DIR)/environment
 # variable_set
 SRC += variable_set.c

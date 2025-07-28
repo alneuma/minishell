@@ -22,6 +22,27 @@ int		expand_add_length_normal(int *len, const char *str, int *idx,
 int		expand_add_length(int *len, const char *str, int *idx,
 			const t_env *env);
 int		expand_add_length_code(int *len, int *idx, const t_env *env);
+int		expand(char **expansion, t_token *token, t_env *env);
+
+int	expand(char **expansion, t_token *token, t_env *env)
+{
+	char	*tmp;
+	int		return_code;
+
+	return_code = expand_str(&tmp, env, token->string);
+	if (return_code)
+		return (return_code);
+	if (token->id != HEREDOC)
+	{
+		return_code = glob_str(expansion, env, tmp);
+		free(tmp);
+		if (return_code)
+			return (return_code);
+	}
+	else
+		*expansion = tmp;
+	return (0);
+}
 
 int	expand_tokens(t_token *tokens, const t_env *env, const int glob)
 {
