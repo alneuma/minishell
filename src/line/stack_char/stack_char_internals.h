@@ -2,7 +2,7 @@
 # define STACK_CHAR_INTERNALS_H
 
 typedef struct s_stack_char_node	t_stack_char_node;
-typedef struct s_stack_char	t_stack_char;
+typedef struct s_stack_char			t_stack_char;
 
 struct s_stack_char_node
 {

@@ -34,8 +34,19 @@ int			variable_create(t_variable **var, const char *key, const char *val,
 void		variable_destroy(t_variable **entry);
 char		*variable_assignment_string_get(const t_variable *entry);
 char		*variable_assignment_string_get_export(const t_variable *entry);
+
+// variable_set
 char		**variable_set_array_get_format(const t_variable_set *env,
 				const t_vartype vartype,
 				char *(*get_assignment_string)(const t_variable *entry));
+char		*variable_set_var_get(const t_variable_set *env, const char *key);
+size_t		varset_size_type(const t_variable_set *env,
+				const t_vartype vartype);
+
+// assignment_strings
+int			assignment_string_is_append(const char *str);
+int			assignment_string_val_get_ref(char **val, const char *str);
+int			assignment_string_val_get(char **val, const char *str);
+int			assignment_string_key_get(char **key, const char *str);
 
 #endif //VARIABLES_INTERNALS_H

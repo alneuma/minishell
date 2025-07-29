@@ -1,7 +1,7 @@
 #ifndef UTILS_H
 # define UTILS_H
 
-# include "variables.h"
+# include "environment.h"
 
 int		is_quote(const char c);
 int		is_blank(const char c);
@@ -13,5 +13,6 @@ int		ft_get_cwd(char **cwd, const char *caller);
 int		rl_wrapper(char **line, const char *prompt, t_env *env);
 int		str_num_words(char *str);
 void	skip_through_word(char **str);
+char	*str_remove_quotes(const char *str);
 
 #endif //UTILS_H

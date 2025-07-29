@@ -1,21 +1,7 @@
 #ifndef VARIABLES_H
 # define VARIABLES_H
 
-# include "token.h"
-
-typedef struct s_token	t_token;
 typedef struct s_variable_set	t_variable_set;
-typedef struct e_env	t_env;
-
-struct e_env
-{
-	t_variable_set	*vars;
-	char			*cwd;
-	t_token			*root;
-	int				code;
-	int				exit;
-	int				pipe_lvl;
-};
 
 typedef enum e_vartype
 {
@@ -23,12 +9,6 @@ typedef enum e_vartype
 	ENV,
 	BOTH
 }	t_vartype;
-
-// environment
-void	env_clear(t_env *env);
-int		env_initialize(t_env *env, const char **envp);
-
-// variable set
 
 // construct/destruct
 void			variable_set_destroy(t_variable_set **env);
@@ -43,8 +23,6 @@ char			**variable_set_array_get(const t_variable_set *env,
 					const t_vartype vartype);
 
 // display
-int				variable_set_print_by_type(const int fd,
-					const t_variable_set *env, const t_vartype vartype);
 int				variable_set_print_format_env(const int fd,
 					const t_variable_set *vars);
 int				variable_set_print_format_export(const int fd,

@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <errno.h>
-#include "variables_internals.h"
 #include "libft.h"
 #include "defs.h"
 

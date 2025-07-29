@@ -1,12 +1,10 @@
 #ifndef TOKEN_H
 # define TOKEN_H
 
-# include "data_structures.h"
-# include "variables.h"
+# include "environment.h"
 
-typedef struct s_file	t_file;
 typedef struct s_token	t_token;
-typedef struct e_env	t_env;
+typedef struct s_env	t_env;
 
 # define KEEP_STRING 1
 # define FREE_STRING 0

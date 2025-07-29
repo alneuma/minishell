@@ -1,18 +1,5 @@
-#include <stdlib.h>
-#include <limits.h>
-#include <errno.h>
-#include "expander.h"
-#include "variables.h"
-#include "variables_internals.h"
-#include "assignment_strings.h"
-#include "libft.h"
-
 static int	variable_set_var_append(t_variable_set *env, const char *key,
 				const char *val, int is_export);
-int			assignment_string_is_append(const char *str);
-int			assignment_string_val_get_ref(char **val, const char *str);
-int			assignment_string_val_get(char **val, const char *str);
-int			assignment_string_key_get(char **key, const char *str);
 
 // sets the type of a variable
 // creates if not existent
@@ -39,58 +26,6 @@ int	variable_set_var_type_set(t_variable_set *env, const char *key,
 	return (variable_create(&p->next, key, NULL, 1));
 }
 
-int	assignment_string_val_get(char **val, const char *str)
-{
-	char	*start;
-
-	start = ft_strchr(str, '=');
-	if (start == NULL)
-	{
-		*val = NULL;
-		return (0);
-	}
-	*val = ft_strdup(start + 1);
-	if (*val == NULL)
-		return (ENOMEM);
-	return (0);
-}
-
-int	assignment_string_key_get(char **key, const char *str)
-{
-	char	*equal;
-	int		len;
-
-	equal = ft_strchr(str, '=');
-	len = equal - str;
-	if (equal != str && ft_strchr(str, '+') == equal - 1)
-		len--;
-	*key = (char *)malloc(len + 1);
-	if (*key == NULL)
-		return (ENOMEM);
-	ft_memcpy(*key, str, len);
-	(*key)[len] = '\0';
-	return (0);
-}
-
-int	assignment_string_val_get_ref(char **val, const char *str)
-{
-	*val = ft_strchr(str, '=');
-	if (*val == NULL)
-		return (0);
-	*val += 1;
-	return (0);
-}
-
-int	assignment_string_is_append(const char *str)
-{
-	char	*equal;
-
-	equal = ft_strchr(str, '=');
-	if (equal == NULL)
-		return (0);
-	return (ft_strchr(str, '+') == equal - 1);
-}
-
 int	variable_set_assignment_string_add(t_variable_set *env, const char *str,
 		const int is_export)
 {
@@ -113,26 +48,6 @@ int	variable_set_assignment_string_add(t_variable_set *env, const char *str,
 		return_code = variable_set_var_set(env, key, val, is_export);
 	free(key);
 	return (return_code);
-}
-
-static int	variable_set_var_append(t_variable_set *env, const char *key,
-				const char *val, const int is_export)
-{
-	t_variable	*p;
-
-	if (env->size > 0 && !ft_strcmp(env->first->key, key))
-		return (variable_var_append(env->first, val, is_export));
-	p = env->first;
-	while (p->next != NULL)
-	{
-		if (!ft_strcmp(p->next->key, key))
-			return (variable_var_append(p->next, val, is_export));
-		p = p->next;
-	}
-	if (env->size == INT_MAX)
-		return (EOVERFLOW);
-	env->size++;
-	return (variable_create(&p->next, key, val, is_export));
 }
 
 int	variable_set_var_set(t_variable_set *env, const char *key,
@@ -184,4 +99,24 @@ void	variable_set_var_remove(t_variable_set *env, const char *key)
 	p->next = p->next->next;
 	variable_destroy(&tmp);
 	env->size--;
+}
+
+static int	variable_set_var_append(t_variable_set *env, const char *key,
+				const char *val, const int is_export)
+{
+	t_variable	*p;
+
+	if (env->size > 0 && !ft_strcmp(env->first->key, key))
+		return (variable_var_append(env->first, val, is_export));
+	p = env->first;
+	while (p->next != NULL)
+	{
+		if (!ft_strcmp(p->next->key, key))
+			return (variable_var_append(p->next, val, is_export));
+		p = p->next;
+	}
+	if (env->size == INT_MAX)
+		return (EOVERFLOW);
+	env->size++;
+	return (variable_create(&p->next, key, val, is_export));
 }

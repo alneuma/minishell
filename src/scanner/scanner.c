@@ -1,11 +1,3 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <errno.h>
-#include "scanner_internals.h"
-#include "scanner.h"
-#include "utils.h"
-
 int	get_first(t_token **first, char **input);
 
 // overwrites input to point directly after the read lexeme
