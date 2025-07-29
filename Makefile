@@ -32,9 +32,13 @@ SRC	+= line_validate.c
 vpath %.c $(SRC_DIR)/line/stack_char
 SRC	+= stack_char.c
 vpath %.c $(SRC_DIR)/utils
-SRC	+= utils_string.c
+SRC	+= assignment_strings.c
+SRC	+= remove_quotes.c
+SRC	+= utils_chars.c
+SRC	+= utils_close.c
 SRC	+= utils_dir.c
 SRC	+= utils_rl.c
+SRC	+= utils_string.c
 vpath %.c $(SRC_DIR)/execute
 SRC	+= execute.c
 SRC	+= execute_argv.c
@@ -58,14 +62,19 @@ SRC	+= redirects_open.c
 vpath %.c $(SRC_DIR)/execute/pipe
 SRC	+= fork_children.c
 SRC	+= pipe.c
+vpath %.c $(SRC_DIR)/variables
+SRC	+= assignment_strings.c
+SRC	+= query_utils.c
+SRC	+= variable
+SRC	+= variable_set.c
+SRC	+= variable_set_modify.c
+SRC	+= variable_set_print.c
+SRC	+= variable_set_query.c
+vpath %.c $(SRC_DIR)/variables/variable
+SRC	+= variable.c
+SRC	+= variable_operations.c
 vpath %.c $(SRC_DIR)/environment
-# variable_set
-SRC += variable_set.c
-SRC += variable_set_modify.c
-SRC += variable_set_query.c
-# variable
-SRC += variable.c
-SRC += variable_operations.c
+SRC += environment.c
 vpath %.c $(SRC_DIR)/builtins
 SRC += builtins.c
 SRC += cd.c
