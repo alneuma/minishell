@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include "variables.h"
+#include "environment.h"
 
 int	builtin_unset(const char **argv, int fd_in, int fd_out, t_env *env)
 {

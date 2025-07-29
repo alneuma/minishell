@@ -1,5 +1,8 @@
 #include <unistd.h>
 #include <errno.h>
+#include "error.h"
+
+int	close_fd_safe(int fd);
 
 int	close_fd_safe2(int fd1, int fd2)
 {

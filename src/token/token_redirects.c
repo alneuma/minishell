@@ -1,12 +1,8 @@
 #include <stdlib.h>
+#include "token.h"
+#include "token_internals.h"
 
-static int	heredoc_append_line(char **doc, char **line);
 static int	preprocess_redirect(t_token *token, t_env *env);
-static int	heredoc_get_doc(char **doc, const char *prompt, const char *dlm,
-				t_env *env);
-int			preprocess_heredoc(char **doc, const char *dlm_quoted, t_env *env);
-int			heredoc_next_line(char **line, const char *prompt, t_env *env);
-int			heredoc_is_last(const char *line, const char *dlm);
 int			tokens_valid_neighbours(t_token *left, t_token *right);
 int			is_valid_first(t_token *token);
 

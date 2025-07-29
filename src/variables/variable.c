@@ -2,6 +2,7 @@
 #include <errno.h>
 #include "libft.h"
 #include "defs.h"
+#include "variables_internals.h"
 
 char	*variable_assignment_string_get_export(const t_variable *entry)
 {

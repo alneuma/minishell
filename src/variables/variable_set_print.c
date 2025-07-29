@@ -1,3 +1,8 @@
+#include <errno.h>
+#include "libft.h"
+#include "variables_internals.h"
+#include "utils.h"
+
 static int	cmp_vars(const void *var1_void, const void *var2_void);
 
 int	variable_set_print_format_env(const int fd, const t_variable_set *vars)

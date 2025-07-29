@@ -4,7 +4,6 @@
 #include "libft.h"
 #include "variables.h"
 #include "builtins_internals.h"
-#include "assignment_strings.h"
 #include "utils.h"
 #include "defs.h"
 #include "error.h"

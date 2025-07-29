@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include "libft.h"
+#include "variables_internals.h"
 
 int	variable_var_replace(t_variable *entry, const char *val,
 		const int is_export)

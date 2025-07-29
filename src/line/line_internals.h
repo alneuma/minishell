@@ -2,9 +2,9 @@
 # define LINE_INTERNALS_H
 
 typedef struct s_stack_char	t_stack_char;
-typedef struct s_paren_par	t_paren_par;
+typedef struct s_paren_pair	t_paren_pair;
 
-struct s_paren_pairs
+struct s_paren_pair
 {
 	char	left;
 	char	right;

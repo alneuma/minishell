@@ -1,3 +1,11 @@
+#include <stddef.h>
+#include "token.h"
+#include "environment.h"
+#include "literal_internals.h"
+#include "utils.h"
+#include "variables.h"
+#include "builtins.h"
+
 static int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env);
 static int	assign_argv(const char **argv, t_env *env);
 static int	argv_first_non_assignment_idx(int *idx, const char **argv);
@@ -15,7 +23,12 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 	if (return_code || argv == NULL)
 		return (return_code);
 	env->code = 0;
-	argv_first_non_assignment_idx(&idx, (const char **)argv);
+	return_code = argv_first_non_assignment_idx(&idx, (const char **)argv);
+	if (return_code)
+	{
+		strs_destroy(&argv);
+		return (return_code);
+	}
 	if (argv[idx] == NULL)
 		return_code = assign_argv((const char **)argv, env);
 	else if (is_builtin(argv[idx]))
@@ -28,9 +41,18 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 
 static int	argv_first_non_assignment_idx(int *idx, const char **argv)
 {
+	int	valid;
+	int	return_code;
+
 	*idx = 0;
-	while (is_valid_assignment(argv[*idx]))
+	valid = 1;
+	while (valid)
+	{
+		return_code = is_valid_assignment(&valid, argv[*idx]);
+		if (return_code)
+			return (return_code);
 		*idx += 1;
+	}
 	return (0);
 }
 

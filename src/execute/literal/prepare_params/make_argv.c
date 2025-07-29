@@ -1,3 +1,9 @@
+#include <stdlib.h>
+#include <errno.h>
+#include "libft.h"
+#include "token.h"
+#include "utils.h"
+
 static char	*next_word(char **str);
 static int	write_words_from_token(char **argv, int *idx, const t_token *token);
 static int	argv_populate(char **argv, const t_token *tokens);

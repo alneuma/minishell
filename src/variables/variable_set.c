@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include "variables_internals.h"
+
 t_variable_set	*variable_set_create(void)
 {
 	t_variable_set	*new_variable_set;

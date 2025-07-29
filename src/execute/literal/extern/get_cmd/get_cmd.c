@@ -1,3 +1,8 @@
+#include <unistd.h>
+#include <errno.h>
+#include "libft.h"
+#include "error.h"
+#include "utils.h"
 #include "get_cmd_internals.h"
 
 static int	apply_path_relative(char **cmd, const char *str, t_env *env);

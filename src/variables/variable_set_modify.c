@@ -1,3 +1,10 @@
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include "variables_internals.h"
+#include "libft.h"
+#include "utils.h"
+
 static int	variable_set_var_append(t_variable_set *env, const char *key,
 				const char *val, int is_export);
 

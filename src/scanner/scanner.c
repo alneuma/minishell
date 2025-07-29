@@ -1,4 +1,9 @@
-int	get_first(t_token **first, char **input);
+#include "token.h"
+#include "libft.h"
+#include "utils.h"
+#include "scanner_internals.h"
+
+static int	get_first(t_token **first, char **input);
 
 // overwrites input to point directly after the read lexeme
 // success	-> 0
@@ -12,7 +17,7 @@ int	get_next(t_token **token, char **input)
 	{
 		if (is_token_of_type(*input, id))
 		{
-			*input += strlen(token_id_get_lexeme(id));
+			*input += ft_strlen(token_id_get_lexeme(id));
 			return (make_token(token, id, NULL));
 		}
 		id++;
@@ -47,7 +52,7 @@ int	scanner(t_token **tokens, char *input)
 	return (return_code);
 }
 
-int	get_first(t_token **first, char **input)
+static int	get_first(t_token **first, char **input)
 {
 	while (**input && is_blank(**input))
 		*input += 1;

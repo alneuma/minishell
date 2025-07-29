@@ -1,5 +1,10 @@
-#include <unistd.h>	//write(), STDOUT_FILENO
-#include "line.h"	//get_line(), line_validate()
+#include <unistd.h>
+#include <stdlib.h>
+#include "line.h"
+#include "error.h"
+#include "parser.h"
+#include "scanner.h"
+#include "execute.h"
 #include "loop_internals.h"
 
 static int	shell_iteration(t_env *env);

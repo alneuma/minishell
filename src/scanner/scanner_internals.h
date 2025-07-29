@@ -1,9 +1,6 @@
 #ifndef SCANNER_INTERNALS_H
 # define SCANNER_INTERNALS_H
 
-# include "scanner.h"
-# include "data_structures.h"
-
 # define ERROR_INVALID_TOKEN -1
 
 int			token_type_print(t_token_id id);

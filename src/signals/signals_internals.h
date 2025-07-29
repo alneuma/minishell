@@ -1,4 +1,4 @@
-#ifdef SIGNALS_INTERNALS_H
+#ifndef SIGNALS_INTERNALS_H
 # define SIGNALS_INTERNALS_H
 
 void	handler_sigint_rl(int signum);

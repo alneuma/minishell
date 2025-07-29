@@ -1,12 +1,11 @@
 #include <stdlib.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include "utils.h"	//rl_wrapper()
+#include "utils.h"
+#include "defs.h"
 
 int	get_line(char **line, t_env *env)
 {
-	int			return_code;
-
 	if (rl_wrapper(line, P1, env) == -1)
 	{
 		free(*line);

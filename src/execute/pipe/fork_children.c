@@ -1,3 +1,12 @@
+#include <errno.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "token.h"
+#include "utils.h"
+#include "environment.h"
+#include "execute.h"
+#include "pipe_internals.h"
+
 static int	execute_child(t_child_info *chinfo, t_token *tree, t_env *env);
 
 int	pipe_fork_child(t_child_info *chinfo, t_token *tree, t_env *env)

@@ -1,9 +1,15 @@
 #ifndef VARIABLES_INTERNALS_H
 # define VARIABLES_INTERNALS_H
 
-# include <variables.h>
+# include "variables.h"
 
 typedef struct s_variable	t_variable;
+
+struct s_variable_set
+{
+	t_variable	*first;
+	int			size;
+};
 
 struct s_variable
 {
@@ -11,12 +17,6 @@ struct s_variable
 	char		*value;
 	t_vartype	type;
 	t_variable	*next;
-};
-
-struct s_variable_set
-{
-	t_variable	*first;
-	int			size;
 };
 
 // variable
@@ -47,6 +47,6 @@ size_t		varset_size_type(const t_variable_set *env,
 int			assignment_string_is_append(const char *str);
 int			assignment_string_val_get_ref(char **val, const char *str);
 int			assignment_string_val_get(char **val, const char *str);
-int			assignment_string_key_get(char **key, const char *str);
+// int			assignment_string_key_get(char **key, const char *str);
 
 #endif //VARIABLES_INTERNALS_H

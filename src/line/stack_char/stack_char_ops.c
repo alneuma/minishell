@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <errno.h>
 #include <limits.h>
 #include "stack_char_internals.h"

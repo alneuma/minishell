@@ -1,9 +1,5 @@
-#include <errno.h>
-#include <stdlib.h>
-#include "libft.h"
+#include <stddef.h>
 #include "token.h"
-#include "variables.h"
-#include "data_structures.h"
 
 static void		parse_tree_insert(t_token **tree, t_token *new_node);
 static t_token	*create_subshell(t_token **tokens);

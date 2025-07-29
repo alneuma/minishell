@@ -1,3 +1,8 @@
+#include <stdlib.h>
+#include <errno.h>
+#include "variables.h"
+#include "libft.h"
+#include "utils.h"
 #include "expand_string_internals.h"
 
 static int	expand_add_length(int *len, const char *str, int *idx,

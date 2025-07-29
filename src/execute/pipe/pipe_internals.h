@@ -1,6 +1,8 @@
 #ifndef PIPE_INTERNALS_H
 # define PIPE_INTERNALS_H
 
+# include "environment.h"
+
 typedef struct s_child_info
 {
 	pid_t	pid;

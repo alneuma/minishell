@@ -1,4 +1,11 @@
+#include <errno.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 #include "extern_internals.h"
+#include "signals.h"
+#include "utils.h"
 
 static int	process_wstatus(int wstatus, t_env *env);
 
@@ -10,7 +17,11 @@ int	execute_extern(char **argv, int fd_in, int fd_out, t_env *env)
 	return_code = 0;
 	pid = fork();
 	if (pid < 0)
-		return (errno);
+	{
+		return_code = errno;
+		errno = 0;
+		return (return_code);
+	}
 	else if (pid == 0)
 		exit(call_execve(argv, fd_in, fd_out, env));
 	else if (pid > 0)

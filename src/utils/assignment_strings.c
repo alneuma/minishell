@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <errno.h>
-#include "assignment_strings.h"
 #include "libft.h"
+#include "utils.h"
+
+static int	is_assignment(const char *str);
 
 int	is_valid_assignment(int *valid, const char *str)
 {

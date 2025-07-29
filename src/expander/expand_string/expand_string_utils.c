@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "utils.h"
 #include "libft.h"
 
 // *str should point to first character after '$'

@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <errno.h>
+#include "libft.h"
+#include "utils.h"
 
 static int	check_pattern(const char *str, const char *mask, const char *pat);
 static char	*get_mask(const char *pat);

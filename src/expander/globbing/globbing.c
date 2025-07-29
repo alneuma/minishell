@@ -1,9 +1,10 @@
 #include <errno.h>
 #include <stdlib.h>
 #include "libft.h"
+#include "utils.h"
+#include "globbing_internals.h"
 
 static int	write_glob_words(char **words, const t_env *env, char *str);
-static int	join_strs(char **joined, const char **words);
 static int	needs_glob(const char *str);
 static int	glob_write_word(char **words, int *idx, char **str,
 				const t_env *env);

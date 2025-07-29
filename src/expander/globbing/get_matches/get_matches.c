@@ -1,6 +1,10 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <errno.h>
+#include <stdlib.h>
+#include "libft.h"
+#include "error.h"
+#include "get_matches_internals.h"
 
 static int	get_matches(char **str, DIR *cwd, const char *pattern);
 static int	process_node(char **str, const char *pattern,

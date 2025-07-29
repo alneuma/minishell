@@ -1,3 +1,8 @@
+#include <stddef.h>
+#include "variables.h"
+#include "variables_internals.h"
+#include "libft.h"
+
 size_t	varset_size_type(const t_variable_set *env, const t_vartype vartype)
 {
 	size_t		size;

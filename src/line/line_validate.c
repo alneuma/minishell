@@ -1,4 +1,8 @@
 #include "line_internals.h"
+#include "token.h"
+#include "error.h"
+#include "utils.h"
+#include "environment.h"
 
 static int	process_right_paren(int *valid, const char paren,
 				t_stack_char *stack);
@@ -12,7 +16,7 @@ int	line_validate(int *valid, const char *line, t_env *env)
 	int			return_code;
 	t_token_id	culprit;
 
-	return_code = string_validate(valid, &culprit, *line);
+	return_code = string_validate(valid, &culprit, line);
 	if (return_code)
 		return (return_code);
 	if (!*valid)

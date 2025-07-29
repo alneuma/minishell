@@ -1,3 +1,11 @@
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include "libft.h"
+#include "environment.h"
+#include "variables.h"
+#include "utils.h"
+
 static int	append_slashes(char **pathv);
 
 int	get_pathv(char ***pathv, t_env *env)

@@ -1,3 +1,9 @@
+#include <stdlib.h>
+#include <errno.h>
+#include "libft.h"
+#include "utils.h"
+#include "variables_internals.h"
+
 char	*variable_set_var_get_ref(const t_variable_set *env, const char *key)
 {
 	t_variable	*p;

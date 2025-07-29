@@ -1,3 +1,15 @@
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <errno.h>
+#include "libft.h"
+#include "token.h"
+#include "environment.h"
+#include "error.h"
+#include "utils.h"
+
 static int	infile_open(int *error, int *infile_fd, const t_token *rd);
 static int	outfile_open(int *error, int *outfile_fd, const t_token *rd);
 static int	heredoc_open(int *error, int *infile_fd, const t_token *token);

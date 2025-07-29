@@ -1,4 +1,5 @@
 #include "execute_internals.h"
+#include "error.h"
 
 static int	execute_or(t_token *tree, int fd_in, int fd_out, t_env *env);
 static int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env);

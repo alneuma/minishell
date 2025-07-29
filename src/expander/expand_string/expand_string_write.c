@@ -1,3 +1,7 @@
+#include <stdlib.h>
+#include <errno.h>
+#include "libft.h"
+#include "variables.h"
 #include "expand_string_internals.h"
 
 static void	expand_write_single_quoted(char **expansion, char **str);

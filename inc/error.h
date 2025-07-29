@@ -9,6 +9,12 @@
 # define STR_INVALID_ARGUMENT "invalid argument"
 # define STR_INVALID_IDENTIFIER "not a valid identifier"
 
+// codes
+# define ERR_AMBIGUOUS_REDIRECT 1
+# define ERR_CD 1
+# define ERR_INVALID_IDENTIFIER 1
+# define ERR_SYNTAX 2
+
 // functions
 int	is_fatal(const int error);
 int	print_error_token(const t_token_id id);

@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <errno.h>
+#include "environment.h"
 #include "expand_string_internals.h"
 
 int	expand_str(char **new_str, const t_env *env, const char *str)

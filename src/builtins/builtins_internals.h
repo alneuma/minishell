@@ -1,7 +1,7 @@
 #ifndef BUILTINS_INTERNALS_H
 # define BUILTINS_INTERNALS_H
 
-# include "variables.h"
+# include "environment.h"
 
 // builtins
 int	builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env);

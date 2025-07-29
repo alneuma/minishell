@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "stack_char_internals.h"
 
 t_stack_char_node	*stack_char_node_create(char c)

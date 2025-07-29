@@ -1,6 +1,6 @@
 #include <stddef.h>
 #include "libft.h"
-#include "variables.h"
+#include "environment.h"
 #include "builtins_internals.h"
 
 int	builtin_func(const char **argv, int fd_in, int fd_out, t_env *env)

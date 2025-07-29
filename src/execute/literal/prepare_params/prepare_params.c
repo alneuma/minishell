@@ -1,4 +1,8 @@
+#include <stdlib.h>
+#include <errno.h>
 #include "prepare_params_internals.h"
+#include "token.h"
+#include "utils.h"
 
 static int	assign_redirect_fds(int *fd_in, int *fd_out, int *infile_fd,
 				int *outfile_fd);

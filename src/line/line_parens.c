@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include "line_internals.h"
 
-static const t_paren_pairs	g_pairs[] = {{'"', '"'}, {'\'', '\''}, {'(', ')'}};
+static const t_paren_pair	g_pairs[] = {{'"', '"'}, {'\'', '\''}, {'(', ')'}};
 
 int	paren_is_left(const char c)
 {

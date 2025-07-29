@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include "token.h"
 #include "expander_internals.h"
 
 int	expand(char **expansion, t_token *token, t_env *env)

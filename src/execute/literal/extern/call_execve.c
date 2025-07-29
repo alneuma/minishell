@@ -1,3 +1,14 @@
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <unistd.h>
+#include "environment.h"
+#include "error.h"
+#include "utils.h"
+#include "variables.h"
+#include "signals.h"
+#include "extern_internals.h"
+
 static int	fds_setup(int fd_in, int fd_out);
 static void	execve_wrapper(const char *cmd, char **argv, char **envp,
 				t_env *env);

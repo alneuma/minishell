@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include <errno.h>
 #include "libft.h"
-#include "variables.h"
+#include "environment.h"
 
 static int	is_n_option(const char *str);
 

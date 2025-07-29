@@ -1,6 +1,14 @@
+#include <stdlib.h>
+#include <unistd.h>
 #include "redirects_internals.h"
+#include "environment.h"
+#include "token.h"
+#include "defs.h"
+#include "libft.h"
+#include "expander.h"
+#include "error.h"
+#include "utils.h"
 
-static int	tokens_delete_redirects(t_token **tokens);
 static int	redirect_fds_get(int fds[2], t_token *tokens, t_env *env);
 static int	validate_redirect(char *str, t_token *token, t_env *env);
 static int	handle_token(int fds[2], t_token *token, t_env *env);
@@ -27,33 +35,6 @@ int	process_redirects(int *infile_fd, int *outfile_fd, t_token **tokens,
 	}
 	*outfile_fd = fds[0];
 	*infile_fd = fds[1];
-	return (0);
-}
-
-static int	tokens_delete_redirects(t_token **tokens)
-{
-	t_token	*p;
-	t_token	*tmp;
-
-	p = *tokens;
-	while (p != NULL && token_id_is_redirect(p->id))
-	{
-		tmp = p;
-		p = p->right;
-		token_destroy(&tmp, FREE_STRING);
-	}
-	*tokens = p;
-	while (p != NULL)
-	{
-		if (p->right != NULL && token_id_is_redirect(p->right->id))
-		{
-			tmp = p->right;
-			p->right = p->right->right;
-			token_destroy(&tmp, FREE_STRING);
-		}
-		else
-			p = p->right;
-	}
 	return (0);
 }
 

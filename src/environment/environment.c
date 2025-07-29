@@ -1,3 +1,9 @@
+#include <stdlib.h>
+#include <errno.h>
+#include "parser.h"
+#include "utils.h"
+#include "variables.h"
+
 static int	env_vars_create(t_variable_set **vars, const char **envp);
 
 void	env_clear(t_env *env)

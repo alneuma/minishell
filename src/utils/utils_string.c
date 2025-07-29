@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include "utils.h"
+
 // does not need to check for '\0' in the inner loop
 // as correct syntax is assumed
 void	skip_through_word(char **str)

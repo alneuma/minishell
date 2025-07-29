@@ -1,5 +1,11 @@
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <signal.h>
+#include <errno.h>
+#include <unistd.h>
 #include "pipe_internals.h"
 #include "signals.h"
+#include "token.h"
 
 static int	wait_child(int *wstatus, t_child_info *chinfo);
 static void	process_wstatus_left(int wstatus, t_env *env);

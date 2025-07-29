@@ -1,10 +1,8 @@
-#include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
 #include "token.h"
-#include "scanner.h"
 #include "libft.h"
-#include "assignment_strings.h"
+#include "scanner.h"
 
 void	token_destroy(t_token **token, int keep_literal)
 {

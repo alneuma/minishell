@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <errno.h>
 #include "libft.h"
 
 static int	join_strs_len(const char **strs);
