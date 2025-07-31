@@ -12,6 +12,13 @@ void	handler_sigint_rl(int signum)
 	g_signum = SIGINT;
 }
 
+void	handler_sigpipe(int signum)
+{
+	(void)signum;
+	rl_done = 1;
+	g_signum = SIGPIPE;
+}
+
 int	readline_hook(void)
 {
 	return (0);

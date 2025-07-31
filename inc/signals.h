@@ -3,6 +3,11 @@
 
 # include "environment.h"
 
+//signal codes
+# define CODE_SIGINT 130
+# define CODE_SIGQUIT 131
+# define CODE_SIGPIPE 141
+
 int		signum_get(void);
 void	signum_set(int signum);
 int		signal_setup_default(void);

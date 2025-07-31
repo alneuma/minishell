@@ -2,6 +2,7 @@
 # define SIGNALS_INTERNALS_H
 
 void	handler_sigint_rl(int signum);
+void	handler_sigpipe(int signum);
 int		readline_hook(void);
 
 #endif //SIGNALS_INTERNALS_H

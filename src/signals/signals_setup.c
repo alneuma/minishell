@@ -13,6 +13,7 @@ int	signal_setup_default(void)
 	act.sa_handler = SIG_IGN;
 	sigaction(SIGINT, &act, NULL);
 	sigaction(SIGQUIT, &act, NULL);
+	act.sa_handler = handler_sigpipe;
 	sigaction(SIGPIPE, &act, NULL);
 	return (0);
 }
@@ -42,6 +43,8 @@ int	signal_setup_readline(void)
 	sigaction(SIGINT, &act, NULL);
 	act.sa_handler = SIG_IGN;
 	sigaction(SIGQUIT, &act, NULL);
+	sigaction(SIGPIPE, &act, NULL);
+	act.sa_handler = handler_sigpipe;
 	sigaction(SIGPIPE, &act, NULL);
 	return (0);
 }

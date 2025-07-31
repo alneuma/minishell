@@ -76,9 +76,9 @@ static void	process_wstatus_left(int wstatus, t_env *env)
 		env->code = WEXITSTATUS(wstatus);
 	if (env->pipe_lvl == 0)
 	{
-		if (WEXITSTATUS(wstatus) == 131)
+		if (WEXITSTATUS(wstatus) == CODE_SIGQUIT)
 			signum_set(SIGQUIT);
-		if (WEXITSTATUS(wstatus) == 130)
+		if (WEXITSTATUS(wstatus) == CODE_SIGINT)
 			signum_set(SIGINT);
 	}
 }
@@ -87,9 +87,9 @@ static int	process_wstatus_right(int wstatus, t_env *env)
 {
 	if (env->pipe_lvl == 0)
 		env->code = WEXITSTATUS(wstatus);
-	if (env->code == 131)
+	if (env->code == CODE_SIGQUIT)
 		signum_set(SIGQUIT);
-	if (env->code == 130)
+	if (env->code == CODE_SIGINT)
 		signum_set(SIGINT);
 	if (env->code)
 		return (-1);

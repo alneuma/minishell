@@ -1,10 +1,12 @@
 #include <unistd.h>
 #include <stdlib.h>
+#include <signal.h>
 #include "line.h"
 #include "error.h"
 #include "parser.h"
 #include "scanner.h"
 #include "execute.h"
+#include "signals.h"
 #include "loop_internals.h"
 
 static int	shell_iteration(t_env *env);
@@ -18,13 +20,15 @@ int	shell_loop(t_env *env)
 		return_code = shell_iteration(env);
 		if (return_code == 0 && env->exit == 0)
 			env->code = 0;
-		if (is_fatal(return_code) || env->exit)
+		if (is_fatal(return_code) || signum_get() == SIGPIPE || env->exit)
 		{
-			if (!is_fatal(return_code))
+			if (!is_fatal(return_code) || signum_get() != SIGPIPE)
 			{
 				return_code = env->code;
 				write(STDOUT_FILENO, "exit\n", 5);
 			}
+			if (signum_get() == SIGPIPE && !is_fatal(return_code))
+				return (CODE_SIGPIPE);
 			return (return_code);
 		}
 	}

@@ -43,12 +43,12 @@ static int	process_wstatus(int wstatus, t_env *env)
 	if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) == SIGQUIT)
 	{
 		signum_set(SIGQUIT);
-		env->code = 131;
+		env->code = CODE_SIGQUIT;
 	}
 	if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) == SIGINT)
 	{
 		signum_set(SIGINT);
-		env->code = 130;
+		env->code = CODE_SIGINT;
 	}
 	return (0);
 }
