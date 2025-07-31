@@ -48,3 +48,10 @@ char	**variable_set_array_get_format(const t_variable_set *env,
 	envp[i] = NULL;
 	return (envp);
 }
+
+char	**variable_set_array_get(const t_variable_set *env,
+					const t_vartype vartype)
+{
+	return (variable_set_array_get_format(env, vartype,
+			variable_assignment_string_get));
+}

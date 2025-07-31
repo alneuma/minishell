@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "environment.h"
+#include "variables.h"
 #include "error.h"
 #include "utils.h"
 #include "variables.h"
