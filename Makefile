@@ -22,7 +22,6 @@ SRC	+= signals.c
 SRC	+= signals_setup.c
 vpath %.c $(SRC_DIR)/scanner
 SRC	+= scanner.c
-SRC	+= validate.c
 SRC	+= literals.c
 vpath %.c $(SRC_DIR)/line
 SRC	+= line_get.c
