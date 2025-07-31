@@ -10,6 +10,7 @@ static int	get_matches(char **str, DIR *cwd, const char *pattern);
 static int	process_node(char **str, const char *pattern,
 				const struct dirent *node);
 static int	append_match(char **s1, const char *s2);
+static int	starts_with_dot(const char *str);
 
 int	glob_get_matches(char **matches, const char *pattern, t_env *env)
 {
@@ -37,7 +38,7 @@ static int	process_node(char **str, const char *pattern,
 {
 	int	return_code;
 
-	if (node->d_name[0] == '.')
+	if (node->d_name[0] == '.' && starts_with_dot(pattern) == 0)
 		return (0);
 	match_pattern(&return_code, pattern, node->d_name);
 	if (return_code)
@@ -45,6 +46,23 @@ static int	process_node(char **str, const char *pattern,
 		return_code = append_match(str, node->d_name);
 		if (return_code)
 			return (return_code);
+	}
+	return (0);
+}
+
+static int	starts_with_dot(const char *str)
+{
+	char	quote;
+
+	if (*str == '.')
+		return (1);
+	if ((*str == '\'' || *str == '"') && *(str + 1) == '.')
+	{
+		quote = *str;
+		str++;
+		while (*str && *str != quote)
+			str++;
+		return (*str == quote);
 	}
 	return (0);
 }
