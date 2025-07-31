@@ -2,6 +2,7 @@
 #include <errno.h>
 #include "libft.h"
 #include "utils.h"
+#include "variables.h"
 
 static int	is_assignment(const char *str);
 

@@ -1,3 +1,10 @@
+#include <stdlib.h>
+#include "errno.h"
+#include "environment.h"
+#include "utils.h"
+#include "libft.h"
+#include "defs.h"
+
 static int	heredoc_next_line(char **line, const char *prompt, t_env *env);
 static int	heredoc_is_last(const char *line, const char *dlm);
 static int	heredoc_get_doc(char **doc, const char *prompt, const char *dlm,

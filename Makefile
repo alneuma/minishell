@@ -33,7 +33,7 @@ SRC	+= stack_char_init.c
 SRC	+= stack_char_node.c
 SRC	+= stack_char_ops.c
 vpath %.c $(SRC_DIR)/utils
-SRC	+= assignment_strings.c
+SRC	+= assignments.c
 SRC	+= remove_quotes.c
 SRC	+= utils_chars.c
 SRC	+= utils_close.c
@@ -101,6 +101,7 @@ SRC	+= token.c
 SRC	+= token_redirects.c
 SRC	+= token_types.c
 SRC	+= token_validate.c
+SRC	+= heredoc.c
 
 ## objects
 OBJ	:= $(SRC:.c=.o)
