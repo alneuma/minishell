@@ -1,13 +1,13 @@
 int	ft_strcmp(const char *str1, const char *str2)
 {
-	while (*str1 && *str1 == *str2)
-	{
-		str1++;
-		str2++;
-	}
-	if (*str1 < *str2)
+	int	i;
+
+	i = 0;
+	while (str1[i] && str1[i] == str2[i])
+		i++;
+	if (str1[i] < str2[i])
 		return (-1);
-	else if (*str1 > *str2)
+	else if (str1[i] > str2[i])
 		return (1);
 	return (0);
 }

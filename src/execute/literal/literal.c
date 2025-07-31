@@ -46,11 +46,13 @@ static int	argv_first_non_assignment_idx(int *idx, const char **argv)
 
 	*idx = 0;
 	valid = 1;
-	while (valid)
+	while (argv[*idx] != NULL)
 	{
 		return_code = is_valid_assignment(&valid, argv[*idx]);
 		if (return_code)
 			return (return_code);
+		if (valid == 0)
+			return (0);
 		*idx += 1;
 	}
 	return (0);
