@@ -1,3 +1,7 @@
+#include <stdlib.h>
+#include <errno.h>
+#include "libft.h"
+
 int	assignment_string_val_get(char **val, const char *str)
 {
 	char	*start;

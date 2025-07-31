@@ -79,8 +79,6 @@ SRC	+= exit.c
 SRC	+= export.c
 SRC	+= pwd.c
 SRC	+= unset.c
-vpath %.c $(SRC_DIR)/assignment_strings
-SRC	+= assignment_strings.c
 vpath %.c $(SRC_DIR)/expander
 SRC	+= expander.c
 vpath %.c $(SRC_DIR)/expander/expand_string
