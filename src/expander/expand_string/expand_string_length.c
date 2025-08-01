@@ -61,7 +61,7 @@ static int	expand_add_length_normal(int *len, const char *str, int *idx,
 {
 	char	*key;
 
-	key = expand_get_key(str);
+	key = expand_get_key(str + *idx);
 	if (key == NULL)
 		return (ENOMEM);
 	*len += expand_get_value_length(env, key);
