@@ -8,7 +8,7 @@
 #include "utils.h"
 #include "variables.h"
 #include "signals.h"
-#include "extern_internals.h"
+#include "literal_internals.h"
 
 static int	fds_setup(int fd_in, int fd_out);
 static void	execve_wrapper(const char *cmd, char **argv, char **envp,
@@ -20,21 +20,40 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 	char	**envp;
 	char	*cmd;
 	int		return_code;
+	int		idx;
 
+	return_code = assign_argv((const char **)argv, env);
+	if (return_code)
+	{
+		execve_cleanup(argv, NULL, fd_in, fd_out);
+		return (return_code);
+	}
+	return_code = argv_first_non_assignment_idx(&idx,
+					(const char **)argv);
+	if (return_code)
+	{
+		execve_cleanup(argv, NULL, fd_in, fd_out);
+		return (return_code);
+	}
 	envp = variable_set_array_get(env->vars, ENV);
 	if (envp == NULL)
+	{
+		execve_cleanup(argv, NULL, fd_in, fd_out);
 		return (ENOMEM);
+	}
 	return_code = fds_setup(fd_in, fd_out);
 	if (return_code)
 	{
+		execve_cleanup(argv, NULL, fd_in, fd_out);
 		strs_destroy(&envp);
 		return (return_code);
 	}
 	cmd = NULL;
-	return_code = get_cmd(&cmd, argv, env);
+	return_code = get_cmd(&cmd, argv + idx, env);
 	if (return_code == 0)
-		execve_wrapper(cmd, argv, envp, env);
-	execve_cleanup(envp, cmd, fd_in, fd_out);
+		execve_wrapper(cmd, argv + idx, envp, env);
+	execve_cleanup(argv, cmd, fd_in, fd_out);
+	strs_destroy(&envp);
 	if (return_code)
 		env_clear(env);
 	if (return_code == EACCES)

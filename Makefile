@@ -43,10 +43,9 @@ vpath %.c $(SRC_DIR)/execute
 SRC	+= execute.c
 vpath %.c $(SRC_DIR)/execute/literal
 SRC	+= literal.c
-vpath %.c $(SRC_DIR)/execute/literal/extern
 SRC	+= call_execve.c
 SRC	+= extern.c
-vpath %.c $(SRC_DIR)/execute/literal/extern/get_cmd
+vpath %.c $(SRC_DIR)/execute/literal/get_cmd
 SRC	+= get_cmd.c
 SRC	+= get_cmd_utils.c
 vpath %.c $(SRC_DIR)/execute/literal/prepare_params

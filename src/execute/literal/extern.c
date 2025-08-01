@@ -3,7 +3,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include "extern_internals.h"
+#include "literal_internals.h"
 #include "signals.h"
 #include "utils.h"
 
