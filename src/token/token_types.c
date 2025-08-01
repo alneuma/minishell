@@ -78,6 +78,6 @@ int	token_type_print(t_token_id id)
 	fstr = "%s:\t%d\t%s";
 	if (id == PIPE || id == AND || id == OR || id == INFILE)
 		fstr = "%s:\t\t%d\t%s";
-	return (printf(fstr, token_id_get_name(id), token_id_get_prec(id),
+	return (ft_printf(fstr, token_id_get_name(id), token_id_get_prec(id),
 			token_id_get_lexeme(id)));
 }
