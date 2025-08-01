@@ -50,7 +50,7 @@ int	ft_chdir(const char *objective)
 	{
 		return_code = errno;
 		errno = 0;
-		if (is_fatal(return_code))
+		if (!is_fatal(return_code))
 			print_error("cd", return_code);
 		return (return_code);
 	}
