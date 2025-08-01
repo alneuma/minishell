@@ -16,7 +16,9 @@ int	get_cmd(char **cmd, char **argv, t_env *env)
 		ft_dprintf(STDERR_FILENO, "%s: command not found\n", "''");
 		return (-1);
 	}
-	else if (ft_strlen(argv[0]) >= 2 && argv[0][0] == '.' && argv[0][1] == '/')
+	else if ((ft_strlen(argv[0]) >= 2 && argv[0][0] == '.' && argv[0][1] == '/')
+		|| (ft_strlen(argv[0]) >= 3 && argv[0][0] == '.' && argv[0][1] == '.'
+		&& argv[0][2] == '/'))
 		return (apply_path_relative(cmd, argv[0], env));
 	else if (ft_strlen(argv[0]) >= 1 && argv[0][0] == '/')
 		return (apply_path_absolute(cmd, argv[0]));
