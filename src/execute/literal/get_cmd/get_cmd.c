@@ -11,6 +11,7 @@ static int	apply_path_absolute(char **cmd, const char *str);
 
 int	get_cmd(char **cmd, char **argv, t_env *env)
 {
+	*cmd = NULL;
 	if (**argv == '\0')
 	{
 		ft_dprintf(STDERR_FILENO, "%s: command not found\n", "''");

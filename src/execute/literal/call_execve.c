@@ -11,73 +11,62 @@
 #include "literal_internals.h"
 
 static int	fds_setup(int fd_in, int fd_out);
-static void	execve_wrapper(const char *cmd, char **argv, char **envp,
-				t_env *env);
-static void	execve_cleanup(char **envp, char *cmd, int fd_in, int fd_out);
+static void	execve_wrapper(t_exec *params, t_env *env);
+static int	setup_exec(t_exec *params, char **argv, t_env *env);
 
 int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 {
-	char	**envp;
-	char	*cmd;
+	t_exec	params;
 	int		return_code;
-	int		idx;
 
-	return_code = assign_argv((const char **)argv, env);
-	if (return_code)
-	{
-		execve_cleanup(argv, NULL, fd_in, fd_out);
-		return (return_code);
-	}
-	return_code = argv_first_non_assignment_idx(&idx,
-					(const char **)argv);
-	if (return_code)
-	{
-		execve_cleanup(argv, NULL, fd_in, fd_out);
-		return (return_code);
-	}
-	envp = variable_set_array_get(env->vars, ENV);
-	if (envp == NULL)
-	{
-		execve_cleanup(argv, NULL, fd_in, fd_out);
-		return (ENOMEM);
-	}
 	return_code = fds_setup(fd_in, fd_out);
 	if (return_code)
 	{
-		execve_cleanup(argv, NULL, fd_in, fd_out);
-		strs_destroy(&envp);
+		env_clear(env);
+		strs_destroy(&argv);
 		return (return_code);
 	}
-	cmd = NULL;
-	return_code = get_cmd(&cmd, argv + idx, env);
+	return_code = setup_exec(&params, argv, env);
 	if (return_code == 0)
-		execve_wrapper(cmd, argv + idx, envp, env);
-	execve_cleanup(argv, cmd, fd_in, fd_out);
-	strs_destroy(&envp);
-	if (return_code)
-		env_clear(env);
+		execve_wrapper(&params, env);
+	env_clear(env);
+	strs_destroy(&params.envp);
+	strs_destroy(&params.argv);
+	free(params.cmd);
+	close_fd_safe2(fd_in, fd_out);
 	if (return_code == EACCES)
 		return (126);
 	return (127);
 }
 
-static void	execve_wrapper(const char *cmd, char **argv, char **envp,
-				t_env *env)
+static int	setup_exec(t_exec *params, char **argv, t_env *env)
+{
+	int	return_code;
+
+	return_code = assign_argv((const char **)argv, env);
+	if (return_code)
+		return (return_code);
+	return_code = argv_first_non_assignment_idx(&params->argv_idx,
+			(const char **)argv);
+	if (return_code)
+		return (return_code);
+	params->argv = argv;
+	params->envp = variable_set_array_get(env->vars, ENV);
+	if (params->envp == NULL)
+		return (ENOMEM);
+	return_code = get_cmd(&params->cmd, argv + params->argv_idx, env);
+	if (return_code)
+		strs_destroy(&params->envp);
+	return (return_code);
+}
+
+static void	execve_wrapper(t_exec *params, t_env *env)
 {
 	env_clear(env);
 	signal_setup_extern();
-	execve(cmd, argv, envp);
+	execve(params->cmd, params->argv + params->argv_idx, params->envp);
 	print_error_str("", strerror(errno));
 	errno = 0;
-}
-
-static void	execve_cleanup(char **envp, char *cmd, int fd_in, int fd_out)
-{
-	signal_setup_default();
-	strs_destroy(&envp);
-	free(cmd);
-	close_fd_safe(fd_in);
-	close_fd_safe(fd_out);
 }
 
 static int	fds_setup(int fd_in, int fd_out)
