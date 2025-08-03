@@ -28,11 +28,13 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 	}
 	return_code = setup_exec(&params, argv, env);
 	if (return_code == 0)
+	{
 		execve_wrapper(&params, env);
-	env_clear(env);
-	strs_destroy(&params.envp);
+		strs_destroy(&params.envp);
+		free(params.cmd);
+	}
 	strs_destroy(&params.argv);
-	free(params.cmd);
+	env_clear(env);
 	close_fd_safe2(fd_in, fd_out);
 	if (return_code == EACCES)
 		return (126);

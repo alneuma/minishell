@@ -39,15 +39,17 @@ int	str_num_words(char *str)
 	return (words);
 }
 
-void	strs_destroy(char ***argv)
+void	strs_destroy(char ***strs)
 {
 	int	i;
 
+	if (*strs == NULL)
+		return ;
 	i = 0;
-	while ((*argv)[i] != NULL)
-		free((*argv)[i++]);
-	free(*argv);
-	*argv = NULL;
+	while ((*strs)[i] != NULL)
+		free((*strs)[i++]);
+	free(*strs);
+	*strs = NULL;
 }
 
 int	string_array_get_len(const char **arr)
