@@ -26,7 +26,7 @@ char	**variable_set_array_get_format(const t_variable_set *env,
 	int			i;
 	t_variable	*p;
 
-	envp = (char **)malloc(sizeof(envp) * (varset_size_type(env, vartype) + 1));
+	envp = (char **)malloc(sizeof(*envp) * (varset_size_type(env, vartype) + 1));
 	if (envp == NULL)
 		return (NULL);
 	i = 0;

@@ -36,7 +36,6 @@ static void	join_strs_write(char *new_str, const char **strs)
 	int	len;
 
 	word = 0;
-	len = 0;
 	while (strs[word] != NULL)
 	{
 		len = ft_strlen(strs[word]);

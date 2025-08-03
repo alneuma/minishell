@@ -18,13 +18,14 @@ int	get_objective_dir(char **objective, const char **argv, t_env *env)
 	char	*tmp;
 
 	*objective = NULL;
+	tmp = (char *)argv[1];
 	if (string_array_get_len(argv) > 2)
 	{
 		print_error_str(" cd:", STR_TOO_MANY_ARGUMENTS);
 		env->code = ERR_CD;
 		return (-1);
 	}
-	if (string_array_get_len(argv) == 1)
+	if (string_array_get_len(argv) < 2)
 	{
 		tmp = variable_set_var_get_ref(env->vars, "HOME");
 		if (tmp == NULL)
@@ -34,8 +35,6 @@ int	get_objective_dir(char **objective, const char **argv, t_env *env)
 			return (-1);
 		}
 	}
-	if (string_array_get_len(argv) == 2)
-		tmp = (char *)argv[1];
 	*objective = ft_strdup(tmp);
 	if (*objective == NULL)
 		return (ENOMEM);
