@@ -4,12 +4,10 @@
 #include "token_internals.h"
 #include "libft.h"
 
-static const t_token_type	g_token_types[] = {{"OR", "||", 2, OR},
-{"PIPE", "|", 4, PIPE}, {"AND", "&&", 3, AND}, {"HEREDOC", "<<", 400, HEREDOC},
-{"INFILE", "<", 400, INFILE}, {"OUTFILE_APPEND", ">>", 400, OUTFILE_APPEND},
-{"OUTFILE", ">", 400, OUTFILE}, {"PAREN_LEFT", "(", 1000, PAREN_LEFT},
-{"PAREN_RIGHT", ")", 1000, PAREN_RIGHT}, {"LITERAL", NULL, 400, LITERAL},
-{"TKN_NEWLINE", "newline", 2000, TKN_NEWLINE}};
+static const t_token_type	g_token_types[] = {{"||", 2, OR}, {"|", 4, PIPE},
+{"&&", 3, AND}, {"<<", 400, HEREDOC}, {"<", 400, INFILE},
+{">>", 400, OUTFILE_APPEND}, {">", 400, OUTFILE}, {"(", 1000, PAREN_LEFT},
+{")", 1000, PAREN_RIGHT}, {NULL, 400, LITERAL}, {"newline", 2000, TKN_NEWLINE}};
 
 int	token_id_get_prec(t_token_id id)
 {
@@ -39,20 +37,6 @@ char	*token_id_get_lexeme(t_token_id id)
 	return (NULL);
 }
 
-char	*token_id_get_name(t_token_id id)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < sizeof(g_token_types) / sizeof(*g_token_types))
-	{
-		if (g_token_types[i].id == id)
-			return (g_token_types[i].name);
-		i++;
-	}
-	return (NULL);
-}
-
 // returns LITERAL when nothing else is valid
 t_token_id	token_string_get_id(const char *str)
 {
@@ -69,15 +53,4 @@ t_token_id	token_string_get_id(const char *str)
 		i++;
 	}
 	return (LITERAL);
-}
-
-int	token_type_print(t_token_id id)
-{
-	char	*fstr;
-
-	fstr = "%s:\t%d\t%s";
-	if (id == PIPE || id == AND || id == OR || id == INFILE)
-		fstr = "%s:\t\t%d\t%s";
-	return (ft_printf(fstr, token_id_get_name(id), token_id_get_prec(id),
-			token_id_get_lexeme(id)));
 }
