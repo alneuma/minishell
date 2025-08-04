@@ -113,6 +113,11 @@ static int	variable_set_var_append(t_variable_set *env, const char *key,
 {
 	t_variable	*p;
 
+	if (env->size == 0)
+	{
+		env->size++;
+		return (variable_create(&env->first, key, val, is_export));
+	}
 	if (env->size > 0 && !ft_strcmp(env->first->key, key))
 		return (variable_var_append(env->first, val, is_export));
 	p = env->first;

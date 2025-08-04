@@ -33,7 +33,7 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 		strs_destroy(&params.envp);
 		free(params.cmd);
 	}
-	strs_destroy(&params.argv);
+	strs_destroy(&argv);
 	env_clear(env);
 	close_fd_safe2(fd_in, fd_out);
 	if (return_code == EACCES)

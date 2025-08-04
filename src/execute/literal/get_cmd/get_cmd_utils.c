@@ -54,11 +54,13 @@ int	test_cmd(char **cmd, const char *str, const char *path)
 	*cmd = ft_strjoin(path, str);
 	if (*cmd == NULL)
 		return (ENOMEM);
-	if (access(*cmd, X_OK) == 0)
-		return (0);
-	return_code = errno;
-	errno = 0;
-	free(*cmd);
-	*cmd = NULL;
-	return (return_code);
+	if (access(*cmd, X_OK) < 0)
+	{
+		return_code = errno;
+		errno = 0;
+		free(*cmd);
+		*cmd = NULL;
+		return (return_code);
+	}
+	return (0);
 }

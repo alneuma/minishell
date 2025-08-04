@@ -4,6 +4,33 @@
 static void		parse_tree_insert(t_token **tree, t_token *new_node);
 static t_token	*create_subshell(t_token **tokens);
 
+// Correct syntax is assumed for the argument
+// otherwise "()" could lead to NULL pointer dereference
+t_token	*tree_from_tokens(t_token **tokens)
+{
+	t_token	*tree;
+	t_token	*tmp;
+
+	tree = NULL;
+	while (*tokens != NULL)
+	{
+		tmp = *tokens;
+		(*tokens) = (*tokens)->right;
+		if (tmp->id == PAREN_LEFT)
+		{
+			token_destroy(&tmp, FREE_STRING);
+			parse_tree_insert(&tree, create_subshell(tokens));
+		}
+		else
+		{
+			tmp->right = NULL;
+			tmp->left = NULL;
+			parse_tree_insert(&tree, tmp);
+		}
+	}
+	return (tree);
+}
+
 static t_token	*create_subshell(t_token **tokens)
 {
 	t_token	*tree;
@@ -19,31 +46,6 @@ static t_token	*create_subshell(t_token **tokens)
 			token_destroy(&tmp, FREE_STRING);
 			tree->is_subshell = 1;
 			return (tree);
-		}
-		else
-		{
-			tmp->right = NULL;
-			tmp->left = NULL;
-			parse_tree_insert(&tree, tmp);
-		}
-	}
-	return (tree);
-}
-
-t_token	*tree_from_tokens(t_token **tokens)
-{
-	t_token	*tree;
-	t_token	*tmp;
-
-	tree = NULL;
-	while (*tokens != NULL)
-	{
-		tmp = *tokens;
-		(*tokens) = (*tokens)->right;
-		if (tmp->id == PAREN_LEFT)
-		{
-			token_destroy(&tmp, FREE_STRING);
-			parse_tree_insert(&tree, create_subshell(tokens));
 		}
 		else
 		{

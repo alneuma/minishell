@@ -65,6 +65,7 @@ static int	glob_write_word(char **words, int *idx, char **str,
 	if (needs_glob(words[*idx]))
 	{
 		tmp = words[*idx];
+		words[*idx] = NULL;
 		return_code = glob_get_matches(&words[*idx], tmp, (t_env *)env);
 		free(tmp);
 		if (return_code)

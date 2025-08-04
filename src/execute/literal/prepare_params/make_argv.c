@@ -16,6 +16,8 @@ int	tokens_make_argv(char ***argv, const t_token *tokens)
 	return_code = argv_create(argv, tokens);
 	if (return_code)
 		return (return_code);
+	if (*argv == NULL)
+		return (0);
 	return_code = argv_populate(*argv, tokens);
 	if (return_code)
 		strs_destroy(argv);

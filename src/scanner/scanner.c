@@ -28,7 +28,6 @@ int	get_next(t_token **token, char **input)
 int	scanner(t_token **tokens, char *input)
 {
 	t_token	*current;
-	t_token	*start;
 	int		return_code;
 
 	return_code = get_first(&current, &input);
@@ -44,7 +43,7 @@ int	scanner(t_token **tokens, char *input)
 		return_code = get_next(&current->right, &input);
 		if (return_code)
 		{
-			tokens_destroy(&start);
+			tokens_destroy(tokens);
 			return (return_code);
 		}
 		current = current->right;

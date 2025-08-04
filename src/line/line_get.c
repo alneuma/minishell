@@ -6,6 +6,7 @@
 
 int	get_line(char **line, t_env *env)
 {
+	*line = NULL;
 	if (rl_wrapper(line, P1, env) == -1)
 	{
 		free(*line);

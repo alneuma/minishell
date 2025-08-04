@@ -43,20 +43,20 @@ int	variable_create(t_variable **var, const char *key, const char *val,
 	if ((*var)->key == NULL)
 	{
 		free(*var);
+		*var = NULL;
 		return (ENOMEM);
 	}
 	(*var)->next = NULL;
 	(*var)->type = vartype;
 	if (val == NULL)
-	{
 		(*var)->value = NULL;
-		return (0);
-	}
-	(*var)->value = ft_strdup(val);
-	if ((*var)->value == NULL)
+	else
+		(*var)->value = ft_strdup(val);
+	if (val != NULL && (*var)->value == NULL)
 	{
 		free((*var)->key);
 		free(*var);
+		*var = NULL;
 		return (ENOMEM);
 	}
 	return (0);

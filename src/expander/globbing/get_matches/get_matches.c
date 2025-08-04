@@ -37,11 +37,14 @@ static int	process_node(char **str, const char *pattern,
 				const struct dirent *node)
 {
 	int	return_code;
+	int	match;
 
 	if (node->d_name[0] == '.' && starts_with_dot(pattern) == 0)
 		return (0);
-	match_pattern(&return_code, pattern, node->d_name);
+	return_code = match_pattern(&match, pattern, node->d_name);
 	if (return_code)
+		return (return_code);
+	if (match)
 	{
 		return_code = append_match(str, node->d_name);
 		if (return_code)
@@ -76,6 +79,7 @@ static int	append_match(char **s1, const char *s2)
 	else
 		tmp = ft_strdup("");
 	free(*s1);
+	*s1 = NULL;
 	if (tmp == NULL)
 		return (ENOMEM);
 	*s1 = ft_strjoin(tmp, s2);

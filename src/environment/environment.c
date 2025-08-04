@@ -9,6 +9,7 @@ static int	env_vars_create(t_variable_set **vars, const char **envp);
 void	env_clear(t_env *env)
 {
 	free(env->cwd);
+	env->cwd = NULL;
 	parse_tree_destroy(&env->root);
 	variable_set_destroy(&env->vars);
 }

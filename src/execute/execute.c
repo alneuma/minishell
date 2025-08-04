@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include "execute_internals.h"
 #include "error.h"
 
@@ -6,6 +7,8 @@ static int	execute_and(t_token *tree, int fd_in, int fd_out, t_env *env);
 
 int	execute(t_token *token, int fd_in, int fd_out, t_env *env)
 {
+	if (token == NULL)
+		return (0);
 	if (token->id == LITERAL || token_id_is_redirect(token->id))
 		return (execute_literal(token, fd_in, fd_out, env));
 	if (token->id == PIPE)

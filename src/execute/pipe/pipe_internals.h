@@ -12,5 +12,7 @@ typedef struct s_child_info
 }	t_child_info;
 
 int	pipe_fork_child(t_child_info *chinfo, t_token *tree, t_env *env);
+int	pipe_setup_fds(t_child_info *chinfo_1, t_child_info *chinfo_2,
+		int fd_in, int fd_out);
 
 #endif //PIPE_INTERNALS_H

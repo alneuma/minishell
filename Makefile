@@ -55,6 +55,7 @@ vpath %.c $(SRC_DIR)/execute/literal/prepare_params/redirects
 SRC	+= execute_redirects.c
 SRC	+= redirects_open.c
 vpath %.c $(SRC_DIR)/execute/pipe
+SRC	+= pipe_setup_fds.c
 SRC	+= fork_children.c
 SRC	+= pipe.c
 vpath %.c $(SRC_DIR)/variables

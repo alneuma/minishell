@@ -22,12 +22,12 @@ char	**variable_set_array_get_format(const t_variable_set *env,
 			const t_vartype vartype,
 			char *(*get_assignment_string)(const t_variable *entry))
 {
-	char		**envp;
+	char		**ep;
 	int			i;
 	t_variable	*p;
 
-	envp = (char **)malloc(sizeof(*envp) * (varset_size_type(env, vartype) + 1));
-	if (envp == NULL)
+	ep = (char **)malloc(sizeof(*ep) * (varset_size_type(env, vartype) + 1));
+	if (ep == NULL)
 		return (NULL);
 	i = 0;
 	p = env->first;
@@ -35,18 +35,18 @@ char	**variable_set_array_get_format(const t_variable_set *env,
 	{
 		if (vartype == BOTH || variable_type_get(p) == vartype)
 		{
-			envp[i] = get_assignment_string(p);
-			if (envp[i] == NULL)
+			ep[i] = get_assignment_string(p);
+			if (ep[i] == NULL)
 			{
-				strs_destroy(&envp);
+				strs_destroy(&ep);
 				return (NULL);
 			}
 			i++;
 		}
 		p = p->next;
 	}
-	envp[i] = NULL;
-	return (envp);
+	ep[i] = NULL;
+	return (ep);
 }
 
 char	**variable_set_array_get(const t_variable_set *env,

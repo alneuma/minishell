@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <stdlib.h>
 #include <errno.h>
 #include "libft.h"
 #include "error.h"
@@ -36,6 +37,7 @@ static int	apply_path_relative(char **cmd, const char *str, t_env *env)
 	if (cwd == NULL)
 		return (ENOMEM);
 	*cmd = ft_strjoin(cwd, str);
+	free(cwd);
 	if (*cmd == NULL)
 		return (ENOMEM);
 	if (access(*cmd, X_OK) < 0)
@@ -81,11 +83,10 @@ static int	apply_path(char **cmd, const char *str, t_env *env)
 	{
 		return_code = test_cmd(cmd, str, pathv[i]); 
 		if (return_code == 0 || is_fatal(return_code))
+		{
 			strs_destroy(&pathv);
-		if (return_code == 0)
-			return (0);
-		if (is_fatal(return_code))
 			return (return_code);
+		}
 		i++;
 	}
 	strs_destroy(&pathv);

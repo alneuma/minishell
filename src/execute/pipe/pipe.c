@@ -2,7 +2,6 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <errno.h>
-#include <unistd.h>
 #include "pipe_internals.h"
 #include "signals.h"
 #include "token.h"
@@ -10,8 +9,6 @@
 static int	wait_child(int *wstatus, t_child_info *chinfo);
 static void	process_wstatus_left(int wstatus, t_env *env);
 static int	process_wstatus_right(int wstatus, t_env *env);
-static int	pipe_setup_fds(t_child_info *chinfo_1, t_child_info *chinfo_2,
-				int fd_in, int fd_out);
 
 int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 {
@@ -32,29 +29,6 @@ int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 	process_wstatus_left(return_code, env);
 	wait_child(&return_code, &chinfo_right);
 	return (process_wstatus_right(return_code, env));
-}
-
-static int	pipe_setup_fds(t_child_info *chinfo_1, t_child_info *chinfo_2,
-				int fd_in, int fd_out)
-{
-	int	fds[2];
-	int	return_code;
-
-	if (pipe(fds) < 0)
-	{
-		return_code = errno;
-		errno = 0;
-		return (return_code);
-	}
-	chinfo_1->fd_in = fd_in;
-	chinfo_1->fd_out = fds[1];
-	chinfo_1->fd_garbage[0] = fds[0];
-	chinfo_1->fd_garbage[1] = fd_out;
-	chinfo_2->fd_in = fds[0];
-	chinfo_2->fd_out = fd_out;
-	chinfo_2->fd_garbage[0] = fds[1];
-	chinfo_2->fd_garbage[1] = fd_in;
-	return (0);
 }
 
 static int	wait_child(int *wstatus, t_child_info *chinfo)
