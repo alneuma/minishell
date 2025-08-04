@@ -3,6 +3,7 @@
 #include "libft.h"
 #include "utils.h"
 #include "defs.h"
+#include "error.h"
 #include "variables.h"
 #include "builtins_internals.h"
 
@@ -13,7 +14,7 @@ int	builtin_pwd(const char **argv, int fd_in, int fd_out, t_env *env)
 	(void)fd_in;
 	if (argv[1] != NULL)
 	{
-		env->code = 2;
+		env->code = ERR_PWD;
 		ft_dprintf(STDERR_FILENO, "%s: pwd: %s: invalid option\n", SHELL_NAME,
 			argv[1]);
 		return (-1);

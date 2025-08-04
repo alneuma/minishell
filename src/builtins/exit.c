@@ -8,22 +8,20 @@
 
 int	builtin_exit(const char **argv, int fd_in, int fd_out, t_env *env)
 {
-	int	code;
-
 	(void)fd_in;
 	(void)fd_out;
-	code = 0;
 	if (string_array_get_len(argv) > 2)
 	{
 		print_error_str(" exit:", STR_TOO_MANY_ARGUMENTS);
-		return (EINVAL);
+		env->code = ERR_EXIT;
+		return (-1);
 	}
-	if (argv[1] != NULL && !ft_atois(&code, argv[1]))
+	if (argv[1] != NULL && !ft_atois(&env->code, argv[1]))
 	{
 		print_error_str(" exit:", STR_INVALID_ARGUMENT);
-		return (EINVAL);
+		env->code = ERR_EXIT;
+		return (-1);
 	}
-	env->code = code;
 	env->exit = 1;
 	return (0);
 }
