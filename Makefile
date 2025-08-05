@@ -83,6 +83,7 @@ SRC	+= expander.c
 vpath %.c $(SRC_DIR)/expander/expand_string
 SRC	+= expand_string.c
 SRC	+= expand_string_length.c
+SRC	+= expand_string_add_length.c
 SRC	+= expand_string_utils.c
 SRC	+= expand_string_write.c
 vpath %.c $(SRC_DIR)/expander/globbing

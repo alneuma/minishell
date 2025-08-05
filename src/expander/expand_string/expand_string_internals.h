@@ -3,6 +3,7 @@
 
 # include "environment.h"
 
+int		expand_add_length(int *len, const char **str, const t_env *env);
 int		expand_string_length(int *length, const t_env *env, const char *str);
 int		expand_string_write(char *expansion, const t_env *env, char *str);
 char	*expand_get_key(const char *key_start);
