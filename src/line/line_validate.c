@@ -28,6 +28,8 @@ int	line_validate(int *valid, const char *line, t_env *env)
 	return (0);
 }
 
+// Possible improvements:
+// Do not assign '\n' to a custom defined type. Instead use TKN_NEWLINE
 static int	string_validate(int *valid, t_token_id *culprit, const char *str)
 {
 	t_stack_char	*stack;

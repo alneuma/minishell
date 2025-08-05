@@ -14,6 +14,16 @@ static int	get_objective_dir(char **objective, const char **argv, t_env *env);
 static int	ft_chdir(const char *objective);
 static int	handle_relative(char **objective, t_env *env);
 
+// Possible improvements:
+// Security:
+// test if HOME is a valdid absolute path before using it
+// test if objective is a valdid absolute path before using it
+// test if env->cwd is valid before usage
+// General:
+// multiple intermediate values are saved
+// names of environment variables should be provided as macros for better
+// maintainability
+
 int	builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
 {
 	char	*objective;
