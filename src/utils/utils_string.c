@@ -13,7 +13,7 @@ void	skip_through_word(char **str)
 		return ;
 	quote = 0;
 	if (is_quote(**str))
-		quote = **str;
+		quote = *(*str)++;
 	while (**str != '\0' && (!is_blank(**str) || quote))
 	{
 		if (quote && **str == quote)
@@ -35,8 +35,8 @@ int	str_num_words(char *str)
 			str++;
 		if (*str == '\0')
 			return (words);
-		words++;
 		skip_through_word(&str);
+		words++;
 	}
 	return (words);
 }

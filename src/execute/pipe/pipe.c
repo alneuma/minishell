@@ -22,16 +22,10 @@ int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 		return (return_code);
 	return_code = pipe_fork_child(&chinfo_left, tree->left, env);
 	if (return_code)
-	{
-		pipe_close_fds(&chinfo_left, &chinfo_right);
 		return (return_code);
-	}
 	return_code = pipe_fork_child(&chinfo_right, tree->right, env);
 	if (return_code)
-	{
-		pipe_close_fds(&chinfo_left, &chinfo_right);
 		return (return_code);
-	}
 	wait_child(&return_code, &chinfo_left);
 	process_wstatus_left(return_code, env);
 	wait_child(&return_code, &chinfo_right);
