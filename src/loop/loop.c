@@ -12,6 +12,7 @@
 static int	shell_iteration(t_env *env);
 static int	preprocess_tokens(t_token *tokens, int *valid, t_env *env);
 static int	get_tokens(t_token **tokens, t_env *env);
+static int	loop_return(int return_code, t_env *env);
 
 int	shell_loop(t_env *env)
 {
@@ -25,17 +26,20 @@ int	shell_loop(t_env *env)
 		if (return_code)
 			print_error_shell(return_code);
 		if (is_fatal(return_code) || signum_get() == SIGPIPE || env->exit)
-		{
-			if (!is_fatal(return_code) && signum_get() != SIGPIPE)
-			{
-				return_code = env->code;
-				write(STDOUT_FILENO, "exit\n", 5);
-			}
-			if (signum_get() == SIGPIPE && !is_fatal(return_code))
-				return (CODE_SIGPIPE);
-			return (return_code);
-		}
+			return (loop_return(return_code, env));
 	}
+}
+
+static int	loop_return(int return_code, t_env *env)
+{
+	if (!is_fatal(return_code) && signum_get() != SIGPIPE)
+	{
+		return_code = env->code;
+		write(STDOUT_FILENO, "exit\n", 5);
+	}
+	if (signum_get() == SIGPIPE && !is_fatal(return_code))
+		return (CODE_SIGPIPE);
+	return (return_code);
 }
 
 // tree_from_tokens() can not fail
