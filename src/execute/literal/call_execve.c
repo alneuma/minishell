@@ -31,8 +31,8 @@ int	call_execve(char **argv, int fd_in, int fd_out, t_env *env)
 	{
 		execve_wrapper(&params, env);
 		strs_destroy(&params.envp);
-		free(params.cmd);
 	}
+	free(params.cmd);
 	strs_destroy(&argv);
 	env_clear(env);
 	close_fd_safe2(fd_in, fd_out);
@@ -45,6 +45,9 @@ static int	setup_exec(t_exec *params, char **argv, t_env *env)
 {
 	int	return_code;
 
+	params->cmd = NULL;
+	params->argv = NULL;
+	params->envp = NULL;
 	return_code = assign_argv((const char **)argv, env);
 	if (return_code)
 		return (return_code);
