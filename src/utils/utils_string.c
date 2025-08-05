@@ -12,6 +12,8 @@ void	skip_through_word(char **str)
 	if (**str == '\0')
 		return ;
 	quote = 0;
+	if (is_quote(**str))
+		quote = **str;
 	while (**str != '\0' && (!is_blank(**str) || quote))
 	{
 		if (quote && **str == quote)

@@ -87,7 +87,6 @@ static int	write_glob_words(char **words, const t_env *env, char *str)
 		return_code = glob_write_word(words, &idx_words, &str, env);
 		if (return_code)
 			return (return_code);
-		idx_words++;
 	}
 	return (0);
 }
