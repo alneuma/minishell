@@ -16,12 +16,14 @@ int	expand_string_length(int *length, const t_env *env, const char *str)
 {
 	int		i;
 	int		return_code;
+	int		quoted;
 
 	i = 0;
 	*length = 0;
+	quoted = 0;
 	while (str[i] != '\0')
 	{
-		if (str[i] == '$')
+		if (str[i] == '$' && !quoted)
 		{
 			return_code = expand_add_length(length, str, &i, env);
 			if (return_code)
@@ -29,6 +31,8 @@ int	expand_string_length(int *length, const t_env *env, const char *str)
 		}
 		else
 		{
+			if (str[i] == '\'')
+				quoted = !quoted;
 			*length += 1;
 			i++;
 		}
