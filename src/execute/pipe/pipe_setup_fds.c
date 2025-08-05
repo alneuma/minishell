@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <errno.h>
+#include "utils.h"
 #include "pipe_internals.h"
 
 static void	set_defaults(t_child_info *chinfo);
@@ -35,8 +36,16 @@ static void	set_defaults(t_child_info *chinfo)
 	chinfo->fd_out = -1;
 	chinfo->fd_garbage[0] = -1;
 	chinfo->fd_garbage[1] = -1;
-	chinfo->fd_in = -1;
-	chinfo->fd_out = -1;
-	chinfo->fd_garbage[0] = -1;
-	chinfo->fd_garbage[1] = -1;
+}
+
+void	pipe_close_fds(t_child_info *chinfo_1, t_child_info *chinfo_2)
+{
+	close_fd_safe(chinfo_1->fd_in = -1);
+	close_fd_safe(chinfo_1->fd_out = -1);
+	close_fd_safe(chinfo_1->fd_garbage[0] = -1);
+	close_fd_safe(chinfo_1->fd_garbage[1] = -1);
+	close_fd_safe(chinfo_2->fd_in = -1);
+	close_fd_safe(chinfo_2->fd_out = -1);
+	close_fd_safe(chinfo_2->fd_garbage[0] = -1);
+	close_fd_safe(chinfo_2->fd_garbage[1] = -1);
 }

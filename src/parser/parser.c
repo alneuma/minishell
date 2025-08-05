@@ -5,7 +5,7 @@ static void		parse_tree_insert(t_token **tree, t_token *new_node);
 static t_token	*create_subshell(t_token **tokens);
 
 // Correct syntax is assumed for the argument
-// otherwise "()" could lead to NULL pointer dereference
+// otherwise '()' could cause NULL pointer dereference in create_subshell()
 t_token	*tree_from_tokens(t_token **tokens)
 {
 	t_token	*tree;
@@ -31,6 +31,9 @@ t_token	*tree_from_tokens(t_token **tokens)
 	return (tree);
 }
 
+// Input of correct syntax is assumed
+// tree->is_subshell can create NULL pointer dereference
+// when input contains '()'
 static t_token	*create_subshell(t_token **tokens)
 {
 	t_token	*tree;
@@ -67,6 +70,7 @@ void	parse_tree_destroy(t_token **tree)
 	*tree = NULL;
 }
 
+// assumes that new_node is not NULL
 static void	parse_tree_insert(t_token **tree, t_token *new_node)
 {
 	int		prec_tree;

@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <unistd.h>
 #include "token.h"
 #include "environment.h"
 #include "literal_internals.h"
@@ -85,16 +86,16 @@ static int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env)
 	int	rc_fds;
 
 	if (fd_in == -1)
-		fd_in = 0;
+		fd_in = STDIN_FILENO;
 	if (fd_out == -1)
-		fd_out = 1;
+		fd_out = STDOUT_FILENO;
 	return_code = builtin_func((const char **)argv, fd_in, fd_out, env);
 	rc_fds = 0;
-	if (fd_in != 0)
+	if (fd_in != STDIN_FILENO)
 		rc_fds = close_fd_safe(fd_in);
-	if (fd_out != 1 && rc_fds)
+	if (fd_out != STDOUT_FILENO && rc_fds)
 		close_fd_safe(fd_out);
-	if (fd_out != 1 && rc_fds == 0)
+	if (fd_out != STDOUT_FILENO && rc_fds == 0)
 		rc_fds = close_fd_safe(fd_out);
 	if (return_code)
 		return (return_code);

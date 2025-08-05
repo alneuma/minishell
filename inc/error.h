@@ -22,5 +22,6 @@ int	is_fatal(const int error);
 int	print_error_token(const t_token_id id);
 int	print_error(const char *func, const int errnum);
 int	print_error_str(const char *func, const char *str);
+int	print_error_shell(const int errnum);
 
 #endif //ERROR_H

@@ -27,3 +27,9 @@ int	print_error(const char *func, const int errnum)
 	return (ft_dprintf(STDERR_FILENO, "%s: %s: %s\n", SHELL_NAME, func,
 			strerror(errnum)));
 }
+
+int	print_error_shell(const int errnum)
+{
+	return (ft_dprintf(STDERR_FILENO, "%s: %s\n", SHELL_NAME,
+			strerror(errnum)));
+}

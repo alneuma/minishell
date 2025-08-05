@@ -20,9 +20,11 @@ int	shell_loop(t_env *env)
 		return_code = shell_iteration(env);
 		if (return_code == 0 && env->exit == 0)
 			env->code = 0;
+		if (return_code)
+			print_error_shell(return_code);
 		if (is_fatal(return_code) || signum_get() == SIGPIPE || env->exit)
 		{
-			if (!is_fatal(return_code) || signum_get() != SIGPIPE)
+			if (!is_fatal(return_code) && signum_get() != SIGPIPE)
 			{
 				return_code = env->code;
 				write(STDOUT_FILENO, "exit\n", 5);

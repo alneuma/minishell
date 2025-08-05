@@ -11,8 +11,9 @@ typedef struct s_child_info
 	int		fd_garbage[2];
 }	t_child_info;
 
-int	pipe_fork_child(t_child_info *chinfo, t_token *tree, t_env *env);
-int	pipe_setup_fds(t_child_info *chinfo_1, t_child_info *chinfo_2,
-		int fd_in, int fd_out);
+int		pipe_fork_child(t_child_info *chinfo, t_token *tree, t_env *env);
+int		pipe_setup_fds(t_child_info *chinfo_1, t_child_info *chinfo_2,
+			int fd_in, int fd_out);
+void	pipe_close_fds(t_child_info *chinfo_1, t_child_info *chinfo_2);
 
 #endif //PIPE_INTERNALS_H

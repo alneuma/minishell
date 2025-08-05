@@ -9,6 +9,7 @@
 static int	wait_child(int *wstatus, t_child_info *chinfo);
 static void	process_wstatus_left(int wstatus, t_env *env);
 static int	process_wstatus_right(int wstatus, t_env *env);
+static void	process_signal_termination(int wstatus, t_env *env);
 
 int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 {
@@ -21,10 +22,16 @@ int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 		return (return_code);
 	return_code = pipe_fork_child(&chinfo_left, tree->left, env);
 	if (return_code)
+	{
+		pipe_close_fds(&chinfo_left, &chinfo_right);
 		return (return_code);
+	}
 	return_code = pipe_fork_child(&chinfo_right, tree->right, env);
 	if (return_code)
+	{
+		pipe_close_fds(&chinfo_left, &chinfo_right);
 		return (return_code);
+	}
 	wait_child(&return_code, &chinfo_left);
 	process_wstatus_left(return_code, env);
 	wait_child(&return_code, &chinfo_right);
@@ -46,20 +53,27 @@ static int	wait_child(int *wstatus, t_child_info *chinfo)
 
 static void	process_wstatus_left(int wstatus, t_env *env)
 {
-	if (env->pipe_lvl != 0)
+	if (WIFSIGNALED(wstatus))
+	{
+		process_signal_termination(wstatus, env);
+		return ;
+	}
+	else if (env->pipe_lvl != 0 && WIFEXITED(wstatus))
 		env->code = WEXITSTATUS(wstatus);
-	if (env->pipe_lvl == 0)
+	if (env->pipe_lvl == 0 && WIFEXITED(wstatus))
 	{
 		if (WEXITSTATUS(wstatus) == CODE_SIGQUIT)
 			signum_set(SIGQUIT);
-		if (WEXITSTATUS(wstatus) == CODE_SIGINT)
+		else if (WEXITSTATUS(wstatus) == CODE_SIGINT)
 			signum_set(SIGINT);
 	}
 }
 
 static int	process_wstatus_right(int wstatus, t_env *env)
 {
-	if (env->pipe_lvl == 0)
+	if (WIFSIGNALED(wstatus))
+		process_signal_termination(wstatus, env);
+	if (env->pipe_lvl == 0 && WIFEXITED(wstatus))
 		env->code = WEXITSTATUS(wstatus);
 	if (env->code == CODE_SIGQUIT)
 		signum_set(SIGQUIT);
@@ -68,4 +82,13 @@ static int	process_wstatus_right(int wstatus, t_env *env)
 	if (env->code)
 		return (-1);
 	return (0);
+}
+
+static void	process_signal_termination(int wstatus, t_env *env)
+{
+	signum_set(WTERMSIG(wstatus));
+	if (WTERMSIG(wstatus) == SIGINT)
+		env->code = CODE_SIGINT;
+	else if (WTERMSIG(wstatus) == SIGQUIT)
+		env->code = CODE_SIGQUIT;
 }
