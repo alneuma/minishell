@@ -17,6 +17,8 @@ void	variable_set_destroy(t_variable_set **env)
 {
 	t_variable	*tmp;
 
+	if (*env == NULL)
+		return ;
 	while ((*env)->first != NULL)
 	{
 		tmp = (*env)->first;

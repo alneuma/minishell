@@ -18,7 +18,7 @@ int	expand_string_write(char *expansion, const t_env *env, char *str)
 	while (*str != '\0')
 	{
 		if (*str == '"')
-			quoted_double = 1 - quoted_double;
+			quoted_double = !quoted_double;
 		if (*str == '\'' && !quoted_double)
 			expand_write_single_quoted(&expansion, &str);
 		else if (*str == '$')

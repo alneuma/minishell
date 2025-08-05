@@ -5,74 +5,92 @@
 #include "utils.h"
 #include "expand_string_internals.h"
 
-static int	expand_add_length(int *len, const char *str, int *idx,
-				const t_env *env);
-static int	expand_add_length_normal(int *len, const char *str, int *idx,
-				const t_env *env);
+static int	expand_add_length(int *len, const char **str, const t_env *env);
+static int	expand_add_length_normal(int *len, const char **str, const t_env *env);
 static int	expand_get_value_length(const t_env *env, const char *key);
-static int	expand_add_length_code(int *len, int *idx, const t_env *env);
+static int	expand_add_length_code(int *len, const t_env *env);
+static void	skip_through_single_quoted(int *len, const char **str);
+static void	increment(int *len, const char **str);
 
 int	expand_string_length(int *length, const t_env *env, const char *str)
 {
-	int		i;
-	int		return_code;
-	int		quoted;
+	int	return_code;
+	int	quoted_double;
 
-	i = 0;
 	*length = 0;
-	quoted = 0;
-	while (str[i] != '\0')
+	quoted_double = 0;
+	while (*str != '\0')
 	{
-		if (str[i] == '$' && !quoted)
+		if (*str == '"')
 		{
-			return_code = expand_add_length(length, str, &i, env);
+			quoted_double = !quoted_double;
+			increment(length, &str);
+		}
+		else if (*str == '\'' && !quoted_double)
+			skip_through_single_quoted(length, &str);
+		else if (*str == '$')
+		{
+			return_code = expand_add_length(length, &str, env);
 			if (return_code)
 				return (return_code);
 		}
-		else
-		{
-			if (str[i] == '\'')
-				quoted = !quoted;
-			*length += 1;
-			i++;
-		}
+		else 
+			increment(length, &str);
 	}
 	return (0);
 }
 
-static int	expand_add_length(int *len, const char *str, int *idx,
-				const t_env *env)
+static void	increment(int *len, const char **str)
+{
+	*len += 1;
+	*str += 1;
+}
+
+static void	skip_through_single_quoted(int *len, const char **str)
+{
+	(*str)++;
+	(*len)++;
+	while (**str != '\'')
+	{
+		(*str)++;
+		(*len)++;
+	}
+	(*str)++;
+	(*len)++;
+}
+
+static int	expand_add_length(int *len, const char **str, const t_env *env)
 {
 	int	return_code;
 
-	if (str[*idx] == '$' && str[*idx + 1] == '?')
+	if (**str == '$' && *(*str + 1) == '?')
 	{
-		return_code = expand_add_length_code(len, idx, env);
+		return_code = expand_add_length_code(len, env);
 		if (return_code)
 			return (return_code);
+		*str += 2;
 	}
-	else if (str[*idx] == '$')
+	else if (**str == '$')
 	{
-		return_code = expand_add_length_normal(len, str, idx, env);
+		return_code = expand_add_length_normal(len, str, env);
 		if (return_code)
 			return (return_code);
 	}
 	return (0);
 }
 
-static int	expand_add_length_normal(int *len, const char *str, int *idx,
-		const t_env *env)
+static int	expand_add_length_normal(int *len, const char **str, const t_env *env)
 {
 	char	*key;
 
-	key = expand_get_key(str + *idx);
+	key = expand_get_key(*str);
 	if (key == NULL)
 		return (ENOMEM);
 	*len += expand_get_value_length(env, key);
 	free(key);
-	*idx += 1;
-	while (is_identifier_char(str[*idx]))
-		*idx += 1;
+	(*str)++;
+	while (is_identifier_char(**str))
+		(*str)++;
 	return (0);
 }
 
@@ -88,7 +106,7 @@ static int	expand_get_value_length(const t_env *env, const char *key)
 	return (ft_strlen(value));
 }
 
-static int	expand_add_length_code(int *len, int *idx, const t_env *env)
+static int	expand_add_length_code(int *len, const t_env *env)
 {
 	char	*tmp_str;
 
@@ -97,6 +115,5 @@ static int	expand_add_length_code(int *len, int *idx, const t_env *env)
 		return (ENOMEM);
 	*len += ft_strlen(tmp_str);
 	free(tmp_str);
-	*idx += 2;
 	return (0);
 }
