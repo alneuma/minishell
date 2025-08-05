@@ -10,6 +10,8 @@
 #include "loop_internals.h"
 
 static int	shell_iteration(t_env *env);
+static int	preprocess_tokens(t_token *tokens, int *valid, t_env *env);
+static int	get_tokens(t_token **tokens, t_env *env);
 
 int	shell_loop(t_env *env)
 {
@@ -36,6 +38,8 @@ int	shell_loop(t_env *env)
 	}
 }
 
+// tree_from_tokens() can not fail
+// if provided with syntactically correct list of tokens
 static int	shell_iteration(t_env *env)
 {
 	t_token		*tokens;
@@ -54,7 +58,7 @@ static int	shell_iteration(t_env *env)
 	return (return_code);
 }
 
-int	preprocess_tokens(t_token *tokens, int *valid, t_env *env)
+static int	preprocess_tokens(t_token *tokens, int *valid, t_env *env)
 {
 	int			return_code;
 	t_token_id	culprit;
@@ -77,7 +81,7 @@ int	preprocess_tokens(t_token *tokens, int *valid, t_env *env)
 	return (0);
 }
 
-int	get_tokens(t_token **tokens, t_env *env)
+static int	get_tokens(t_token **tokens, t_env *env)
 {
 	char		*line;
 	int			return_code;
