@@ -9,6 +9,5 @@ int			in_literal(char *str);
 int			is_token_of_type(char *str, t_token_id id);
 int			make_token(t_token **token,
 				t_token_id id, char **str);
-int			get_next(t_token **token, char **input);
 
 #endif //SCANNER_INTERNALS_H

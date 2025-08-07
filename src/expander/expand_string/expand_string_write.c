@@ -7,7 +7,7 @@
 static void	expand_write_single_quoted(char **expansion, char **str);
 static int	expand_write_val(char **expansion, char **str, const t_env *env);
 static int	expand_write_code(char **expansion, char **str, const t_env *env);
-static int	expand_write_normal(char **expansion, char **str, const t_env *env);
+static int	expand_write_expansion(char **expansion, char **str, const t_env *env);
 
 int	expand_string_write(char *expansion, const t_env *env, char *str)
 {
@@ -23,7 +23,7 @@ int	expand_string_write(char *expansion, const t_env *env, char *str)
 			expand_write_single_quoted(&expansion, &str);
 		else if (*str == '$')
 		{
-			return_code = expand_write_normal(&expansion, &str, env);
+			return_code = expand_write_expansion(&expansion, &str, env);
 			if (return_code)
 				return (return_code);
 		}
@@ -37,18 +37,20 @@ int	expand_string_write(char *expansion, const t_env *env, char *str)
 static int	expand_write_code(char **expansion, char **str, const t_env *env)
 {
 	char	*tmp_str;
+	int		len;
 
 	tmp_str = ft_itoa(env->code);
 	if (tmp_str == NULL)
 		return (ENOMEM);
-	ft_memcpy(*expansion, tmp_str, ft_strlen(tmp_str));
-	*expansion += ft_strlen(tmp_str);
+	len = ft_strlen(tmp_str);
+	ft_memcpy(*expansion, tmp_str, len);
+	*expansion += len;
 	*str += 2;
 	free(tmp_str);
 	return (0);
 }
 
-static int	expand_write_normal(char **expansion, char **str, const t_env *env)
+static int	expand_write_expansion(char **expansion, char **str, const t_env *env)
 {
 	int	return_code;
 

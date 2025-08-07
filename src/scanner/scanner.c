@@ -4,11 +4,12 @@
 #include "scanner_internals.h"
 
 static int	get_first(t_token **first, char **input);
+static int	get_next(t_token **token, char **input);
 
 // overwrites input to point directly after the read lexeme
 // success	-> 0
 // error	-> != 0
-int	get_next(t_token **token, char **input)
+static int	get_next(t_token **token, char **input)
 {
 	int	id;
 

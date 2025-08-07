@@ -2,6 +2,7 @@
 #include <errno.h>
 #include "token.h"
 #include "utils.h"
+#include "scanner_internals.h"
 
 int		in_literal(char *str);
 int		make_token(t_token **token, t_token_id id, char **str);
@@ -16,7 +17,7 @@ int	in_literal(char *str)
 	id = 0;
 	while (id < LITERAL)
 	{
-		if (*str == *token_id_get_lexeme(id))
+		if (is_token_of_type(str, id))
 			return (0);
 		id++;
 	}
