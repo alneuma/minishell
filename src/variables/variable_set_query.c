@@ -33,7 +33,7 @@ char	**variable_set_array_get_format(const t_variable_set *env,
 	p = env->first;
 	while (p != NULL)
 	{
-		if (vartype == BOTH || variable_type_get(p) == vartype)
+		if ((vartype == BOTH || variable_type_get(p) == vartype) && p->value)
 		{
 			ep[i] = get_assignment_string(p);
 			if (ep[i] == NULL)

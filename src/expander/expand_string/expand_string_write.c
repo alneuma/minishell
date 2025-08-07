@@ -7,7 +7,8 @@
 static void	expand_write_single_quoted(char **expansion, char **str);
 static int	expand_write_val(char **expansion, char **str, const t_env *env);
 static int	expand_write_code(char **expansion, char **str, const t_env *env);
-static int	expand_write_expansion(char **expansion, char **str, const t_env *env);
+static int	expand_write_expansion(char **expansion, char **str,
+				const t_env *env);
 
 int	expand_string_write(char *expansion, const t_env *env, char *str)
 {
@@ -50,7 +51,8 @@ static int	expand_write_code(char **expansion, char **str, const t_env *env)
 	return (0);
 }
 
-static int	expand_write_expansion(char **expansion, char **str, const t_env *env)
+static int	expand_write_expansion(char **expansion, char **str,
+				const t_env *env)
 {
 	int	return_code;
 
