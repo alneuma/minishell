@@ -72,7 +72,7 @@ int	assign_argv(const char **argv, t_env *env)
 			return (return_code);
 		if (valid == 0)
 			return (0);
-		return_code = variable_set_assignment_string_add(env->vars, argv[i], 0);
+		return_code = variable_set_assignment_string_add(env->vars, argv[i], 1);
 		if (return_code)
 			return (return_code);
 		i++;

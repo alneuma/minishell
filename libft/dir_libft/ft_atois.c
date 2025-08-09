@@ -16,6 +16,8 @@ int	ft_atois(int *n, const char *str)
 	un = 0;
 	if (*str == '-' || *str == '+')
 		signum -= 2 * (*str++ == '-');
+	if (*str == '\0')
+		return (0);
 	while (*str)
 	{
 		digit = *str - '0';

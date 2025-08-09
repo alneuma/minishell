@@ -46,7 +46,7 @@ int	process_variable_export(const char *var, t_env *env)
 		return (variable_set_assignment_string_add(env->vars, var, 1));
 	else if (is_valid_identifier(var, ft_strlen(var)))
 		return (variable_set_var_type_set(env->vars, var, ENV));
-	ft_dprintf(STDERR_FILENO, "%s: `%s': %s\n", SHELL_NAME,
+	ft_dprintf(STDERR_FILENO, "%s: export: `%s': %s\n", SHELL_NAME,
 		var, STR_INVALID_IDENTIFIER);
 	env->code = ERR_INVALID_IDENTIFIER;
 	return (-1);
