@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include "token.h"
+#include "parser.h"
 
 static void		parse_tree_insert(t_token **tree, t_token *new_node);
 static t_token	*create_subshell(t_token **tokens);

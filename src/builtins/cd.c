@@ -10,7 +10,7 @@
 #include "builtins_internals.h"
 
 static int	update_env(const char *old_cwd, t_env *env);
-static int	get_objective_dir(char **objective, const char **argv, t_env *env);
+static int	get_objective_dir(char **objective, char **argv, t_env *env);
 static int	ft_chdir(const char *objective);
 static int	handle_relative(char **objective, t_env *env);
 
@@ -24,7 +24,7 @@ static int	handle_relative(char **objective, t_env *env);
 // names of environment variables should be provided as macros for better
 // maintainability
 
-int	builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
+int	builtin_cd(char **argv, int fd_in, int fd_out, t_env *env)
 {
 	char	*objective;
 	char	*old_cwd;
@@ -53,7 +53,7 @@ int	builtin_cd(const char **argv, int fd_in, int fd_out, t_env *env)
 	return (return_code);
 }
 
-static int	get_objective_dir(char **objective, const char **argv, t_env *env)
+static int	get_objective_dir(char **objective, char **argv, t_env *env)
 {
 	char	*tmp;
 

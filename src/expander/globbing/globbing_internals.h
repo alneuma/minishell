@@ -3,7 +3,7 @@
 
 # include "environment.h"
 
-int	join_strs(char **joined, const char **words);
+int	join_strs(char **joined, char *const *words);
 int	glob_get_matches(char **matches, const char *pattern, t_env *env);
 
 #endif //GLOBBING_INTERNALS_H

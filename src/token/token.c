@@ -4,6 +4,9 @@
 #include "libft.h"
 #include "scanner.h"
 
+int	is_token_of_type(char *str, t_token_id id);
+int	make_token(t_token **token, t_token_id id, char **str);
+
 void	token_destroy(t_token **token, int keep_literal)
 {
 	if ((*token)->string != NULL && keep_literal == FREE_STRING)

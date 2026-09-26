@@ -1,7 +1,9 @@
 #include <stddef.h>
 #include "token.h"
+#include "token_internals.h"
 
-int	is_valid_first(t_token *token);
+static int	token_id_is_connector(t_token_id id);
+int			is_valid_first(t_token *token);
 
 int	token_id_is_redirect(t_token_id id)
 {
@@ -9,7 +11,7 @@ int	token_id_is_redirect(t_token_id id)
 		|| id == OUTFILE_APPEND);
 }
 
-int	token_id_is_connector(t_token_id id)
+static int	token_id_is_connector(t_token_id id)
 {
 	return (id == AND || id == OR || id == PIPE);
 }

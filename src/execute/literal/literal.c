@@ -8,6 +8,7 @@
 #include "builtins.h"
 
 static int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env);
+int			execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env);
 
 int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 {
@@ -22,14 +23,14 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 	if (return_code || argv == NULL)
 		return (return_code);
 	env->code = 0;
-	return_code = argv_first_non_assignment_idx(&idx, (const char **)argv);
+	return_code = argv_first_non_assignment_idx(&idx, argv);
 	if (return_code)
 	{
 		strs_destroy(&argv);
 		return (return_code);
 	}
 	if (argv[idx] == NULL)
-		return_code = assign_argv((const char **)argv, env);
+		return_code = assign_argv(argv, env);
 	else if (is_builtin(argv[idx]))
 		return_code = execute_builtin(argv + idx, fds[0], fds[1], env);
 	else
@@ -38,7 +39,7 @@ int	execute_literal(t_token *tree, int fd_in, int fd_out, t_env *env)
 	return (return_code);
 }
 
-int	argv_first_non_assignment_idx(int *idx, const char **argv)
+int	argv_first_non_assignment_idx(int *idx, char **argv)
 {
 	int	valid;
 	int	return_code;
@@ -57,7 +58,7 @@ int	argv_first_non_assignment_idx(int *idx, const char **argv)
 	return (0);
 }
 
-int	assign_argv(const char **argv, t_env *env)
+int	assign_argv(char **argv, t_env *env)
 {
 	int	i;
 	int	valid;
@@ -89,7 +90,7 @@ static int	execute_builtin(char **argv, int fd_in, int fd_out, t_env *env)
 		fd_in = STDIN_FILENO;
 	if (fd_out == -1)
 		fd_out = STDOUT_FILENO;
-	return_code = builtin_func((const char **)argv, fd_in, fd_out, env);
+	return_code = builtin_func(argv, fd_in, fd_out, env);
 	rc_fds = 0;
 	if (fd_in != STDIN_FILENO)
 		rc_fds = close_fd_safe(fd_in);

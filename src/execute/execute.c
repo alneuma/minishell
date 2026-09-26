@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include "execute.h"
 #include "execute_internals.h"
 #include "error.h"
 

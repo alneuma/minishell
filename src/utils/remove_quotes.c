@@ -17,7 +17,7 @@ char	*str_remove_quotes(const char *str)
 	count = str_count_quotes(str);
 	if (count == 0)
 		return (ft_strdup(str));
-	new_str = (char *)malloc(ft_strlen(str) - count + 1);
+	new_str = (char *)malloc(ft_strlen(str) - (size_t)(count + 1));
 	if (new_str == NULL)
 		return (NULL);
 	i = 0;

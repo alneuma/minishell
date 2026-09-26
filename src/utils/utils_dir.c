@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <unistd.h>
 #include <errno.h>
+#include "utils.h"
 
 // glibc POSIX.1-2001
 // see: man 3 getcwd

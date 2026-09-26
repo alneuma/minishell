@@ -10,6 +10,7 @@ static int	wait_child(int *wstatus, t_child_info *chinfo);
 static void	process_wstatus_left(int wstatus, t_env *env);
 static int	process_wstatus_right(int wstatus, t_env *env);
 static void	process_signal_termination(int wstatus, t_env *env);
+int			execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env);
 
 int	execute_pipe(t_token *tree, int fd_in, int fd_out, t_env *env)
 {

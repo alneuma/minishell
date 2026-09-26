@@ -2,7 +2,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include "signals.h"
-#include "variables.h"
+#include "utils.h"
 
 int	rl_wrapper(char **line, const char *prompt, t_env *env)
 {

@@ -15,6 +15,8 @@ static int	outfile_open(int *error, int *outfile_fd, const t_token *rd);
 static int	heredoc_open(int *error, int *infile_fd, const t_token *token);
 static int	redirect_open(int *error, int *infile_fd, int *outfile_fd,
 				t_token *tmp);
+int			handle_redirect(int fds[2], const char *original, t_token *token,
+				t_env *env);
 
 int	handle_redirect(int fds[2], const char *original, t_token *token,
 		t_env *env)

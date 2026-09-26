@@ -1,11 +1,12 @@
 #include <stdlib.h>
 #include "utils.h"
 #include "libft.h"
+#include "expand_string_internals.h"
 
 // *str should point to first character after '$'
 char	*expand_get_key(const char *key_start)
 {
-	int		i;
+	size_t	i;
 	char	*key;
 
 	key_start++;

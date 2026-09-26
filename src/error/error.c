@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include "error.h"
 #include "token.h"
 #include "libft.h"
 #include "defs.h"

@@ -48,11 +48,10 @@ static int	setup_exec(t_exec *params, char **argv, t_env *env)
 	params->cmd = NULL;
 	params->argv = NULL;
 	params->envp = NULL;
-	return_code = assign_argv((const char **)argv, env);
+	return_code = assign_argv(argv, env);
 	if (return_code)
 		return (return_code);
-	return_code = argv_first_non_assignment_idx(&params->argv_idx,
-			(const char **)argv);
+	return_code = argv_first_non_assignment_idx(&params->argv_idx, argv);
 	if (return_code)
 		return (return_code);
 	params->argv = argv;

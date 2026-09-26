@@ -9,6 +9,7 @@
 static int	apply_path_relative(char **cmd, const char *str, t_env *env);
 static int	apply_path(char **cmd, const char *str, t_env *env);
 static int	apply_path_absolute(char **cmd, const char *str);
+int			get_cmd(char **cmd, char **argv, t_env *env);
 
 int	get_cmd(char **cmd, char **argv, t_env *env)
 {
@@ -75,13 +76,13 @@ static int	apply_path(char **cmd, const char *str, t_env *env)
 	int		return_code;
 	int		i;
 
-	return_code = get_pathv(&pathv, env); 
+	return_code = get_pathv(&pathv, env);
 	if (return_code)
 		return (return_code);
 	i = 0;
 	while (pathv[i] != NULL)
 	{
-		return_code = test_cmd(cmd, str, pathv[i]); 
+		return_code = test_cmd(cmd, str, pathv[i]);
 		if (return_code == 0 || is_fatal(return_code))
 		{
 			strs_destroy(&pathv);

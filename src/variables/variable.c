@@ -6,8 +6,8 @@
 
 char	*variable_assignment_string_get_export(const t_variable *entry)
 {
-	char	*str;
-	int		len;
+	char		*str;
+	size_t		len;
 
 	len = ft_strlen(entry->key) + ft_strlen(EXPORT_PREFIX) + 1;
 	if (entry->value != NULL)

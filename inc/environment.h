@@ -1,8 +1,9 @@
 #ifndef ENVIRONMENT_H
 # define ENVIRONMENT_H
 
+# include "variables.h"
+
 typedef struct s_token			t_token;
-typedef struct s_variable_set	t_variable_set;
 typedef struct s_env			t_env;
 
 struct s_env
@@ -17,6 +18,6 @@ struct s_env
 
 // environment
 void	env_clear(t_env *env);
-int		env_initialize(t_env *env, const char **envp);
+int		env_initialize(t_env *env, char **envp);
 
 #endif //ENVIRONMENT_H

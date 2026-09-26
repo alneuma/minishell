@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "libft.h"
 #include "defs.h"
+#include "token_internals.h"
 
 static int	heredoc_next_line(char **line, const char *prompt, t_env *env);
 static int	heredoc_is_last(const char *line, const char *dlm);

@@ -11,6 +11,7 @@ static int	process_node(char **str, const char *pattern,
 				const struct dirent *node);
 static int	append_match(char **s1, const char *s2);
 static int	starts_with_dot(const char *str);
+int			glob_get_matches(char **matches, const char *pattern, t_env *env);
 
 int	glob_get_matches(char **matches, const char *pattern, t_env *env)
 {

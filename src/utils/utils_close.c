@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include "error.h"
+#include "utils.h"
 
 int	close_fd_safe(int fd);
 
