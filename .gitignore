@@ -6,3 +6,4 @@
 *.sh
 tags
 minishell
+compile_commands.json
