@@ -3,9 +3,6 @@
 
 # include "environment.h"
 
-typedef struct s_token	t_token;
-typedef struct s_env	t_env;
-
 # define KEEP_STRING 1
 # define FREE_STRING 0
 

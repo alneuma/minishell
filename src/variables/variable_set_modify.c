@@ -6,7 +6,7 @@
 #include "utils.h"
 
 static int	variable_set_var_append(t_variable_set *env, const char *key,
-				const char *val, int is_export);
+				const char *val, t_vartype is_export);
 
 // sets the type of a variable
 // creates if not existent
@@ -34,7 +34,7 @@ int	variable_set_var_type_set(t_variable_set *env, const char *key,
 }
 
 int	variable_set_assignment_string_add(t_variable_set *env, const char *str,
-		const int is_export)
+		t_vartype is_export)
 {
 	char	*key;
 	char	*val;
@@ -58,7 +58,7 @@ int	variable_set_assignment_string_add(t_variable_set *env, const char *str,
 }
 
 int	variable_set_var_set(t_variable_set *env, const char *key,
-		const char *val, const int is_export)
+		const char *val, t_vartype is_export)
 {
 	t_variable	*p;
 
@@ -109,7 +109,7 @@ void	variable_set_var_remove(t_variable_set *env, const char *key)
 }
 
 static int	variable_set_var_append(t_variable_set *env, const char *key,
-				const char *val, const int is_export)
+				const char *val, t_vartype is_export)
 {
 	t_variable	*p;
 

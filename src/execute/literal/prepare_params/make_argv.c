@@ -8,6 +8,7 @@ static char	*next_word(char **str);
 static int	write_words_from_token(char **argv, int *idx, const t_token *token);
 static int	argv_populate(char **argv, const t_token *tokens);
 static int	argv_create(char ***argv, const t_token *tokens);
+int			tokens_make_argv(char ***argv, const t_token *tokens);
 
 int	tokens_make_argv(char ***argv, const t_token *tokens)
 {
@@ -26,7 +27,7 @@ int	tokens_make_argv(char ***argv, const t_token *tokens)
 
 static int	argv_create(char ***argv, const t_token *tokens)
 {
-	int	words;
+	size_t	words;
 
 	words = 0;
 	while (tokens != NULL)
@@ -72,10 +73,10 @@ static char	*next_word(char **str)
 
 	p = (char *)*str;
 	skip_through_word(&p);
-	new_word = (char *)malloc(sizeof(*new_word) * (p - *str + 1));
+	new_word = (char *)malloc(sizeof(*new_word) * (size_t)(p - *str + 1));
 	if (new_word == NULL)
 		return (NULL);
-	ft_memcpy(new_word, *str, p - *str);
+	ft_memcpy(new_word, *str, (size_t)(p - *str));
 	new_word[p - *str] = '\0';
 	while (*p != '\0' && is_blank(*p))
 		p++;

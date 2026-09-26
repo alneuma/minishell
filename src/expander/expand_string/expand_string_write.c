@@ -38,7 +38,7 @@ int	expand_string_write(char *expansion, const t_env *env, char *str)
 static int	expand_write_code(char **expansion, char **str, const t_env *env)
 {
 	char	*tmp_str;
-	int		len;
+	size_t	len;
 
 	tmp_str = ft_itoa(env->code);
 	if (tmp_str == NULL)

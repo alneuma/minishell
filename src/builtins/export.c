@@ -10,7 +10,7 @@
 
 int	process_variable_export(const char *var, t_env *env);
 
-int	builtin_export(const char **argv, int fd_in, int fd_out, t_env *env)
+int	builtin_export(char **argv, int fd_in, int fd_out, t_env *env)
 {
 	int	return_code;
 	int	error;

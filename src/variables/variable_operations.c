@@ -4,7 +4,7 @@
 #include "variables_internals.h"
 
 int	variable_var_replace(t_variable *entry, const char *val,
-		const int is_export)
+		t_vartype is_export)
 {
 	free(entry->value);
 	if (val == NULL)
@@ -20,7 +20,7 @@ int	variable_var_replace(t_variable *entry, const char *val,
 	return (0);
 }
 
-int	variable_var_append(t_variable *entry, const char *val, const int is_export)
+int	variable_var_append(t_variable *entry, const char *val, t_vartype is_export)
 {
 	char	*tmp;
 

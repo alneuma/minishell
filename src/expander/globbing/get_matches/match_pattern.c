@@ -2,6 +2,7 @@
 #include <errno.h>
 #include "libft.h"
 #include "utils.h"
+#include "get_matches_internals.h"
 
 static int	check_pattern(const char *str, const char *mask, const char *pat);
 static char	*get_mask(const char *pat);

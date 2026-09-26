@@ -7,6 +7,7 @@
 static int	assign_redirect_fds(int *fd_in, int *fd_out, int *infile_fd,
 				int *outfile_fd);
 static int	argv_remove_quotes(char **argv);
+int			prepare_params(char ***argv, t_token *tree, int fds[2], t_env *env);
 
 int	prepare_params(char ***argv, t_token *tree, int fds[2], t_env *env)
 {

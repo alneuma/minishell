@@ -1,12 +1,11 @@
 #include <stddef.h>
 #include <errno.h>
 #include "libft.h"
-#include "variables.h"
-#include "defs.h"
+#include "builtins_internals.h"
 #include "utils.h"
 #include "error.h"
 
-int	builtin_exit(const char **argv, int fd_in, int fd_out, t_env *env)
+int	builtin_exit(char **argv, int fd_in, int fd_out, t_env *env)
 {
 	(void)fd_in;
 	(void)fd_out;

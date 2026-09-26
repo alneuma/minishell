@@ -1,3 +1,4 @@
+#include "scanner.h"
 #include "token.h"
 #include "libft.h"
 #include "utils.h"
@@ -11,7 +12,7 @@ static int	get_next(t_token **token, char **input);
 // error	-> != 0
 static int	get_next(t_token **token, char **input)
 {
-	int	id;
+	t_token_id	id;
 
 	id = 0;
 	while (id < LITERAL)

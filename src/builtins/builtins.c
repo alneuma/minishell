@@ -1,9 +1,10 @@
 #include <stddef.h>
+#include "builtins.h"
 #include "libft.h"
 #include "environment.h"
 #include "builtins_internals.h"
 
-int	builtin_func(const char **argv, int fd_in, int fd_out, t_env *env)
+int	builtin_func(char **argv, int fd_in, int fd_out, t_env *env)
 {
 	if (ft_strcmp("cd", argv[0]) == 0)
 		return (builtin_cd(argv, fd_in, fd_out, env));

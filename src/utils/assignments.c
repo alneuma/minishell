@@ -36,11 +36,11 @@ static int	is_assignment(const char *str)
 	equal = ft_strchr(str, '=');
 	if (equal == NULL)
 		return (0);
-	if (is_valid_identifier(str, equal - str))
+	if (is_valid_identifier(str, (size_t)(equal - str)))
 		return (1);
 	equal--;
 	if (equal - str > 0 && *equal == '+'
-		&& is_valid_identifier(str, equal - str))
+		&& is_valid_identifier(str, (size_t)(equal - str)))
 		return (1);
 	return (0);
 }
@@ -50,9 +50,9 @@ int	is_identifier_char(const char c)
 	return (ft_isalnum(c) || c == '_');
 }
 
-int	is_valid_identifier(const char *str, int len)
+int	is_valid_identifier(const char *str, size_t len)
 {
-	int	i;
+	size_t		i;
 
 	if (len == 0 || !is_identifier_char(*str) || ft_isdigit(*str))
 		return (0);

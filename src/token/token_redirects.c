@@ -5,6 +5,7 @@
 static int	preprocess_redirect(t_token *token, t_env *env);
 int			tokens_valid_neighbours(t_token *left, t_token *right);
 int			is_valid_first(t_token *token);
+int			token_is_redirect(t_token *token);
 
 int	token_is_redirect(t_token *token)
 {

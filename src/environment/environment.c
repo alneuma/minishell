@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "variables.h"
 
-static int	env_vars_create(t_variable_set **vars, const char **envp);
+static int	env_vars_create(t_variable_set **vars, char **envp);
 
 void	env_clear(t_env *env)
 {
@@ -14,7 +14,7 @@ void	env_clear(t_env *env)
 	variable_set_destroy(&env->vars);
 }
 
-int	env_initialize(t_env *env, const char **envp)
+int	env_initialize(t_env *env, char **envp)
 {
 	int	return_code;
 
@@ -34,7 +34,7 @@ int	env_initialize(t_env *env, const char **envp)
 	return (0);
 }
 
-static int	env_vars_create(t_variable_set **vars, const char **envp)
+static int	env_vars_create(t_variable_set **vars, char **envp)
 {
 	int	return_code;
 	int	i;

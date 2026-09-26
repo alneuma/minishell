@@ -3,6 +3,11 @@
 #include <limits.h>
 #include "stack_char_internals.h"
 
+int	stack_char_size(t_stack_char *stack);
+int	stack_char_peek(char *c, t_stack_char *stack);
+int	stack_char_pop(char *c, t_stack_char *stack);
+int	stack_char_push(char c, t_stack_char *stack);
+
 int	stack_char_size(t_stack_char *stack)
 {
 	return (stack->size);

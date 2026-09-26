@@ -5,12 +5,12 @@
 #include "utils.h"
 #include "expand_string_internals.h"
 
-static int	expand_add_length_normal(int *len, const char **str,
-				const t_env *env);
-static int	expand_get_value_length(const t_env *env, const char *key);
-static int	expand_add_length_code(int *len, const t_env *env);
+static int		expand_add_length_normal(size_t *len, const char **str,
+					const t_env *env);
+static size_t	expand_get_value_length(const t_env *env, const char *key);
+static int		expand_add_length_code(size_t *len, const t_env *env);
 
-int	expand_add_length(int *len, const char **str, const t_env *env)
+int	expand_add_length(size_t *len, const char **str, const t_env *env)
 {
 	int	return_code;
 
@@ -30,7 +30,7 @@ int	expand_add_length(int *len, const char **str, const t_env *env)
 	return (0);
 }
 
-static int	expand_add_length_normal(int *len, const char **str,
+static int	expand_add_length_normal(size_t *len, const char **str,
 				const t_env *env)
 {
 	char	*key;
@@ -46,7 +46,7 @@ static int	expand_add_length_normal(int *len, const char **str,
 	return (0);
 }
 
-static int	expand_get_value_length(const t_env *env, const char *key)
+static size_t	expand_get_value_length(const t_env *env, const char *key)
 {
 	char	*value;
 
@@ -58,7 +58,7 @@ static int	expand_get_value_length(const t_env *env, const char *key)
 	return (ft_strlen(value));
 }
 
-static int	expand_add_length_code(int *len, const t_env *env)
+static int	expand_add_length_code(size_t *len, const t_env *env)
 {
 	char	*tmp_str;
 

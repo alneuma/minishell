@@ -4,12 +4,12 @@
 #include "utils.h"
 #include "globbing_internals.h"
 
-static int	write_glob_words(char **words, const t_env *env, char *str);
+static int	write_glob_words(char **words, t_env *env, char *str);
 static int	needs_glob(const char *str);
-static int	glob_write_word(char **words, int *idx, char **str,
-				const t_env *env);
+static int	glob_write_word(char **words, int *idx, char **str, t_env *env);
+int			glob_str(char **new_str, t_env *env, char *str);
 
-int	glob_str(char **new_str, const t_env *env, char *str)
+int	glob_str(char **new_str, t_env *env, char *str)
 {
 	char	**words;
 	int		return_code;
@@ -23,7 +23,7 @@ int	glob_str(char **new_str, const t_env *env, char *str)
 		strs_destroy(&words);
 		return (return_code);
 	}
-	return_code = join_strs(new_str, (const char **)words);
+	return_code = join_strs(new_str, words);
 	strs_destroy(&words);
 	return (return_code);
 }
@@ -46,8 +46,7 @@ static int	needs_glob(const char *str)
 	return (0);
 }
 
-static int	glob_write_word(char **words, int *idx, char **str,
-				const t_env *env)
+static int	glob_write_word(char **words, int *idx, char **str, t_env *env)
 {
 	char	*word_end;
 	char	*tmp;
@@ -57,16 +56,16 @@ static int	glob_write_word(char **words, int *idx, char **str,
 		*str += 1;
 	word_end = *str;
 	skip_through_word(&word_end);
-	words[*idx] = (char *)malloc(word_end - *str + 1);
+	words[*idx] = (char *)malloc((size_t)(word_end - *str) + 1);
 	if (words[*idx] == NULL)
 		return (ENOMEM);
-	ft_memmove(words[*idx], *str, word_end - *str);
+	ft_memmove(words[*idx], *str, (size_t)(word_end - *str));
 	words[*idx][word_end - *str] = '\0';
 	if (needs_glob(words[*idx]))
 	{
 		tmp = words[*idx];
 		words[*idx] = NULL;
-		return_code = glob_get_matches(&words[*idx], tmp, (t_env *)env);
+		return_code = glob_get_matches(&words[*idx], tmp, env);
 		free(tmp);
 		if (return_code)
 			return (return_code);
@@ -76,7 +75,7 @@ static int	glob_write_word(char **words, int *idx, char **str,
 	return (0);
 }
 
-static int	write_glob_words(char **words, const t_env *env, char *str)
+static int	write_glob_words(char **words, t_env *env, char *str)
 {
 	int		idx_words;
 	int		return_code;

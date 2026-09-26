@@ -1,13 +1,11 @@
 #include <unistd.h>
 #include <errno.h>
 #include "libft.h"
-#include "utils.h"
 #include "defs.h"
 #include "error.h"
-#include "variables.h"
 #include "builtins_internals.h"
 
-int	builtin_pwd(const char **argv, int fd_in, int fd_out, t_env *env)
+int	builtin_pwd(char **argv, int fd_in, int fd_out, t_env *env)
 {
 	int	return_code;
 

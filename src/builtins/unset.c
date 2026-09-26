@@ -1,10 +1,11 @@
 #include <stddef.h>
 #include "variables.h"
 #include "environment.h"
+#include "builtins_internals.h"
 
-int	builtin_unset(const char **argv, int fd_in, int fd_out, t_env *env)
+int	builtin_unset(char **argv, int fd_in, int fd_out, t_env *env)
 {
-	int	i;
+	size_t	i;
 
 	(void)fd_in;
 	(void)fd_out;

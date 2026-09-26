@@ -1,9 +1,10 @@
+#include <stddef.h>
 #include "expand_string_internals.h"
 
-static void	skip_through_single_quoted(int *len, const char **str);
-static void	increment(int *len, const char **str);
+static void	skip_through_single_quoted(size_t *len, const char **str);
+static void	increment(size_t *len, const char **str);
 
-int	expand_string_length(int *length, const t_env *env, const char *str)
+int	expand_string_length(size_t *length, const t_env *env, const char *str)
 {
 	int	return_code;
 	int	quoted_double;
@@ -25,19 +26,19 @@ int	expand_string_length(int *length, const t_env *env, const char *str)
 			if (return_code)
 				return (return_code);
 		}
-		else 
+		else
 			increment(length, &str);
 	}
 	return (0);
 }
 
-static void	increment(int *len, const char **str)
+static void	increment(size_t *len, const char **str)
 {
 	*len += 1;
 	*str += 1;
 }
 
-static void	skip_through_single_quoted(int *len, const char **str)
+static void	skip_through_single_quoted(size_t *len, const char **str)
 {
 	(*str)++;
 	(*len)++;

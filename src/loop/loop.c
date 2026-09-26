@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
+#include "loop.h"
 #include "line.h"
 #include "error.h"
 #include "parser.h"

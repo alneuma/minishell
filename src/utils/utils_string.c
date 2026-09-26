@@ -24,9 +24,9 @@ void	skip_through_word(char **str)
 	}
 }
 
-int	str_num_words(char *str)
+size_t	str_num_words(char *str)
 {
-	int		words;
+	size_t		words;
 
 	words = 0;
 	while (*str)
@@ -54,9 +54,9 @@ void	strs_destroy(char ***strs)
 	*strs = NULL;
 }
 
-int	string_array_get_len(const char **arr)
+size_t	string_array_get_len(char **arr)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	while (arr[i] != NULL)

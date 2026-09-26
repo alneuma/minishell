@@ -12,6 +12,8 @@
 static int	redirect_fds_get(int fds[2], t_token *tokens, t_env *env);
 static int	validate_redirect(char *str, t_token *token, t_env *env);
 static int	handle_token(int fds[2], t_token *token, t_env *env);
+int			process_redirects(int *infile_fd, int *outfile_fd, t_token **tokens,
+				t_env *env);
 
 int	process_redirects(int *infile_fd, int *outfile_fd, t_token **tokens,
 		t_env *env)

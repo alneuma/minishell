@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <errno.h>
+#include "utils.h"
+#include "variables_internals.h"
 #include "libft.h"
 
 int	assignment_string_val_get(char **val, const char *str)
@@ -21,10 +23,10 @@ int	assignment_string_val_get(char **val, const char *str)
 int	assignment_string_key_get(char **key, const char *str)
 {
 	char	*equal;
-	int		len;
+	size_t	len;
 
 	equal = ft_strchr(str, '=');
-	len = equal - str;
+	len = (size_t)(equal - str);
 	if (equal != str && ft_strchr(str, '+') == equal - 1)
 		len--;
 	*key = (char *)malloc(len + 1);

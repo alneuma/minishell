@@ -7,6 +7,8 @@
 #include "utils.h"
 
 static int	append_slashes(char **pathv);
+int			get_pathv(char ***pathv, t_env *env);
+int			test_cmd(char **cmd, const char *str, const char *path);
 
 int	get_pathv(char ***pathv, t_env *env)
 {

@@ -1,11 +1,12 @@
 #include <stddef.h>
 #include <errno.h>
+#include "builtins_internals.h"
 #include "libft.h"
 #include "environment.h"
 
 static int	is_n_option(const char *str);
 
-int	builtin_echo(const char **argv, int fd_in, int fd_out, t_env *env)
+int	builtin_echo(char **argv, int fd_in, int fd_out, t_env *env)
 {
 	int	i;
 	int	opt_n;

@@ -1,3 +1,5 @@
+#include "utils.h"
+
 int	is_quote(const char c)
 {
 	return (c == '\'' || c == '"');

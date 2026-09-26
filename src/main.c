@@ -12,7 +12,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	signal_setup_default();
-	return_code = env_initialize(&env, (const char **)envp);
+	return_code = env_initialize(&env, envp);
 	if (return_code)
 		return (return_code);
 	return_code = shell_loop(&env);

@@ -1,3 +1,4 @@
+#include "line.h"
 #include "line_internals.h"
 #include "token.h"
 #include "error.h"

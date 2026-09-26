@@ -1,11 +1,12 @@
 #include <stdlib.h>
 #include <errno.h>
 #include "libft.h"
+#include "get_matches_internals.h"
 
-static int	join_strs_len(const char **strs);
-static void	join_strs_write(char *new_str, const char **strs);
+static size_t	join_strs_len(char *const *strs);
+static void		join_strs_write(char *new_str, char *const *strs);
 
-int	join_strs(char **joined, const char **words)
+int	join_strs(char **joined, char *const *words)
 {
 	*joined = (char *)malloc(join_strs_len(words) + 1);
 	if (*joined == NULL)
@@ -14,10 +15,10 @@ int	join_strs(char **joined, const char **words)
 	return (0);
 }
 
-static int	join_strs_len(const char **strs)
+static size_t	join_strs_len(char *const *strs)
 {
-	int	len;
-	int	i;
+	size_t	len;
+	size_t	i;
 
 	len = 0;
 	i = 0;
@@ -30,10 +31,10 @@ static int	join_strs_len(const char **strs)
 	return (len);
 }
 
-static void	join_strs_write(char *new_str, const char **strs)
+static void	join_strs_write(char *new_str, char *const *strs)
 {
-	int	word;
-	int	len;
+	size_t	word;
+	size_t	len;
 
 	word = 0;
 	while (strs[word] != NULL)

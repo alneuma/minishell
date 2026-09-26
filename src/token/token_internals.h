@@ -1,6 +1,8 @@
 #ifndef TOKEN_INTERNALS_H
 # define TOKEN_INTERNALS_H
 
+# include "token.h"
+
 int	preprocess_heredoc(char **doc, const char *dlm_quoted, t_env *env);
 
 typedef struct s_token_type
@@ -9,5 +11,7 @@ typedef struct s_token_type
 	int			prec;
 	t_token_id	id;
 }	t_token_type;
+
+int	tokens_valid_neighbours(t_token *left, t_token *right);
 
 #endif //TOKEN_INTERNALS_H

@@ -6,11 +6,11 @@
 
 int		in_literal(char *str);
 int		make_token(t_token **token, t_token_id id, char **str);
-int		literal_length(char *str);
+size_t	literal_length(char *str);
 
 int	in_literal(char *str)
 {
-	int	id;
+	t_token_id	id;
 
 	if (is_blank(*str))
 		return (0);
@@ -26,9 +26,9 @@ int	in_literal(char *str)
 
 char	*get_literal(char **str)
 {
-	int		len;
+	size_t	len;
 	char	*new_literal;
-	int		i;
+	size_t	i;
 
 	len = literal_length(*str);
 	new_literal = (char *)malloc(len + 1);
@@ -45,9 +45,9 @@ char	*get_literal(char **str)
 	return (new_literal);
 }
 
-int	literal_length(char *str)
+size_t	literal_length(char *str)
 {
-	int		i;
+	size_t	i;
 	char	quote;
 
 	i = 0;

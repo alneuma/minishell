@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include "line.h"
 #include "utils.h"
 #include "defs.h"
 
