@@ -13,7 +13,10 @@
 
 ## Usage
 
+You need to provide the readline library and header. On Ubuntu 26 this can be achieved by installing the package `libreadline-dev`
+
 ```bash
+sudo apt install -y libreadline-dev
 make
 ./minishell
 ```
@@ -38,4 +41,7 @@ make
 
 ## Coding standard
 
-Written to the 42 Norm (no more than 25 lines per function, no more than 80 characters per line).
+Written to the 42 Norm:
+- no more than 25 lines per function
+- no more than 80 characters per line
+- many other stylistic rules
